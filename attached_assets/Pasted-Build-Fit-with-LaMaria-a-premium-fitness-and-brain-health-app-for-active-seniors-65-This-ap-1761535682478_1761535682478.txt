@@ -1,0 +1,76 @@
+Build "Fit with LaMaria" - a premium fitness and brain health app for active seniors (65+).
+
+This app combines daily workouts with cognitive puzzles to help users stay physically fit and mentally sharp. Complete your workout to unlock today's brain game.
+
+═══════════════════════════════════════════════════════════════════
+BRAND IDENTITY: FIT WITH LAMARIA
+═══════════════════════════════════════════════════════════════════
+
+FOUNDER: LaMaria Wall (@lamaria_wall / @yogic_yogi)
+- Yoga and fitness instructor
+- Authentic, warm, encouraging personality
+- Target audience: Women 65+ who want gentle, effective fitness
+
+BRAND PERSONALITY:
+- Sophisticated but approachable
+- Encouraging without being patronizing
+- Wellness-focused (holistic health)
+- Emphasizes self-care and consistency
+- Celebrates small wins and progress
+
+BRAND VOICE:
+- Warm and supportive ("You've got this")
+- Respectful and mature (never condescending)
+- Health-focused ("Nourish your body and mind")
+- Achievement-oriented ("Today's win starts now")
+- Uses proper grammar, professional tone
+
+VISUAL STYLE:
+- Clean, elegant, calming
+- Inspired by wellness/yoga aesthetics
+- High contrast for accessibility
+- Sophisticated color palette (not childish)
+
+═══════════════════════════════════════════════════════════════════
+TECH STACK
+═══════════════════════════════════════════════════════════════════
+
+- React 18 with Vite
+- Tailwind CSS (use CDN or npm install)
+- React Router v6
+- Firebase (Authentication, Firestore, Hosting)
+- Date-fns for date handling
+- Lucide React for icons (professional, clean icons)
+
+DO NOT use localStorage or sessionStorage - use Firebase for all persistence.
+
+═══════════════════════════════════════════════════════════════════
+COLOR PALETTE (Wellness-Inspired)
+═══════════════════════════════════════════════════════════════════
+
+PRIMARY COLORS:
+- Sage Green: #6B9080 (primary buttons, success states)
+- Deep Plum: #5D576B (headers, emphasis)
+- Warm Coral: #E76F51 (accent, workout complete)
+- Soft Gold: #F4A261 (puzzle unlock, achievements)
+
+NEUTRALS:
+- Cream: #F8F4F0 (background)
+- Warm White: #FFFFFF (cards)
+- Charcoal: #2B2D42 (text)
+- Light Gray: #E5E5E5 (borders)
+
+USAGE:
+- Workouts: Sage green (#6B9080)
+- Puzzles: Deep plum (#5D576B)
+- Success states: Warm coral (#E76F51)
+- Achievements/streaks: Soft gold (#F4A261)
+- Locked states: Light gray (#E5E5E5)
+
+Tailwind Custom Config (add to tailwind.config.js):
+```javascriptmodule.exports = {
+theme: {
+extend: {
+colors: {
+'lamaria-sage': '#6B9080',
+'lamaria-plum': '#5D576B',Claude does not have the ability to run the code it generates yet.Claude can make mistakes. Please double-check responses.

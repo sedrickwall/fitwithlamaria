@@ -1,18 +1,85 @@
-import { sql } from "drizzle-orm";
-import { pgTable, text, varchar } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+// Workout schema
+export const workoutSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  category: z.enum(["seated", "standing", "balance"]),
+  duration: z.number(),
+  difficulty: z.enum(["low", "medium"]),
+  videoUrl: z.string(),
+  thumbnail: z.string().optional(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+export type Workout = z.infer<typeof workoutSchema>;
+
+// User profile schema
+export const userProfileSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  age: z.number().optional(),
+  fitnessLevel: z.enum(["beginner", "intermediate", "advanced"]).optional(),
+  totalPoints: z.number().default(0),
+  currentStreak: z.number().default(0),
+  lastActiveDate: z.string().optional(),
 });
 
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
+export type UserProfile = z.infer<typeof userProfileSchema>;
+
+// Workout completion schema
+export const workoutCompletionSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  workoutId: z.string(),
+  completedAt: z.string(),
+  date: z.string(),
+  pointsEarned: z.number(),
+});
+
+export type WorkoutCompletion = z.infer<typeof workoutCompletionSchema>;
+
+// Puzzle attempt schema
+export const puzzleAttemptSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  date: z.string(),
+  word: z.string(),
+  guesses: z.array(z.string()),
+  solved: z.boolean(),
+  attempts: z.number(),
+  pointsEarned: z.number(),
+  completedAt: z.string().optional(),
+});
+
+export type PuzzleAttempt = z.infer<typeof puzzleAttemptSchema>;
+
+// Daily status schema
+export const dailyStatusSchema = z.object({
+  date: z.string(),
+  workoutCompleted: z.boolean(),
+  puzzleUnlocked: z.boolean(),
+  puzzleSolved: z.boolean(),
+  totalPointsEarned: z.number(),
+});
+
+export type DailyStatus = z.infer<typeof dailyStatusSchema>;
+
+// Leaderboard entry schema
+export const leaderboardEntrySchema = z.object({
+  userId: z.string(),
+  name: z.string(),
+  points: z.number(),
+  rank: z.number(),
+  streak: z.number(),
+});
+
+export type LeaderboardEntry = z.infer<typeof leaderboardEntrySchema>;
+
+// Insert schemas (for creating new records)
+export const insertUserProfileSchema = userProfileSchema.omit({ id: true });
+export const insertWorkoutCompletionSchema = workoutCompletionSchema.omit({ id: true });
+export const insertPuzzleAttemptSchema = puzzleAttemptSchema.omit({ id: true });
+
+export type InsertUserProfile = z.infer<typeof insertUserProfileSchema>;
+export type InsertWorkoutCompletion = z.infer<typeof insertWorkoutCompletionSchema>;
+export type InsertPuzzleAttempt = z.infer<typeof insertPuzzleAttemptSchema>;
