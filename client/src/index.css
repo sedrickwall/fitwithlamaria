@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .bg-gradient-primary {
+    background: var(--gradient-primary);
+  }
+  .bg-gradient-secondary {
+    background: var(--gradient-secondary);
+  }
+  .bg-gradient-accent {
+    background: var(--gradient-accent);
+  }
+  .bg-gradient-warm {
+    background: var(--gradient-warm);
+  }
+  .hover\:bg-gradient-primary:hover {
+    background: linear-gradient(135deg, hsl(174, 62%, 42%) 0%, hsl(154, 50%, 45%) 100%);
+  }
+  .hover\:bg-gradient-secondary:hover {
+    background: linear-gradient(135deg, hsl(267, 70%, 60%) 0%, hsl(290, 65%, 55%) 100%);
+  }
+}
+
 :root {
   --button-outline: rgba(0, 0, 0, 0.10);
   --badge-outline: rgba(0, 0, 0, 0.05);
@@ -26,27 +47,32 @@
   --popover: 0 0% 100%;
   --popover-foreground: 231 19% 21%;
   --popover-border: 0 0% 90%;
-  --primary: 154 32% 32%;
+  --primary: 174 62% 47%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 267 15% 28%;
+  --secondary: 267 70% 65%;
   --secondary-foreground: 0 0% 100%;
   --muted: 0 0% 92%;
   --muted-foreground: 231 19% 35%;
-  --accent: 14 78% 45%;
+  --accent: 340 82% 62%;
   --accent-foreground: 0 0% 100%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --success: 154 32% 32%;
+  --success: 154 50% 50%;
   --success-foreground: 0 0% 100%;
-  --warning: 27 90% 28%;
+  --warning: 38 92% 50%;
   --warning-foreground: 0 0% 100%;
   --input: 0 0% 90%;
   --ring: 154 21% 50%;
-  --chart-1: 154 21% 50%;
-  --chart-2: 267 10% 38%;
-  --chart-3: 14 78% 61%;
-  --chart-4: 27 87% 67%;
+  --chart-1: 174 62% 47%;
+  --chart-2: 267 70% 65%;
+  --chart-3: 340 82% 62%;
+  --chart-4: 38 92% 50%;
   --chart-5: 0 84% 60%;
+  
+  --gradient-primary: linear-gradient(135deg, hsl(174, 62%, 47%) 0%, hsl(154, 50%, 50%) 100%);
+  --gradient-secondary: linear-gradient(135deg, hsl(267, 70%, 65%) 0%, hsl(290, 65%, 60%) 100%);
+  --gradient-accent: linear-gradient(135deg, hsl(340, 82%, 62%) 0%, hsl(14, 78%, 65%) 100%);
+  --gradient-warm: linear-gradient(135deg, hsl(38, 92%, 50%) 0%, hsl(30, 85%, 55%) 100%);
 
   --font-sans: Inter, Roboto, sans-serif;
   --font-serif: Georgia, serif;

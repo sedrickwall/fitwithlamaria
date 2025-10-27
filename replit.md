@@ -6,7 +6,7 @@ FitWord is a premium fitness and brain health application designed for active se
 
 **Target Audience:** Women 65+ seeking gentle, effective fitness combined with mental engagement
 
-**Brand Personality:** Sophisticated yet approachable, encouraging without patronizing, wellness-focused with emphasis on consistency and celebrating small wins
+**Brand Personality:** Vibrant, energetic yet calming, encouraging without patronizing, wellness-focused with emphasis on consistency and celebrating small wins. Modern gradient-based design inspired by contemporary web aesthetics (Base44-style)
 
 **Core Features:**
 - Daily workout library (seated, standing, balance exercises)
@@ -39,16 +39,22 @@ Preferred communication style: Simple, everyday language.
 
 **UI Component System:**
 - Shadcn/ui (Radix UI primitives) for accessible, composable components
-- Tailwind CSS with custom design tokens matching Material Design 3
+- Tailwind CSS with custom gradient utilities and vibrant color palette
+- Modern gradient buttons inspired by Base44 design aesthetic
 - Custom typography scale (minimum 24px for interactive elements, 18px minimum overall)
 - Touch target minimum: 56x56px (64px for primary CTAs)
 
 **Design System:**
-- CSS custom properties for theming (HSL color model)
+- CSS custom properties for theming with gradient support
+- Vibrant gradient color palette:
+  - Primary: Teal-to-green gradient (HSL 174,62%,47% → 154,50%,50%)
+  - Secondary: Purple-to-lavender gradient (HSL 267,70%,65% → 290,65%,60%)
+  - Accent: Pink-to-coral gradient (HSL 340,82%,62% → 14,78%,65%)
+  - Warning: Gold-to-orange gradient (HSL 38,92%,50% → 30,85%,55%)
 - Responsive grid: single column mobile, 2-column tablet, up to 3-column desktop
-- Material Design 3 elevation system with subtle shadows
+- Diagonal gradients (135deg) for dynamic visual movement
 - Inter/Roboto font families from Google Fonts
-- Accessibility-first: high contrast ratios, ARIA labels, keyboard navigation
+- Accessibility-first: white text on gradients, large touch targets, ARIA labels, keyboard navigation
 
 ### Backend Architecture
 

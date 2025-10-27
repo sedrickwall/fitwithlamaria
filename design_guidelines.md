@@ -35,33 +35,37 @@ Fit with LaMaria combines gentle, effective workouts with cognitive puzzles to h
 
 ## Color Palette (Wellness-Inspired)
 
-### Primary Colors
+### Primary Colors (Vibrant Gradients)
 
-#### Sage Green (Darkened for Accessibility)
-- **Color**: Darker sage for 7:1+ contrast on light backgrounds
-- **Usage**: Primary buttons, workout states, success indicators
-- **Represents**: Growth, wellness, vitality
-- **Applications**: "Mark Complete" buttons, workout cards, progress indicators
+#### Teal/Turquoise Gradient
+- **Color**: HSL(174, 62%, 47%) → HSL(154, 50%, 50%)
+- **Gradient**: `linear-gradient(135deg, teal to green)`
+- **Usage**: Primary buttons, workout states, main CTAs
+- **Represents**: Energy, vitality, wellness, fresh start
+- **Applications**: "Begin Movement" button, workout cards, primary actions
 
-#### Deep Plum (Darkened for Accessibility)
-- **Color**: Darker plum for 7:1+ contrast on light backgrounds
-- **Usage**: Headers, navigation, puzzle elements
-- **Represents**: Wisdom, focus, mental clarity
-- **Applications**: Page titles, puzzle game board, emphasis text
+#### Purple/Lavender Gradient  
+- **Color**: HSL(267, 70%, 65%) → HSL(290, 65%, 60%)
+- **Gradient**: `linear-gradient(135deg, purple to lavender)`
+- **Usage**: Secondary buttons, puzzle elements, brain health
+- **Represents**: Mental clarity, focus, wisdom
+- **Applications**: "Play Brain Game" button, puzzle UI, secondary actions
 
-#### Warm Coral (Darkened for Accessibility)
-- **Color**: Darker coral for 7:1+ contrast on light backgrounds
-- **Usage**: Accent color, completion celebrations, CTAs
-- **Represents**: Energy, achievement, celebration
-- **Applications**: Workout complete messages, streak milestones, achievement badges
+#### Pink/Coral Gradient
+- **Color**: HSL(340, 82%, 62%) → HSL(14, 78%, 65%)
+- **Gradient**: `linear-gradient(135deg, pink to coral)`
+- **Usage**: Accent elements, celebrations, achievements
+- **Represents**: Joy, accomplishment, celebration
+- **Applications**: Achievement badges, completion messages, special highlights
 
-#### Soft Gold (Darkened for Accessibility)
-- **Color**: Darker gold for 7:1+ contrast on light backgrounds
-- **Usage**: Puzzle unlocks, streaks, special achievements
-- **Represents**: Rewards, brain health, accomplishment
-- **Applications**: Puzzle solved bonuses, streak counters, point displays
+#### Gold/Orange Gradient
+- **Color**: HSL(38, 92%, 50%) → HSL(30, 85%, 55%)
+- **Gradient**: `linear-gradient(135deg, gold to orange)`
+- **Usage**: Points, streaks, rewards
+- **Represents**: Rewards, brain health, daily wins
+- **Applications**: Points display, streak counters, bonus indicators
 
-**Note**: All colors have been darkened from their original wellness palette to ensure WCAG AAA compliance (7:1 contrast ratio) on the cream and white backgrounds used throughout the app.
+**Design Philosophy**: Inspired by modern, vibrant web aesthetics (Base44-style). Uses bright, optimistic gradients that energize without overwhelming. All gradients flow at 135deg (diagonal) for dynamic movement.
 
 ### Neutral Palette
 
@@ -90,13 +94,13 @@ Fit with LaMaria combines gentle, effective workouts with cognitive puzzles to h
 **Locked**: Light Gray (#E5E5E5) for disabled states
 
 ### Accessibility Requirements
-All color combinations MUST meet **WCAG AAA standards (7:1 contrast ratio minimum)**:
-- All brand colors darkened to ensure 7:1+ contrast on light backgrounds
-- Primary/Success (Sage): HSL(154, 32%, 32%) on cream ✅
-- Secondary (Plum): HSL(267, 15%, 28%) on white ✅  
-- Accent (Coral): HSL(14, 78%, 45%) on white ✅
-- Warning (Gold): HSL(27, 90%, 40%) on white ✅
-- Charcoal text (#2B2D42) on Cream: 12.1:1 ✅
+All interactive elements prioritize **readability and large touch targets**:
+- **Text on Gradients**: White text (100% opacity) on vibrant gradients ensures high contrast
+- **Button Accessibility**: All buttons use gradient backgrounds with white text
+- **Touch Targets**: Minimum 56px height for all interactive elements (64px for primary CTAs)
+- **Font Sizes**: Minimum 18px body text, 24px+ for interactive elements
+- **Gradients**: Diagonal gradients (135deg) avoid vertical/horizontal reading barriers
+- **Icons**: Always paired with text labels for clarity
 
 ---
 

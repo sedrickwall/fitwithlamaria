@@ -84,7 +84,7 @@ export default function Dashboard() {
             <Link href="/workouts">
               <Button 
                 size="lg"
-                className="w-full h-16 text-body-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+                className="w-full h-16 text-body-lg font-semibold"
                 data-testid="button-start-workout"
               >
                 <Dumbbell className="w-6 h-6 mr-2" />
@@ -95,7 +95,8 @@ export default function Dashboard() {
             <Link href="/puzzle">
               <Button 
                 size="lg"
-                className="w-full h-16 text-body-lg font-semibold shadow-lg hover:shadow-xl transition-all bg-secondary hover:bg-secondary/90"
+                variant="secondary"
+                className="w-full h-16 text-body-lg font-semibold"
                 data-testid="button-play-puzzle"
               >
                 <Puzzle className="w-6 h-6 mr-2" />
