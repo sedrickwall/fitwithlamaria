@@ -14,8 +14,14 @@ export default function Progress() {
 
   const totalPoints = profile?.totalPoints || 0;
   const currentStreak = profile?.currentStreak || 0;
-  const totalWorkouts = getWorkoutCompletions().length;
-  const totalPuzzles = getPuzzleAttempts().filter(a => a.solved).length;
+  const workoutCompletions = getWorkoutCompletions();
+  const puzzleAttempts = getPuzzleAttempts();
+  
+  const uniqueWorkoutDays = new Set(workoutCompletions.map(c => c.date)).size;
+  const uniquePuzzleDays = new Set(puzzleAttempts.filter(a => a.solved).map(a => a.date)).size;
+  
+  const totalWorkouts = uniqueWorkoutDays;
+  const totalPuzzles = uniquePuzzleDays;
   const completedDates = getCompletedDates();
   const leaderboard = getWeeklyLeaderboard();
 

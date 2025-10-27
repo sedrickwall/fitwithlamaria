@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Workout, WorkoutCompletion } from "@shared/schema";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
-import { saveWorkoutCompletion } from "@/lib/localStorage";
+import { saveWorkoutCompletion, getWorkoutCompletions } from "@/lib/localStorage";
 import { calculateWorkoutPoints } from "@/lib/points";
 
 const SAMPLE_WORKOUTS: Workout[] = [
@@ -115,13 +115,27 @@ export default function WorkoutPlayer() {
   const handleComplete = () => {
     if (!profile) return;
 
+    const today = new Date().toISOString().split('T')[0];
+    const existingCompletions = getWorkoutCompletions();
+    const alreadyCompleted = existingCompletions.some(
+      c => c.date === today && c.workoutId === workout.id
+    );
+
+    if (alreadyCompleted) {
+      setCompleted(true);
+      setTimeout(() => {
+        navigate("/puzzle");
+      }, 1500);
+      return;
+    }
+
     const points = calculateWorkoutPoints();
     const completion: WorkoutCompletion = {
       id: `completion_${Date.now()}`,
       userId: profile.id,
       workoutId: workout.id,
       completedAt: new Date().toISOString(),
-      date: new Date().toISOString().split('T')[0],
+      date: today,
       pointsEarned: points,
     };
 

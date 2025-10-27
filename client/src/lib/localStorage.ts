@@ -61,8 +61,16 @@ export function getWorkoutCompletions(): WorkoutCompletion[] {
 
 export function saveWorkoutCompletion(completion: WorkoutCompletion): void {
   const completions = getWorkoutCompletions();
-  completions.push(completion);
-  setInStorage(STORAGE_KEYS.WORKOUT_COMPLETIONS, completions);
+  
+  const today = completion.date;
+  const alreadyCompleted = completions.some(
+    c => c.date === today && c.workoutId === completion.workoutId
+  );
+  
+  if (!alreadyCompleted) {
+    completions.push(completion);
+    setInStorage(STORAGE_KEYS.WORKOUT_COMPLETIONS, completions);
+  }
 }
 
 export function getPuzzleAttempts(): PuzzleAttempt[] {
