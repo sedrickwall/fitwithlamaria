@@ -185,13 +185,13 @@ export default function WorkoutPlayer() {
         </div>
 
         {completed ? (
-          <div className="bg-success/10 border-2 border-success rounded-lg p-8 text-center animate-fade-in">
+          <div className="bg-card border-2 border-success rounded-lg p-8 text-center animate-fade-in">
             <CheckCircle className="w-24 h-24 text-success mx-auto mb-4" />
             <h3 className="text-h2 font-bold text-success mb-2">
-              Workout Complete!
+              Wonderful Work!
             </h3>
             <p className="text-body-lg text-foreground mb-4">
-              You earned {calculateWorkoutPoints()} points! Redirecting to puzzle...
+              You earned {calculateWorkoutPoints()} points. Preparing your brain game...
             </p>
           </div>
         ) : (
@@ -206,14 +206,14 @@ export default function WorkoutPlayer() {
           </Button>
         )}
 
-        <div className="mt-8 p-6 bg-accent/50 rounded-lg">
+        <div className="mt-8 p-6 bg-card rounded-lg border-2 border-primary">
           <h3 className="text-h3 font-semibold text-foreground mb-3">
-            Tips for this workout
+            Wellness Reminders
           </h3>
           <ul className="space-y-2 text-body-md text-muted-foreground">
             <li className="flex items-start gap-2">
               <span className="text-primary mt-1">•</span>
-              <span>Listen to your body and rest when needed</span>
+              <span>Honor your body—rest when you need to</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-1">•</span>
@@ -221,11 +221,11 @@ export default function WorkoutPlayer() {
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-1">•</span>
-              <span>Follow along at your own pace</span>
+              <span>Move at your own pace, there's no rush</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-1">•</span>
-              <span>Complete the workout to unlock today's puzzle</span>
+              <span>Finish to unlock today's brain game</span>
             </li>
           </ul>
         </div>

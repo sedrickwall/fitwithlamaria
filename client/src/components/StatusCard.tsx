@@ -10,10 +10,10 @@ interface StatusCardProps {
 
 export function StatusCard({ icon: Icon, title, description, status, testId }: StatusCardProps) {
   const statusColors = {
-    complete: "bg-success/10 border-success/20",
-    unlocked: "bg-primary/10 border-primary/20",
+    complete: "bg-card border-success",
+    unlocked: "bg-card border-primary",
     locked: "bg-muted border-border",
-    pending: "bg-background border-border",
+    pending: "bg-card border-border",
   };
 
   const iconColors = {
@@ -31,8 +31,8 @@ export function StatusCard({ icon: Icon, title, description, status, testId }: S
       <div className="flex items-start gap-6">
         <div 
           className={`w-16 h-16 flex items-center justify-center rounded-full ${
-            status === "complete" ? "bg-success/20" : 
-            status === "unlocked" ? "bg-primary/20" : 
+            status === "complete" ? "bg-card border-2 border-success" : 
+            status === "unlocked" ? "bg-card border-2 border-primary" : 
             "bg-muted"
           }`}
         >

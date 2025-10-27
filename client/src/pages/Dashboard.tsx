@@ -36,10 +36,10 @@ export default function Dashboard() {
       <main className="max-w-7xl mx-auto px-6 md:px-8 py-8">
         <div className="mb-8">
           <h2 className="text-h1 font-bold text-foreground mb-2">
-            Welcome to FitWord
+            Good morning{profile?.name && profile.name !== "You" ? `, ${profile.name}` : ""}!
           </h2>
           <p className="text-body-lg text-muted-foreground">
-            Move to unlock your daily brain game
+            Your daily practice nourishes body and mind
           </p>
         </div>
 
@@ -50,11 +50,11 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <StatusCard
             icon={workoutCompleted ? CheckCircle2 : Dumbbell}
-            title={workoutCompleted ? "Workout Complete!" : "Today's Workout"}
+            title={workoutCompleted ? "Workout Complete" : "Today's Movement"}
             description={
               workoutCompleted 
-                ? "Great job! You've completed your workout today." 
-                : "Complete a workout to unlock today's puzzle"
+                ? "Wonderful work! You're building strength every day." 
+                : "Choose a gentle workout to start your day"
             }
             status={workoutCompleted ? "complete" : "pending"}
             testId="status-workout"
@@ -64,15 +64,15 @@ export default function Dashboard() {
             icon={puzzleSolved ? CheckCircle2 : (puzzleUnlocked ? Puzzle : Lock)}
             title={
               puzzleSolved 
-                ? "Puzzle Complete!" 
-                : (puzzleUnlocked ? "Puzzle Unlocked!" : "Today's Puzzle")
+                ? "Brain Game Complete" 
+                : (puzzleUnlocked ? "Brain Game Ready!" : "Today's Brain Game")
             }
             description={
               puzzleSolved 
-                ? "Excellent! You've solved today's puzzle." 
+                ? "Excellent focus! You're keeping your mind sharp." 
                 : (puzzleUnlocked 
-                  ? "Your brain game is ready to play!" 
-                  : "Locked until you complete your workout")
+                  ? "You've earned today's puzzle. Ready to play?" 
+                  : "Complete your workout to unlock")
             }
             status={puzzleSolved ? "complete" : (puzzleUnlocked ? "unlocked" : "locked")}
             testId="status-puzzle"
@@ -88,18 +88,18 @@ export default function Dashboard() {
                 data-testid="button-start-workout"
               >
                 <Dumbbell className="w-6 h-6 mr-2" />
-                Start Workout
+                Begin Movement
               </Button>
             </Link>
           ) : !puzzleSolved && puzzleUnlocked ? (
             <Link href="/puzzle">
               <Button 
                 size="lg"
-                className="w-full h-16 text-body-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+                className="w-full h-16 text-body-lg font-semibold shadow-lg hover:shadow-xl transition-all bg-secondary hover:bg-secondary/90"
                 data-testid="button-play-puzzle"
               >
                 <Puzzle className="w-6 h-6 mr-2" />
-                Play Today's Puzzle
+                Play Brain Game
               </Button>
             </Link>
           ) : puzzleSolved ? (
@@ -110,7 +110,7 @@ export default function Dashboard() {
                 className="w-full h-16 text-body-lg font-semibold"
                 data-testid="button-view-progress"
               >
-                View Progress
+                See Your Progress
               </Button>
             </Link>
           ) : (
@@ -121,7 +121,7 @@ export default function Dashboard() {
               data-testid="button-puzzle-locked"
             >
               <Lock className="w-6 h-6 mr-2" />
-              Puzzle Locked
+              Brain Game Locked
             </Button>
           )}
         </div>

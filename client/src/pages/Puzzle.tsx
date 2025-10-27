@@ -178,7 +178,7 @@ export default function Puzzle() {
       }).join("")
     ).join("\n");
 
-    const shareText = `FitWord #${puzzleNumber}\n${attempts}/6\n\n${emojiGrid}`;
+    const shareText = `Fit with LaMaria - Brain Game #${puzzleNumber}\n${attempts}/6\n\n${emojiGrid}`;
 
     if (navigator.share) {
       navigator.share({ text: shareText });
@@ -205,10 +205,10 @@ export default function Puzzle() {
           <div className="max-w-md mx-auto">
             <Lock className="w-24 h-24 text-muted-foreground mx-auto mb-6" />
             <h2 className="text-h1 font-bold text-foreground mb-4">
-              Puzzle Locked
+              Brain Game Locked
             </h2>
             <p className="text-body-lg text-muted-foreground mb-8">
-              Complete a workout to unlock today's brain game
+              Move your body first to unlock today's brain game. Your wellness routine starts with movement.
             </p>
             <Button
               onClick={() => navigate("/workouts")}
@@ -216,7 +216,7 @@ export default function Puzzle() {
               className="h-16 text-body-lg font-semibold"
               data-testid="button-go-to-workouts"
             >
-              Go to Workouts
+              Begin Movement
             </Button>
           </div>
         </main>
@@ -232,8 +232,8 @@ export default function Puzzle() {
       
       <main className="max-w-7xl mx-auto px-6 md:px-8 py-8">
         <div className="mb-8 text-center">
-          <h2 className="text-h1 font-bold text-foreground mb-2">
-            FitWord #{puzzleNumber}
+          <h2 className="text-h1 font-bold text-secondary mb-2">
+            Brain Game #{puzzleNumber}
           </h2>
           <p className="text-body-lg text-muted-foreground">
             Guess the 5-letter word in 6 tries
@@ -277,22 +277,22 @@ export default function Puzzle() {
           </div>
         )}
 
-        <div className="mt-12 p-6 bg-accent/50 rounded-lg max-w-2xl mx-auto">
+        <div className="mt-12 p-6 bg-card rounded-lg max-w-2xl mx-auto border-2 border-secondary">
           <h3 className="text-h3 font-semibold text-foreground mb-3">
-            How to play
+            How to Play
           </h3>
           <ul className="space-y-2 text-body-md text-muted-foreground">
             <li className="flex items-start gap-2">
               <span className="text-success mt-1">🟩</span>
-              <span>Green = Letter is correct and in the right position</span>
+              <span>Green: Letter is correct and in the right spot</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-warning mt-1">🟨</span>
-              <span>Yellow = Letter is in the word but wrong position</span>
+              <span>Yellow: Letter is in the word, wrong spot</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-muted-foreground mt-1">⬜</span>
-              <span>Gray = Letter is not in the word</span>
+              <span>Gray: Letter is not in the word</span>
             </li>
           </ul>
         </div>
@@ -302,20 +302,23 @@ export default function Puzzle() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <div className="flex justify-center mb-4">
-              <CheckCircle className="w-32 h-32 text-success" />
+              <CheckCircle className="w-32 h-32 text-secondary" />
             </div>
             <DialogTitle className="text-h2 text-center">
-              Congratulations!
+              Excellent Focus!
             </DialogTitle>
             <DialogDescription className="text-body-lg text-center">
-              You solved today's puzzle in {guesses.length} {guesses.length === 1 ? "try" : "tries"}!
+              You solved today's brain game in {guesses.length} {guesses.length === 1 ? "try" : "tries"}. You're keeping your mind sharp.
             </DialogDescription>
           </DialogHeader>
-          <div className="bg-success/10 rounded-lg p-6 text-center">
+          <div className="bg-card rounded-lg p-6 text-center border-2 border-secondary">
             <p className="text-body-md text-muted-foreground mb-2">Points Earned</p>
-            <p className="text-stat font-bold text-success">+{pointsEarned}</p>
+            <p className="text-stat font-bold text-secondary">+{pointsEarned}</p>
             {guesses.length <= 4 && (
-              <p className="text-body-md text-success mt-2">Bonus for solving in 4 or fewer tries!</p>
+              <p className="text-body-md text-secondary mt-2">Impressive! Bonus for 4 tries or fewer</p>
+            )}
+            {workoutCompleted && (
+              <p className="text-body-sm text-warning mt-2">+10 streak bonus for completing both today!</p>
             )}
           </div>
           <div className="flex gap-4">

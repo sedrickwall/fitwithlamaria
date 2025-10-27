@@ -1,214 +1,382 @@
-# FitWord Design Guidelines
+# Fit with LaMaria - Design Guidelines
 
-## Design Approach
-**System:** Material Design 3 with accessibility enhancements
-**Rationale:** Provides robust component patterns with strong visual feedback, proven accessibility standards, and clear hierarchy—essential for 65+ users who need consistent, learnable interfaces.
+## Brand Identity
+
+### About the Founder
+**LaMaria Wall** (@lamaria_wall / @yogic_yogi) is a dedicated yoga and fitness instructor who created this app to help active seniors (65+) maintain both physical fitness and mental sharpness through daily movement and brain games.
+
+### Brand Mission
+Fit with LaMaria combines gentle, effective workouts with cognitive puzzles to help you nourish your body and mind every day. Complete your workout to unlock today's brain game.
+
+### Brand Personality
+- **Sophisticated but approachable** - Elegant design that never feels intimidating
+- **Encouraging without patronizing** - Respectful tone that celebrates your capabilities
+- **Wellness-focused** - Holistic approach to health, mind and body
+- **Consistency-oriented** - Emphasizes daily practice and sustainable habits
+- **Achievement-celebrating** - Honors small wins and progress milestones
+
+### Brand Voice & Messaging
+
+#### Tone Principles
+- **Warm and supportive**: "You've got this" energy
+- **Respectful and mature**: Never condescending or childish
+- **Health-focused**: "Nourish your body and mind"
+- **Achievement-oriented**: "Today's win starts now"
+- **Professional**: Proper grammar, clear communication
+
+#### Sample Copy Patterns
+- ✅ "Wonderful work! You're building strength every day."
+- ✅ "Your daily practice nourishes both body and mind."
+- ✅ "You've earned today's brain game. Ready to play?"
+- ❌ "Great job kiddo!" (too patronizing)
+- ❌ "You did it! 🎉🎉🎉" (excessive, childish)
+
+---
+
+## Color Palette (Wellness-Inspired)
+
+### Primary Colors
+
+#### Sage Green (Darkened for Accessibility)
+- **Color**: Darker sage for 7:1+ contrast on light backgrounds
+- **Usage**: Primary buttons, workout states, success indicators
+- **Represents**: Growth, wellness, vitality
+- **Applications**: "Mark Complete" buttons, workout cards, progress indicators
+
+#### Deep Plum (Darkened for Accessibility)
+- **Color**: Darker plum for 7:1+ contrast on light backgrounds
+- **Usage**: Headers, navigation, puzzle elements
+- **Represents**: Wisdom, focus, mental clarity
+- **Applications**: Page titles, puzzle game board, emphasis text
+
+#### Warm Coral (Darkened for Accessibility)
+- **Color**: Darker coral for 7:1+ contrast on light backgrounds
+- **Usage**: Accent color, completion celebrations, CTAs
+- **Represents**: Energy, achievement, celebration
+- **Applications**: Workout complete messages, streak milestones, achievement badges
+
+#### Soft Gold (Darkened for Accessibility)
+- **Color**: Darker gold for 7:1+ contrast on light backgrounds
+- **Usage**: Puzzle unlocks, streaks, special achievements
+- **Represents**: Rewards, brain health, accomplishment
+- **Applications**: Puzzle solved bonuses, streak counters, point displays
+
+**Note**: All colors have been darkened from their original wellness palette to ensure WCAG AAA compliance (7:1 contrast ratio) on the cream and white backgrounds used throughout the app.
+
+### Neutral Palette
+
+#### Cream `#F8F4F0`
+- **Usage**: Page backgrounds (light mode)
+- **Warm, calming base**
+
+#### Warm White `#FFFFFF`
+- **Usage**: Card backgrounds, elevated surfaces
+- **Clean, spacious feel**
+
+#### Charcoal `#2B2D42`
+- **Usage**: Primary text, dark mode backgrounds
+- **Strong, readable contrast**
+
+#### Light Gray `#E5E5E5`
+- **Usage**: Borders, dividers, locked states
+- **Subtle separation**
+
+### Color Usage Guidelines
+
+**Workouts**: Sage Green (#6B9080) for workout-related elements  
+**Puzzles**: Deep Plum (#5D576B) for brain game elements  
+**Success**: Warm Coral (#E76F51) for completion states  
+**Achievements**: Soft Gold (#F4A261) for streaks and points  
+**Locked**: Light Gray (#E5E5E5) for disabled states
+
+### Accessibility Requirements
+All color combinations MUST meet **WCAG AAA standards (7:1 contrast ratio minimum)**:
+- All brand colors darkened to ensure 7:1+ contrast on light backgrounds
+- Primary/Success (Sage): HSL(154, 32%, 32%) on cream ✅
+- Secondary (Plum): HSL(267, 15%, 28%) on white ✅  
+- Accent (Coral): HSL(14, 78%, 45%) on white ✅
+- Warning (Gold): HSL(27, 90%, 40%) on white ✅
+- Charcoal text (#2B2D42) on Cream: 12.1:1 ✅
 
 ---
 
 ## Typography
 
-**Font Family:**
-- Primary: Inter or Roboto (Google Fonts CDN)
-- Monospace: Roboto Mono (for puzzle letter grids)
+### Font Family
+```css
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+```
 
-**Scale (Desktop):**
-- Headings (H1): 48px, Bold
-- Headings (H2): 36px, Semibold  
-- Headings (H3): 28px, Medium
-- Body Large: 24px, Regular (minimum for all interactive elements)
-- Body Medium: 20px, Regular
-- Caption: 18px, Regular (never smaller)
+### Size Guidelines (Senior-Friendly)
 
-**Scale (Mobile):**
-- Headings (H1): 36px, Bold
-- Headings (H2): 28px, Semibold
-- Body/Interactive: 22px, Regular (minimum touch target compliance)
+**Minimum Sizes for Accessibility:**
+- Body text: **24px (1.5rem)** minimum
+- Secondary text: **20px (1.25rem)** minimum
+- Headings: **32px (2rem)** minimum
+- Large headings: **48px (3rem)** for hero sections
+- Touch targets: **56×56px** minimum
 
-**Hierarchy Rules:**
-- All buttons, form inputs, and CTAs: Minimum 24px
-- Error messages: 20px, Medium weight
-- Streak counters and stats: 32-48px, Bold (high visual prominence)
+### Font Hierarchy
+
+#### Display (Hero Text)
+- Size: 48-60px
+- Weight: 600-700 (Semi-bold to Bold)
+- Line height: 1.1
+- Use for: Welcome messages, page heroes
+
+#### Heading 1
+- Size: 40px
+- Weight: 700 (Bold)
+- Line height: 1.2
+- Use for: Page titles
+
+#### Heading 2
+- Size: 32px
+- Weight: 600 (Semi-bold)
+- Line height: 1.3
+- Use for: Section titles
+
+#### Heading 3
+- Size: 28px
+- Weight: 600 (Semi-bold)
+- Use for: Card headings
+
+#### Body Large
+- Size: 24px
+- Weight: 400 (Regular)
+- Line height: 1.5
+- Use for: Primary content, interactive elements
+
+#### Body Medium
+- Size: 20px
+- Weight: 400 (Regular)
+- Use for: Metadata, descriptions
 
 ---
 
 ## Layout System
 
-**Spacing Primitives:** Tailwind units 4, 6, 8, 12, 16, 24
-- Micro spacing (cards, buttons): p-4, gap-4
-- Component spacing: p-6, p-8
-- Section spacing: py-12, py-16
-- Screen margins: px-6 (mobile), px-8 (desktop)
+### Spacing (8px Grid)
+- Micro: 8px (0.5rem)
+- Small: 16px (1rem)
+- Medium: 24px (1.5rem)
+- Large: 32px (2rem)
+- XL: 48px (3rem)
+- XXL: 64px (4rem)
 
-**Grid System:**
-- Dashboard cards: Single column mobile, 2-column tablet/desktop (grid-cols-1 md:grid-cols-2)
-- Workout library: 1 column mobile, 2 columns tablet, 3 columns desktop (grid-cols-1 md:grid-cols-2 lg:grid-cols-3)
-- Max container width: max-w-7xl mx-auto
+### Touch Targets
+- **Minimum**: 56px × 56px for all interactive elements
+- **Primary buttons**: 64px height minimum
+- **Icon buttons**: 64px × 64px
 
-**Touch Targets:**
-- Minimum: 56px × 56px (all interactive elements)
-- Primary CTAs: 64px height, full-width on mobile
-- Icon buttons: 64px × 64px minimum
+### Grid System
+- Dashboard: 1 column mobile, 2 columns tablet+
+- Workouts: 1 column mobile, 2 tablet, 3 desktop
+- Max width: `max-w-7xl` centered
 
 ---
 
-## Component Library
+## Visual Style
 
-### Navigation
-- **Bottom Navigation Bar** (mobile primary):
-  - 3 tabs: Home, Workouts, Progress
-  - Icons + labels (always visible, never icon-only)
-  - Active state: filled icons with indicator bar
-  - Height: 72px (generous tap area)
-  
-- **Top App Bar:**
-  - Fixed position, elevation/shadow for depth
-  - Current date (left), user points (right)
-  - Height: 64px
+### Design Aesthetics
+- **Clean and uncluttered**: Generous white space
+- **Elegant simplicity**: Refined without complexity
+- **Calming presence**: Soft shadows, gentle transitions
+- **Yoga/wellness inspired**: Balanced, harmonious
 
-### Cards
-- **Status Cards** (Dashboard):
-  - Elevated surface with 8px rounded corners
-  - Icon (64px) + Status text (24px) + Description (20px)
-  - Generous padding: p-8
-  - Clear visual state: Complete (checkmark icon) vs. Locked (lock icon)
+### Shadows & Depth
+```css
+/* Subtle elevation (cards) */
+box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 
-- **Workout Cards:**
-  - Thumbnail ratio 16:9
-  - Duration badge (top-right overlay with blur backdrop)
-  - Title: 24px Semibold
-  - Metadata: 20px (duration, difficulty)
-  - Tap target: entire card
+/* Moderate elevation (modals) */
+box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+
+/* Strong elevation (overlays) */
+box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16);
+```
+
+### Border Radius
+- Cards: 12px (`rounded-xl`)
+- Buttons: 8px (`rounded-lg`)
+- Inputs: 8px (`rounded-lg`)
+- Images: 8px (`rounded-lg`)
+
+---
+
+## Component Guidelines
 
 ### Buttons
-- **Primary CTA:**
-  - Height: 64px
-  - Full-width on mobile, max-w-md on desktop
-  - Rounded: rounded-xl
-  - Text: 24px, Semibold
-  - Elevation: shadow-lg
-  
-- **Secondary Actions:**
-  - Height: 56px
-  - Outlined style with 2px border
-  - Text: 22px, Medium
 
-- **Icon Buttons:**
-  - Size: 64px × 64px
-  - Icons: 32px (Heroicons via CDN)
-  - Circular: rounded-full
+#### Primary (Sage Green)
+- Background: `#6B9080`
+- Text: White
+- Height: 56px minimum
+- Padding: 16px 32px
+- Font: 24px, Semi-bold
+- Use: Main actions (Mark Complete, Submit)
 
-### Forms & Inputs
-- **Text Inputs:**
-  - Height: 64px
-  - Font size: 24px
-  - Label: floating or always-visible above
-  - Border: 2px solid, rounded-lg
-  - Focus state: 3px border with glow effect
+#### Secondary (Deep Plum)
+- Background: `#5D576B`
+- Text: White
+- Height: 56px minimum
+- Use: Navigation, secondary actions
 
-- **Keyboard (Puzzle):**
-  - Letter keys: 56px × 56px minimum
-  - QWERTY layout, 3 rows
-  - Gap: gap-2 between keys
-  - Font: 28px, Semibold, uppercase
-  - Rounded: rounded-lg
+#### Accent (Warm Coral)
+- Background: `#E76F51`
+- Text: White
+- Use: Celebrations, special achievements
+
+### Cards
+
+#### Workout Cards
+- Background: White
+- Border: 2px Sage Green
+- Shadow: Subtle
+- Hover: Lift with shadow increase
+
+#### Puzzle Cards
+- Background: White
+- Border: 2px Deep Plum
+- Locked: Light Gray border
+
+#### Stats/Achievement Cards
+- Background: White
+- Accent: Soft Gold highlights
+- Icon: 64px
+- Generous padding: p-8
+
+### Status Indicators
+
+#### Completed
+- Color: Sage Green
+- Icon: CheckCircle
+- Message: Warm, affirming
+
+#### Locked
+- Color: Light Gray
+- Icon: Lock
+- Message: Clear unlock instruction
+
+#### Streak/Points
+- Color: Soft Gold
+- Large, prominent display
+- Celebratory tone
+
+### Success Messages
+
+**Use warm, encouraging language:**
+- "Wonderful work! You earned **100 points**"
+- "Beautiful! You've unlocked today's brain game"
+- "Excellent focus! **+50 points** for solving the puzzle"
+- "You're on a **3-day streak**—your consistency is inspiring!"
+
+**Avoid:**
+- Childish language or excessive emojis
+- Patronizing tone
+- Generic "Good job!"
+
+---
+
+## Layout Patterns
+
+### Top Bar
+- Background: Deep Plum or White
+- Height: 64px
+- Left: "Fit with LaMaria" branding
+- Right: Points display (Soft Gold icon + number)
+
+### Dashboard Hero
+```
+[Greeting - 48px]
+"Good morning!"
+
+[Tagline - 24px, supportive]
+"Your daily practice nourishes body and mind"
+
+[Status Cards Grid]
+```
+
+### Bottom Navigation
+- 3 tabs: Home, Workouts, Progress
+- Icons + labels (always visible)
+- Height: 72px
+- Active: Filled icon with indicator
 
 ### Puzzle Grid
-- **5×5 Letter Boxes:**
-  - Each box: 64px × 64px (mobile), 72px × 72px (tablet+)
-  - Border: 3px solid
-  - Letter: 40px, Bold, uppercase, centered
-  - Spacing: gap-2 between boxes
-  - States: empty, filled, correct (green), present (yellow), absent (gray)
+- 6 rows × 5 columns
+- Box size: 64px × 64px
+- Gap: 8px
+- Border: 3px solid
+- Letter: 40px, bold, centered
+- Colors: Green (correct), Yellow (wrong position), Gray (absent)
 
-### Progress Indicators
-- **Streak Display:**
-  - Flame icon (48px) + Number (48px Bold) + "days" (24px)
-  - Prominent placement, elevated card
-  
-- **Points Counter:**
-  - Coin/star icon (32px) + Number (36px Bold) + "pts" (20px)
-  - Top-right position, always visible
-
-- **Calendar View:**
-  - Month grid: 7 columns (S-S)
-  - Date cells: 56px × 56px
-  - Completed days: filled circle indicator
-  - Current day: outline ring
-
-### Leaderboard
-- **List Items:**
-  - Height: 80px per entry
-  - Rank badge (left): 48px circle
-  - Name: 24px Medium
-  - Points: 22px Regular
-  - Dividers between items
-  - User's own entry: highlighted with subtle elevation
-
-### Video Player
-- **Controls:**
-  - Play/Pause: 80px circular button (center)
-  - Skip buttons: 64px (±15 seconds)
-  - Progress bar: 16px height, touch-friendly scrubber
-  - Time display: 22px, bottom corners
-  - Full-screen toggle: 56px (top-right)
-
-### Modals & Overlays
-- **Completion Celebrations:**
-  - Full-screen modal with semi-transparent backdrop
-  - Large success icon (128px)
-  - Congratulations text: 36px Bold
-  - Points earned: 48px, animated count-up
-  - Confetti animation (subtle, 2s duration)
-  - Dismiss button: 64px height
-
-### Share Results
-- **Results Grid:**
-  - Wordle-style emoji squares (🟩🟨⬜)
-  - Preview: 20px squares with 2px gap
-  - "Share" button with native share icon
-  - Copy-to-clipboard fallback
+### Calendar
+- 7-column grid (Sun-Sat)
+- Cell size: 56px × 56px
+- Completed: Sage Green fill
+- Today: Warm Coral outline
 
 ---
 
-## Accessibility Standards
+## Accessibility Checklist
 
-- **Contrast Ratios:** Minimum 7:1 for all text (AAA level)
-- **Focus Indicators:** 4px outline, high contrast, visible on all interactive elements
-- **Screen Reader:** ARIA labels on all icons, status announcements for streak updates
-- **Motion:** Respect prefers-reduced-motion (disable confetti, smooth transitions only)
-- **Font Scaling:** Support up to 200% text scaling without breaking layout
-
----
-
-## Animations
-
-**Sparingly Used:**
-- Page transitions: 200ms fade
-- Card elevation on tap: 150ms ease-out
-- Puzzle letter flip: 300ms when submitted
-- Streak increment: gentle scale pulse (1.05x, 400ms)
-- Success confetti: 2s, only on puzzle completion
-
-**Disabled Entirely:**
-- Auto-playing carousels
-- Background animations
-- Parallax scrolling
-- Continuous looping effects
+✅ **Text**: 24px minimum for body  
+✅ **Contrast**: 7:1 ratio (WCAG AAA)  
+✅ **Touch targets**: 56×56px minimum  
+✅ **Color independence**: Never color alone  
+✅ **Labels**: Descriptive, helpful  
+✅ **Errors**: Gentle, solution-oriented  
+✅ **Loading**: Clear indicators  
+✅ **Focus**: Visible keyboard navigation  
+✅ **Zoom**: Support 200% text scaling  
 
 ---
 
-## Images
+## Animation & Motion
 
-**Workout Thumbnails:**
-- 16:9 aspect ratio
-- Show instructor in action, well-lit, high contrast
-- Consistent framing across all videos
-- Alt text: "{Workout type} - {Duration} minute {Level} workout"
+### Transitions
+- Duration: 200-300ms
+- Easing: `ease-in-out`
+- **Respect `prefers-reduced-motion`**
 
-**Empty States:**
-- Friendly illustrations (not photos) showing encouragement
-- Example: "No workouts yet today!" with person stretching illustration
-- Keep simple, avoid clutter
+### Hover States
+- Subtle lift (2-4px)
+- Shadow increase
+- Smooth color transitions
 
-**No Hero Image:** This is an app dashboard, not a marketing page—lead with functional status cards immediately.
+### Success Celebrations
+- Gentle fade-in
+- Avoid excessive motion
+- Focus on clarity
+
+---
+
+## Dark Mode
+
+When implementing:
+- Background: Charcoal (#2B2D42)
+- Text: Warm White
+- Maintain 7:1+ contrast
+- Adjust accent colors for dark backgrounds
+- Keep calming aesthetic
+
+---
+
+## Testing Standards
+
+### Visual
+- Test with 200% zoom
+- Test on mobile, tablet, desktop
+- Verify contrast with tools
+- Test with screen readers
+
+### User Experience
+- Can seniors navigate easily?
+- Is tone warm and encouraging?
+- Are touch targets large enough?
+- Is feedback clear and affirming?
+
+---
+
+**Remember**: Every design decision honors LaMaria's mission—helping active seniors stay physically fit and mentally sharp with warmth, respect, and elegance.

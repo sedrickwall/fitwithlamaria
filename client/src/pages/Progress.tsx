@@ -81,7 +81,7 @@ export default function Progress() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-card rounded-lg border-2 border-border p-8 shadow-md">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-card border-2 border-primary flex items-center justify-center">
                     <Trophy className="w-8 h-8 text-primary" />
                   </div>
                   <div>
@@ -95,7 +95,7 @@ export default function Progress() {
 
               <div className="bg-card rounded-lg border-2 border-border p-8 shadow-md">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 rounded-full bg-warning/20 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-card border-2 border-warning flex items-center justify-center">
                     <Flame className="w-8 h-8 text-warning" />
                   </div>
                   <div>
@@ -109,7 +109,7 @@ export default function Progress() {
 
               <div className="bg-card rounded-lg border-2 border-border p-8 shadow-md">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-16 h-16 rounded-full bg-success/20 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-card border-2 border-success flex items-center justify-center">
                     <Target className="w-8 h-8 text-success" />
                   </div>
                   <div>
@@ -136,12 +136,12 @@ export default function Progress() {
               </div>
             </div>
 
-            <div className="mt-8 p-6 bg-accent/50 rounded-lg">
+            <div className="mt-8 p-6 bg-card rounded-lg border-2 border-primary">
               <h3 className="text-h3 font-semibold text-foreground mb-3">
-                Keep it up!
+                Your consistency is inspiring
               </h3>
               <p className="text-body-lg text-muted-foreground">
-                Complete daily workouts to unlock puzzles and build your streak. Every day you stay active, you earn bonus points!
+                Each day you move and engage your mind, you're investing in your well-being. Keep nourishing your body and brain—you're doing beautifully.
               </p>
             </div>
           </TabsContent>
