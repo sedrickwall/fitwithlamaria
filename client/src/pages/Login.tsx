@@ -1,14 +1,23 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Dumbbell, Brain, Trophy } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Dumbbell, Brain, Trophy, Mail } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
-  const { user, signInWithGoogle, loading, isFirebaseEnabled } = useAuth();
+  const { user, signInWithGoogle, signIn, signUp, loading, isFirebaseEnabled } = useAuth();
   const [, navigate] = useLocation();
+  const { toast } = useToast();
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
 
   useEffect(() => {
     if (user && !loading) {
@@ -24,8 +33,49 @@ export default function Login() {
   const handleGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Sign-in error:", error);
+      toast({
+        title: "Sign-in failed",
+        description: error.message || "Failed to sign in with Google",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !password) {
+      toast({
+        title: "Missing information",
+        description: "Please enter your email and password",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      if (isSignUp) {
+        await signUp(email, password, displayName);
+        toast({
+          title: "Account created!",
+          description: "Welcome to FitWord",
+        });
+      } else {
+        await signIn(email, password);
+        toast({
+          title: "Welcome back!",
+          description: "Successfully signed in",
+        });
+      }
+    } catch (error: any) {
+      console.error("Auth error:", error);
+      toast({
+        title: isSignUp ? "Sign-up failed" : "Sign-in failed",
+        description: error.message || "Please try again",
+        variant: "destructive",
+      });
     }
   };
 
@@ -56,24 +106,99 @@ export default function Login() {
           <div className="space-y-6">
             <div className="text-center">
               <h2 className="text-h3 font-bold text-foreground mb-2">
-                Welcome!
+                {isSignUp ? "Create Account" : "Welcome Back!"}
               </h2>
               <p className="text-body-md text-muted-foreground">
-                Sign in to start your fitness and brain training journey
+                {isSignUp ? "Join FitWord to save your progress" : "Sign in to continue your journey"}
               </p>
             </div>
 
             {isFirebaseEnabled ? (
-              <Button
-                onClick={handleGoogleSignIn}
-                size="lg"
-                variant="outline"
-                className="w-full h-14 text-body-lg font-semibold gap-3"
-                data-testid="button-google-signin"
-              >
-                <FcGoogle className="w-6 h-6" />
-                Sign in with Google
-              </Button>
+              <>
+                <form onSubmit={handleEmailAuth} className="space-y-4">
+                  {isSignUp && (
+                    <div className="space-y-2">
+                      <Label htmlFor="displayName" className="text-body-md">
+                        Name
+                      </Label>
+                      <Input
+                        id="displayName"
+                        type="text"
+                        placeholder="Your name"
+                        value={displayName}
+                        onChange={(e) => setDisplayName(e.target.value)}
+                        className="h-12 text-body-md"
+                        data-testid="input-displayname"
+                      />
+                    </div>
+                  )}
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-body-md">
+                      Email
+                    </Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="your@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="h-12 text-body-md"
+                      data-testid="input-email"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-body-md">
+                      Password
+                    </Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="h-12 text-body-md"
+                      data-testid="input-password"
+                    />
+                  </div>
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full h-12 text-body-md font-semibold gap-2"
+                    data-testid="button-email-auth"
+                  >
+                    <Mail className="w-5 h-5" />
+                    {isSignUp ? "Create Account" : "Sign In"}
+                  </Button>
+                </form>
+
+                <div className="relative">
+                  <Separator />
+                  <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-body-sm text-muted-foreground">
+                    or
+                  </span>
+                </div>
+
+                <Button
+                  onClick={handleGoogleSignIn}
+                  size="lg"
+                  variant="outline"
+                  className="w-full h-12 text-body-md font-semibold gap-3"
+                  data-testid="button-google-signin"
+                >
+                  <FcGoogle className="w-5 h-5" />
+                  Continue with Google
+                </Button>
+
+                <div className="text-center">
+                  <button
+                    onClick={() => setIsSignUp(!isSignUp)}
+                    className="text-body-sm text-primary hover:underline"
+                    data-testid="button-toggle-auth-mode"
+                  >
+                    {isSignUp ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
+                  </button>
+                </div>
+              </>
             ) : (
               <Button
                 onClick={() => navigate("/onboarding")}

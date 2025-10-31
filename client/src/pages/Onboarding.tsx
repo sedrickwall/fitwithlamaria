@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { doc, updateDoc } from "firebase/firestore";
+import { db, isFirebaseReady } from "@/services/firebase";
 
 export default function Onboarding() {
   const [, navigate] = useLocation();
@@ -49,7 +51,7 @@ export default function Onboarding() {
     setStep("welcome");
   };
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     localStorage.setItem("fitword_reminder_time", reminderTime);
     localStorage.setItem("fitword_reminder_enabled", reminderEnabled ? "true" : "false");
     localStorage.setItem("fitword_onboarding_complete", "true");
@@ -60,6 +62,20 @@ export default function Onboarding() {
     
     const userName = user?.displayName || user?.email?.split('@')[0] || "Pat";
     localStorage.setItem("fitword_user_name", userName);
+
+    if (isFirebaseReady() && user && db) {
+      try {
+        const ref = doc(db, "users", user.uid);
+        await updateDoc(ref, {
+          inviteCode: inviteCode || "",
+          reminderTime,
+          reminderEnabled,
+          updatedAt: new Date().toISOString(),
+        });
+      } catch (error) {
+        console.error("Error saving onboarding data to Firestore:", error);
+      }
+    }
 
     toast({
       title: "Welcome to FitWord!",
