@@ -5,6 +5,7 @@ import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { PuzzleGrid } from "@/components/PuzzleGrid";
 import { PuzzleKeyboard } from "@/components/PuzzleKeyboard";
+import { LoginModal } from "@/components/LoginModal";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -37,6 +38,7 @@ export default function Puzzle() {
   const [evaluation, setEvaluation] = useState<Array<Array<"correct" | "present" | "absent" | "empty">>>([]);
   const [letterStatus, setLetterStatus] = useState<Record<string, "correct" | "present" | "absent" | "unused">>({});
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [puzzleNumber, setPuzzleNumber] = useState<number>(0);
   const [dailyWord, setDailyWord] = useState<string>("");
 
@@ -200,6 +202,13 @@ export default function Puzzle() {
         setWon(true);
         setGameOver(true);
         setShowSuccess(true);
+        
+        if (!isAuthenticated) {
+          const skipCount = parseInt(localStorage.getItem("fitword_login_skip_count") || "0");
+          if (skipCount < 2) {
+            setTimeout(() => setShowLoginModal(true), 2000);
+          }
+        }
       } else if (newGuesses.length >= 6) {
         if (profile) {
           const attempt: PuzzleAttempt = {
@@ -424,6 +433,12 @@ export default function Puzzle() {
           </div>
         </DialogContent>
       </Dialog>
+
+      <LoginModal
+        open={showLoginModal}
+        onOpenChange={setShowLoginModal}
+        trigger="puzzle"
+      />
 
       <BottomNav />
     </div>

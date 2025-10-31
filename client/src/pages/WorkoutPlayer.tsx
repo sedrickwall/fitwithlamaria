@@ -3,9 +3,11 @@ import { useRoute, useLocation } from "wouter";
 import { ArrowLeft, CheckCircle } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { Button } from "@/components/ui/button";
+import { LoginModal } from "@/components/LoginModal";
 import { Workout, WorkoutCompletion } from "@shared/schema";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
+import { useAuth } from "@/contexts/AuthContext";
 import { saveWorkoutCompletion, getWorkoutCompletions } from "@/lib/localStorage";
 import { calculateWorkoutPoints } from "@/lib/points";
 
@@ -96,8 +98,10 @@ export default function WorkoutPlayer() {
   const [, params] = useRoute("/workout/:id");
   const [, navigate] = useLocation();
   const [completed, setCompleted] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const { profile, addPoints } = useUserProfile();
   const { completeWorkout } = useDailyStatus();
+  const { isAuthenticated } = useAuth();
 
   const workout = SAMPLE_WORKOUTS.find(w => w.id === params?.id);
   const totalPoints = profile?.totalPoints || 0;
@@ -144,6 +148,14 @@ export default function WorkoutPlayer() {
     addPoints(points);
 
     setCompleted(true);
+    
+    if (!isAuthenticated) {
+      const skipCount = parseInt(localStorage.getItem("fitword_login_skip_count") || "0");
+      if (skipCount < 2) {
+        setTimeout(() => setShowLoginModal(true), 1000);
+      }
+    }
+    
     setTimeout(() => {
       navigate("/puzzle");
     }, 2000);
@@ -230,6 +242,12 @@ export default function WorkoutPlayer() {
           </ul>
         </div>
       </main>
+      
+      <LoginModal
+        open={showLoginModal}
+        onOpenChange={setShowLoginModal}
+        trigger="workout"
+      />
     </div>
   );
 }
