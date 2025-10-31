@@ -19,7 +19,16 @@
 // ============================================================
 
 import { initializeApp, type FirebaseApp } from "firebase/app";
-import { getAuth, type Auth } from "firebase/auth";
+import {
+  getAuth,
+  type Auth,
+  signInWithPopup,
+  GoogleAuthProvider,
+  onAuthStateChanged,
+  signOut as firebaseSignOut,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { getFirestore, type Firestore } from "firebase/firestore";
 
 // ============================================================
@@ -72,4 +81,39 @@ export { app, auth, db, isFirebaseConfigured };
 // Helper to check if Firebase is ready to use
 export const isFirebaseReady = (): boolean => {
   return isFirebaseConfigured && app !== null && auth !== null && db !== null;
+};
+
+// ============================================================
+// AUTHENTICATION UTILITIES
+// ============================================================
+
+export const provider = new GoogleAuthProvider();
+
+export const firebaseUtils = {
+  // Google Sign-In
+  signInWithGoogle: () => {
+    if (!auth) throw new Error("Firebase Auth not initialized");
+    return signInWithPopup(auth, provider);
+  },
+  
+  // Email/Password Sign-Up
+  signUpWithEmail: (email: string, password: string) => {
+    if (!auth) throw new Error("Firebase Auth not initialized");
+    return createUserWithEmailAndPassword(auth, email, password);
+  },
+  
+  // Email/Password Sign-In
+  signInWithEmail: (email: string, password: string) => {
+    if (!auth) throw new Error("Firebase Auth not initialized");
+    return signInWithEmailAndPassword(auth, email, password);
+  },
+  
+  // Sign Out
+  signOut: () => {
+    if (!auth) throw new Error("Firebase Auth not initialized");
+    return firebaseSignOut(auth);
+  },
+  
+  // Auth State Listener
+  onAuthStateChanged,
 };
