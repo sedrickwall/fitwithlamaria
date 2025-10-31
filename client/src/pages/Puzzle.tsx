@@ -28,7 +28,7 @@ export default function Puzzle() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const { profile, addPoints } = useUserProfile();
-  const { status, solvePuzzle } = useDailyStatus();
+  const { status, solveWordle } = useDailyStatus();
   const { user, isAuthenticated } = useAuth();
   
   const [guesses, setGuesses] = useState<string[]>([]);
@@ -45,7 +45,8 @@ export default function Puzzle() {
   const currentRow = guesses.length;
   const totalPoints = profile?.totalPoints || 0;
   const workoutCompleted = status?.workoutCompleted || false;
-  const puzzleSolved = status?.puzzleSolved || false;
+  const wordleSolved = status?.wordleSolved || false;
+  const puzzleSolved = wordleSolved; // Use wordle specific status
 
   useEffect(() => {
     fetch("/api/puzzle")
@@ -178,7 +179,7 @@ export default function Puzzle() {
           };
           
           savePuzzleAttempt(attempt);
-          solvePuzzle(totalPoints);
+          solveWordle(totalPoints);
           addPoints(totalPoints);
 
           if (isFirebaseReady() && isAuthenticated && user) {

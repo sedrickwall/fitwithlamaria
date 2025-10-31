@@ -8,7 +8,7 @@ import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Workouts from "@/pages/Workouts";
 import WorkoutPlayer from "@/pages/WorkoutPlayer";
-import Puzzle from "@/pages/Puzzle";
+import PuzzleRouter from "@/pages/PuzzleRouter";
 import Progress from "@/pages/Progress";
 import Onboarding from "@/pages/Onboarding";
 import NotFound from "@/pages/not-found";
@@ -20,7 +20,7 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/workouts" component={Workouts} />
       <Route path="/workout/:id" component={WorkoutPlayer} />
-      <Route path="/puzzle" component={Puzzle} />
+      <Route path="/puzzle" component={PuzzleRouter} />
       <Route path="/progress" component={Progress} />
       <Route path="/onboarding" component={Onboarding} />
       <Route component={NotFound} />

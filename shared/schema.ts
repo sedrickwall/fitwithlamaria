@@ -58,7 +58,9 @@ export const dailyStatusSchema = z.object({
   date: z.string(),
   workoutCompleted: z.boolean(),
   puzzleUnlocked: z.boolean(),
-  puzzleSolved: z.boolean(),
+  wordleSolved: z.boolean().default(false),
+  wordSearchSolved: z.boolean().default(false),
+  puzzleSolved: z.boolean().default(false), // Deprecated: kept for backward compatibility
   totalPointsEarned: z.number(),
 });
 

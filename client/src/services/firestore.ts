@@ -228,7 +228,9 @@ export interface FirestoreDailyStatus {
   date: string;
   workoutCompleted: boolean;
   puzzleUnlocked: boolean;
-  puzzleSolved: boolean;
+  wordleSolved?: boolean;
+  wordSearchSolved?: boolean;
+  puzzleSolved: boolean; // Deprecated: kept for backward compatibility
   totalPointsEarned: number;
   updatedAt: any;
 }

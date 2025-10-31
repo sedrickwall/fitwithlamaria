@@ -1,6 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import puzzleRouter from "./routes/puzzle";
+import wordsearchRouter from "./routes/wordsearch";
+import puzzletypeRouter from "./routes/puzzletype";
 
 // ============================================================
 // ROUTE REGISTRATION
@@ -22,6 +24,12 @@ import puzzleRouter from "./routes/puzzle";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register puzzle routes under /api/puzzle
   app.use("/api/puzzle", puzzleRouter);
+  
+  // Register word search routes under /api/wordsearch
+  app.use("/api/wordsearch", wordsearchRouter);
+  
+  // Register puzzle type detection under /api/puzzletype
+  app.use("/api/puzzletype", puzzletypeRouter);
 
   // Additional routes can be registered here as the app grows
   // Example:
