@@ -1,11 +1,21 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { CheckCircle2, Lock, Trophy } from "lucide-react";
+import { CheckCircle2, Lock, Trophy, SkipForward } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { WordSearchGrid } from "@/components/WordSearchGrid";
 import { LoginModal } from "@/components/LoginModal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
 import { useAuth } from "@/contexts/AuthContext";
@@ -30,6 +40,7 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
   const [gameOver, setGameOver] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showSkipConfirm, setShowSkipConfirm] = useState(false);
 
   const totalPoints = profile?.totalPoints || 0;
   const workoutCompleted = status?.workoutCompleted || false;
@@ -134,6 +145,30 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
     }, 3000);
   };
 
+  const handleSkip = async () => {
+    setShowSkipConfirm(false);
+    setGameOver(true);
+
+    const today = new Date().toISOString().split('T')[0];
+    savePuzzleAttempt({
+      id: `${Date.now()}`,
+      userId: profile?.id || "anonymous",
+      date: today,
+      word: "WORDSEARCH",
+      guesses: foundWords,
+      solved: false,
+      attempts: foundWords.length,
+      pointsEarned: 0,
+    });
+
+    await solveWordSearch(puzzleIndex, 0);
+
+    toast({
+      title: "Puzzle Skipped",
+      description: "You can try again with tomorrow's puzzle.",
+    });
+  };
+
   if (!workoutCompleted && !puzzleSolved) {
     return (
       <div className="min-h-screen bg-background pb-24">
@@ -210,6 +245,21 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
             )}
           </div>
 
+          {!gameOver && !puzzleSolved && (
+            <div className="max-w-md mx-auto mt-6 mb-8">
+              <Button
+                onClick={() => setShowSkipConfirm(true)}
+                size="lg"
+                variant="outline"
+                className="w-full h-14 text-body-md font-medium border-2"
+                data-testid="button-skip-wordsearch"
+              >
+                <SkipForward className="w-5 h-5 mr-2" />
+                Skip This Puzzle
+              </Button>
+            </div>
+          )}
+
           {gameOver && (
             <div className="text-center">
               <Button
@@ -227,6 +277,29 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
 
       <BottomNav />
       
+      <AlertDialog open={showSkipConfirm} onOpenChange={setShowSkipConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-h3">Skip This Puzzle?</AlertDialogTitle>
+            <AlertDialogDescription className="text-body-md">
+              Skipping won't earn you any points, but you'll be able to move on to the next puzzle. You've found {foundWords.length} out of {words.length} words.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="h-12 text-body-md" data-testid="button-cancel-skip-wordsearch">
+              Keep Playing
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleSkip}
+              className="h-12 text-body-md bg-muted hover:bg-muted/80"
+              data-testid="button-confirm-skip-wordsearch"
+            >
+              Skip Puzzle
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <LoginModal
         open={showLoginModal}
         onOpenChange={setShowLoginModal}
