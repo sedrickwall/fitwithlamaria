@@ -190,11 +190,15 @@ Preferred communication style: Simple, everyday language.
 
 **Stripe Subscription System:**
 - Integrated via Replit's Stripe blueprint for secure payment processing
-- Premium subscription model ($9.99/month suggested pricing)
+- Premium subscription pricing:
+  - Monthly: $4.99/month
+  - Yearly: $49/year (saves $10.88 vs monthly)
 - Stripe Checkout flow for secure card payments
 - Environment variables managed via Replit Secrets:
   - `STRIPE_SECRET_KEY` - Server-side secret key
   - `VITE_STRIPE_PUBLIC_KEY` - Client-side publishable key
+  - `VITE_STRIPE_MONTHLY_PRICE_ID` - Monthly subscription price ID
+  - `VITE_STRIPE_YEARLY_PRICE_ID` - Yearly subscription price ID
   
 **Payment Features:**
 - Subscription checkout sessions via Stripe hosted pages
