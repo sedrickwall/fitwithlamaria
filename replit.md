@@ -31,6 +31,8 @@ Preferred communication style: Simple, everyday language.
 - WorkoutPlayer (/workout/:id) - Video player for individual workouts
 - Puzzle (/puzzle) - Daily word puzzle game
 - Progress (/progress) - Stats, calendar, and leaderboard
+- Premium (/premium) - Subscription upgrade page with Stripe checkout
+- Success (/success) - Payment confirmation page
 
 **State Management:** React hooks with custom hooks for domain logic:
 - `useUserProfile` - User data and points management
@@ -60,7 +62,11 @@ Preferred communication style: Simple, everyday language.
 
 **Server Framework:** Express.js with TypeScript running on Node.js
 
-**API Design:** RESTful endpoints under `/api` prefix (currently minimal implementation with placeholder routes)
+**API Design:** RESTful endpoints under `/api` prefix:
+- `/api/puzzle` - Wordle puzzle game logic and validation
+- `/api/wordsearch` - Word search puzzle game logic
+- `/api/puzzletype` - Determines puzzle type and difficulty based on index
+- `/api/stripe` - Stripe payment integration for premium subscriptions
 
 **Data Storage Strategy:**
 - **Current:** In-memory storage using `MemStorage` class implementing `IStorage` interface
@@ -180,11 +186,35 @@ Preferred communication style: Simple, everyday language.
 - TypeScript - Type checking
 - PostCSS with Tailwind
 
+## Payment Integration
+
+**Stripe Subscription System:**
+- Integrated via Replit's Stripe blueprint for secure payment processing
+- Premium subscription model ($9.99/month suggested pricing)
+- Stripe Checkout flow for secure card payments
+- Environment variables managed via Replit Secrets:
+  - `STRIPE_SECRET_KEY` - Server-side secret key
+  - `VITE_STRIPE_PUBLIC_KEY` - Client-side publishable key
+  
+**Payment Features:**
+- Subscription checkout sessions via Stripe hosted pages
+- Payment intent API for custom checkout flows
+- Success/cancel redirect handling
+- Automatic payment confirmation
+
+**Implementation:**
+- Backend: `server/routes/stripe.ts` handles payment session creation
+- Frontend: Premium page with Stripe Elements integration
+- Upgrade CTA displayed on Progress page
+- Post-payment redirect to success page
+
+**Note:** Requires Stripe account and Price ID configuration for production use
+
 ### Future Integration Opportunities
 
-1. **Authentication:** Currently no auth system; could add Firebase Auth or similar
-2. **Real Database:** Migration from localStorage to PostgreSQL already configured
-3. **Video CDN:** Custom workout video hosting beyond YouTube
-4. **Analytics:** Track user engagement, completion rates
-5. **Social Features:** Friend challenges, group leaderboards
-6. **Payment/Subscription:** Premium features for LaMaria Wall brand
+1. **Real Database:** Migration from localStorage to PostgreSQL already configured
+2. **Video CDN:** Custom workout video hosting beyond YouTube
+3. **Analytics:** Track user engagement, completion rates
+4. **Social Features:** Friend challenges, group leaderboards
+5. **Subscription Management:** Webhook handlers for subscription updates, cancellations
+6. **User Roles:** Premium vs free tier feature gating

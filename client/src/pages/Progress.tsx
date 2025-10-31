@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday } from "date-fns";
-import { Trophy, Calendar as CalendarIcon, Users, Flame, Target, Brain } from "lucide-react";
+import { Trophy, Calendar as CalendarIcon, Users, Flame, Target, Brain, Crown, Sparkles } from "lucide-react";
+import { Link } from "wouter";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { getWorkoutCompletions, getPuzzleAttempts, getCompletedDates } from "@/lib/localStorage";
 import { getWeeklyLeaderboard } from "@/lib/leaderboard";
@@ -48,6 +50,33 @@ export default function Progress() {
             Track your fitness journey
           </p>
         </div>
+
+        <Link href="/premium">
+          <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border-2 border-purple-500/20 rounded-lg p-6 mb-8 hover:border-purple-500/40 transition-colors cursor-pointer">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                  <Crown className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-h4 font-semibold flex items-center gap-2">
+                    Upgrade to Premium
+                    <Sparkles className="w-4 h-4 text-purple-500" />
+                  </h3>
+                  <p className="text-body-md text-muted-foreground">
+                    Unlock unlimited workouts and puzzles
+                  </p>
+                </div>
+              </div>
+              <Button 
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                data-testid="button-upgrade-premium"
+              >
+                Learn More
+              </Button>
+            </div>
+          </div>
+        </Link>
 
         <Tabs value={selectedTab} onValueChange={setSelectedTab}>
           <TabsList className="w-full justify-start overflow-x-auto h-auto flex-wrap gap-2 bg-transparent mb-8">

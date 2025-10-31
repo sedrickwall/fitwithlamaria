@@ -11,6 +11,8 @@ import WorkoutPlayer from "@/pages/WorkoutPlayer";
 import PuzzleRouter from "@/pages/PuzzleRouter";
 import Progress from "@/pages/Progress";
 import Onboarding from "@/pages/Onboarding";
+import Premium from "@/pages/Premium";
+import Success from "@/pages/Success";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -22,6 +24,8 @@ function Router() {
       <Route path="/workout/:id" component={WorkoutPlayer} />
       <Route path="/puzzle" component={PuzzleRouter} />
       <Route path="/progress" component={Progress} />
+      <Route path="/premium" component={Premium} />
+      <Route path="/success" component={Success} />
       <Route path="/onboarding" component={Onboarding} />
       <Route component={NotFound} />
     </Switch>

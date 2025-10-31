@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import puzzleRouter from "./routes/puzzle";
 import wordsearchRouter from "./routes/wordsearch";
 import puzzletypeRouter from "./routes/puzzletype";
+import stripeRouter from "./routes/stripe";
 
 // ============================================================
 // ROUTE REGISTRATION
@@ -30,6 +31,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register puzzle type detection under /api/puzzletype
   app.use("/api/puzzletype", puzzletypeRouter);
+  
+  // Register Stripe payment routes under /api/stripe
+  app.use("/api/stripe", stripeRouter);
 
   // Additional routes can be registered here as the app grows
   // Example:
