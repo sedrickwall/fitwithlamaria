@@ -41,14 +41,14 @@ export function useDailyStatus() {
             
             todayStatus = {
               date: firestoreStatus.date,
-              workoutCompletionCount: firestoreStatus.workoutCompletionCount || 0,
+              workoutCompletionCount: firestoreStatus.workoutCompletionCount ?? (firestoreStatus.workoutCompleted ? 1 : 0),
               completedPuzzleIndices: firestoreStatus.completedPuzzleIndices || [],
               workoutCompleted: firestoreStatus.workoutCompleted || false,
               puzzleUnlocked: firestoreStatus.puzzleUnlocked || false,
               wordleSolved,
               wordSearchSolved,
               puzzleSolved: firestoreStatus.puzzleSolved || wordleSolved || wordSearchSolved,
-              totalPointsEarned: firestoreStatus.totalPointsEarned,
+              totalPointsEarned: firestoreStatus.totalPointsEarned || 0,
             };
           }
         }
@@ -57,20 +57,40 @@ export function useDailyStatus() {
           todayStatus = getTodayStatus();
           
           // Also migrate legacy localStorage records
-          if (todayStatus && todayStatus.puzzleSolved && !todayStatus.wordleSolved && !todayStatus.wordSearchSolved) {
-            const statusDate = new Date(todayStatus.date);
-            statusDate.setHours(0, 0, 0, 0);
-            const daysSinceEpoch = Math.floor(statusDate.getTime() / (1000 * 60 * 60 * 24));
+          if (todayStatus) {
+            let needsUpdate = false;
             
-            // Use same alternation logic: even days = wordle, odd days = word search
-            if (daysSinceEpoch % 2 === 0) {
-              todayStatus.wordleSolved = true;
-            } else {
-              todayStatus.wordSearchSolved = true;
+            // Ensure workoutCompletionCount exists
+            if (todayStatus.workoutCompletionCount === undefined) {
+              todayStatus.workoutCompletionCount = todayStatus.workoutCompleted ? 1 : 0;
+              needsUpdate = true;
+            }
+            
+            // Ensure completedPuzzleIndices exists
+            if (!todayStatus.completedPuzzleIndices) {
+              todayStatus.completedPuzzleIndices = [];
+              needsUpdate = true;
+            }
+            
+            // Migrate legacy puzzleSolved flag
+            if (todayStatus.puzzleSolved && !todayStatus.wordleSolved && !todayStatus.wordSearchSolved) {
+              const statusDate = new Date(todayStatus.date);
+              statusDate.setHours(0, 0, 0, 0);
+              const daysSinceEpoch = Math.floor(statusDate.getTime() / (1000 * 60 * 60 * 24));
+              
+              // Use same alternation logic: even days = wordle, odd days = word search
+              if (daysSinceEpoch % 2 === 0) {
+                todayStatus.wordleSolved = true;
+              } else {
+                todayStatus.wordSearchSolved = true;
+              }
+              needsUpdate = true;
             }
             
             // Persist the migrated record back to localStorage
-            updateTodayStatus(todayStatus);
+            if (needsUpdate) {
+              updateTodayStatus(todayStatus);
+            }
           }
         }
 

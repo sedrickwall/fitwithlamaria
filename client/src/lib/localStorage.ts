@@ -103,8 +103,12 @@ export function updateTodayStatus(updates: Partial<DailyStatus>): void {
   } else {
     statuses.push({
       date: today,
+      workoutCompletionCount: 0,
+      completedPuzzleIndices: [],
       workoutCompleted: false,
       puzzleUnlocked: false,
+      wordleSolved: false,
+      wordSearchSolved: false,
       puzzleSolved: false,
       totalPointsEarned: 0,
       ...updates,
