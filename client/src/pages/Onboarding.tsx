@@ -13,10 +13,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Onboarding() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [step, setStep] = useState<"setup" | "welcome">("setup");
   const [inviteCode, setInviteCode] = useState("");
   const [reminderTime, setReminderTime] = useState<string>("09:00");
@@ -51,6 +53,13 @@ export default function Onboarding() {
     localStorage.setItem("fitword_reminder_time", reminderTime);
     localStorage.setItem("fitword_reminder_enabled", reminderEnabled ? "true" : "false");
     localStorage.setItem("fitword_onboarding_complete", "true");
+    
+    if (inviteCode) {
+      localStorage.setItem("fitword_invite_code", inviteCode);
+    }
+    
+    const userName = user?.displayName || user?.email?.split('@')[0] || "Pat";
+    localStorage.setItem("fitword_user_name", userName);
 
     toast({
       title: "Welcome to FitWord!",
