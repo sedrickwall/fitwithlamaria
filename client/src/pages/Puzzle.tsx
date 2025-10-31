@@ -16,8 +16,11 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
+import { useAuth } from "@/contexts/AuthContext";
 import { calculatePuzzlePoints } from "@/lib/points";
 import { savePuzzleAttempt, getPuzzleAttempts } from "@/lib/localStorage";
+import { puzzleOperations } from "@/services/firestore";
+import { isFirebaseReady } from "@/services/firebase";
 import { PuzzleAttempt } from "@shared/schema";
 
 export default function Puzzle() {
@@ -25,6 +28,7 @@ export default function Puzzle() {
   const { toast } = useToast();
   const { profile, addPoints } = useUserProfile();
   const { status, solvePuzzle } = useDailyStatus();
+  const { user, isAuthenticated } = useAuth();
   
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState("");
@@ -174,6 +178,23 @@ export default function Puzzle() {
           savePuzzleAttempt(attempt);
           solvePuzzle(totalPoints);
           addPoints(totalPoints);
+
+          if (isFirebaseReady() && isAuthenticated && user) {
+            try {
+              await puzzleOperations.addAttempt({
+                userId: user.uid,
+                puzzleId: `puzzle_${puzzleNumber}`,
+                date: new Date().toISOString().split('T')[0],
+                word: word,
+                guesses: newGuesses,
+                solved: true,
+                attempts: newGuesses.length,
+                pointsEarned: totalPoints,
+              });
+            } catch (error) {
+              console.error("Error syncing puzzle attempt to Firestore:", error);
+            }
+          }
         }
 
         setWon(true);
@@ -194,6 +215,23 @@ export default function Puzzle() {
           };
           
           savePuzzleAttempt(attempt);
+
+          if (isFirebaseReady() && isAuthenticated && user) {
+            try {
+              await puzzleOperations.addAttempt({
+                userId: user.uid,
+                puzzleId: `puzzle_${puzzleNumber}`,
+                date: new Date().toISOString().split('T')[0],
+                word: "",
+                guesses: newGuesses,
+                solved: false,
+                attempts: newGuesses.length,
+                pointsEarned: 0,
+              });
+            } catch (error) {
+              console.error("Error syncing failed puzzle attempt to Firestore:", error);
+            }
+          }
         }
 
         setGameOver(true);
