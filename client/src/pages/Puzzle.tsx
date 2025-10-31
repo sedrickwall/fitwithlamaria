@@ -16,7 +16,6 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
-import { getDailyWord, getPuzzleNumber } from "@/lib/wordList";
 import { calculatePuzzlePoints } from "@/lib/points";
 import { savePuzzleAttempt, getPuzzleAttempts } from "@/lib/localStorage";
 import { PuzzleAttempt } from "@shared/schema";
@@ -34,13 +33,29 @@ export default function Puzzle() {
   const [evaluation, setEvaluation] = useState<Array<Array<"correct" | "present" | "absent" | "empty">>>([]);
   const [letterStatus, setLetterStatus] = useState<Record<string, "correct" | "present" | "absent" | "unused">>({});
   const [showSuccess, setShowSuccess] = useState(false);
+  const [puzzleNumber, setPuzzleNumber] = useState<number>(0);
+  const [dailyWord, setDailyWord] = useState<string>("");
 
-  const dailyWord = getDailyWord();
-  const puzzleNumber = getPuzzleNumber();
   const currentRow = guesses.length;
   const totalPoints = profile?.totalPoints || 0;
   const workoutCompleted = status?.workoutCompleted || false;
   const puzzleSolved = status?.puzzleSolved || false;
+
+  useEffect(() => {
+    fetch("/api/puzzle")
+      .then(res => res.json())
+      .then(data => {
+        setPuzzleNumber(data.puzzleNumber);
+      })
+      .catch(error => {
+        console.error("Failed to load puzzle:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load today's puzzle",
+          variant: "destructive",
+        });
+      });
+  }, [toast]);
 
   useEffect(() => {
     if (puzzleSolved) {
@@ -51,28 +66,31 @@ export default function Puzzle() {
         setGuesses(attempt.guesses);
         setWon(attempt.solved);
         setGameOver(true);
+        setDailyWord(attempt.word);
         
-        const evals = attempt.guesses.map(guess => evaluateGuess(guess));
-        setEvaluation(evals);
+        Promise.all(
+          attempt.guesses.map(guess => 
+            fetch("/api/puzzle/guess", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ guess }),
+            }).then(res => res.json())
+          )
+        ).then(results => {
+          const evals = results.map(r => r.result);
+          setEvaluation(evals);
+          
+          results.forEach((r, i) => {
+            if (r.result) {
+              updateLetterStatus(attempt.guesses[i], r.result);
+            }
+          });
+        }).catch(error => {
+          console.error("Failed to load previous attempts:", error);
+        });
       }
     }
   }, [puzzleSolved]);
-
-  const evaluateGuess = (guess: string): Array<"correct" | "present" | "absent"> => {
-    const result: Array<"correct" | "present" | "absent"> = Array(5).fill("absent");
-    const wordArray = dailyWord.split("");
-    const guessArray = guess.split("");
-
-    guessArray.forEach((letter, i) => {
-      if (letter === wordArray[i]) {
-        result[i] = "correct";
-      } else if (wordArray.includes(letter)) {
-        result[i] = "present";
-      }
-    });
-
-    return result;
-  };
 
   const updateLetterStatus = (guess: string, result: Array<"correct" | "present" | "absent">) => {
     const newStatus = { ...letterStatus };
@@ -94,7 +112,7 @@ export default function Puzzle() {
     setCurrentGuess(currentGuess.slice(0, -1));
   };
 
-  const handleEnter = () => {
+  const handleEnter = async () => {
     if (currentGuess.length !== 5) {
       toast({
         title: "Not enough letters",
@@ -104,65 +122,92 @@ export default function Puzzle() {
       return;
     }
 
-    const result = evaluateGuess(currentGuess);
-    const newGuesses = [...guesses, currentGuess];
-    const newEvaluation = [...evaluation, result];
-    
-    setGuesses(newGuesses);
-    setEvaluation(newEvaluation);
-    updateLetterStatus(currentGuess, result);
-    setCurrentGuess("");
+    try {
+      const response = await fetch("/api/puzzle/guess", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ guess: currentGuess }),
+      });
 
-    if (currentGuess === dailyWord) {
-      let totalPoints = calculatePuzzlePoints(newGuesses.length, true);
+      const data = await response.json();
       
-      if (profile && workoutCompleted) {
-        const streakBonus = 10;
-        totalPoints += streakBonus;
+      if (!response.ok) {
+        toast({
+          title: "Error",
+          description: data.error || "Failed to validate guess",
+          variant: "destructive",
+        });
+        return;
       }
+
+      const { result, isCorrect, word } = data;
+      const newGuesses = [...guesses, currentGuess];
+      const newEvaluation = [...evaluation, result];
       
-      if (profile) {
-        const attempt: PuzzleAttempt = {
-          id: `puzzle_${Date.now()}`,
-          userId: profile.id,
-          date: new Date().toISOString().split('T')[0],
-          word: dailyWord,
-          guesses: newGuesses,
-          solved: true,
-          attempts: newGuesses.length,
-          pointsEarned: totalPoints,
-          completedAt: new Date().toISOString(),
-        };
-        
-        savePuzzleAttempt(attempt);
-        solvePuzzle(totalPoints);
-        addPoints(totalPoints);
-      }
+      setGuesses(newGuesses);
+      setEvaluation(newEvaluation);
+      updateLetterStatus(currentGuess, result);
+      setCurrentGuess("");
 
-      setWon(true);
-      setGameOver(true);
-      setShowSuccess(true);
-    } else if (newGuesses.length >= 6) {
-      if (profile) {
-        const attempt: PuzzleAttempt = {
-          id: `puzzle_${Date.now()}`,
-          userId: profile.id,
-          date: new Date().toISOString().split('T')[0],
-          word: dailyWord,
-          guesses: newGuesses,
-          solved: false,
-          attempts: newGuesses.length,
-          pointsEarned: 0,
-          completedAt: new Date().toISOString(),
-        };
+      if (isCorrect) {
+        setDailyWord(word);
+        let totalPoints = calculatePuzzlePoints(newGuesses.length, true);
         
-        savePuzzleAttempt(attempt);
-      }
+        if (profile && workoutCompleted) {
+          const streakBonus = 10;
+          totalPoints += streakBonus;
+        }
+        
+        if (profile) {
+          const attempt: PuzzleAttempt = {
+            id: `puzzle_${Date.now()}`,
+            userId: profile.id,
+            date: new Date().toISOString().split('T')[0],
+            word: word,
+            guesses: newGuesses,
+            solved: true,
+            attempts: newGuesses.length,
+            pointsEarned: totalPoints,
+            completedAt: new Date().toISOString(),
+          };
+          
+          savePuzzleAttempt(attempt);
+          solvePuzzle(totalPoints);
+          addPoints(totalPoints);
+        }
 
-      setGameOver(true);
+        setWon(true);
+        setGameOver(true);
+        setShowSuccess(true);
+      } else if (newGuesses.length >= 6) {
+        if (profile) {
+          const attempt: PuzzleAttempt = {
+            id: `puzzle_${Date.now()}`,
+            userId: profile.id,
+            date: new Date().toISOString().split('T')[0],
+            word: "",
+            guesses: newGuesses,
+            solved: false,
+            attempts: newGuesses.length,
+            pointsEarned: 0,
+            completedAt: new Date().toISOString(),
+          };
+          
+          savePuzzleAttempt(attempt);
+        }
+
+        setGameOver(true);
+        toast({
+          title: "Game Over",
+          description: "Better luck tomorrow! The word remains a mystery.",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error("Failed to submit guess:", error);
       toast({
-        title: "Game Over",
-        description: `The word was ${dailyWord}`,
+        title: "Error",
+        description: "Failed to submit guess. Please try again.",
         variant: "destructive",
       });
     }
