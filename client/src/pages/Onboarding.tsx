@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
-import { Bell, CheckCircle, ArrowRight } from "lucide-react";
+import { Bell, CheckCircle, ArrowRight, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -16,6 +17,8 @@ import { useToast } from "@/hooks/use-toast";
 export default function Onboarding() {
   const [, navigate] = useLocation();
   const { toast } = useToast();
+  const [step, setStep] = useState<"setup" | "welcome">("setup");
+  const [inviteCode, setInviteCode] = useState("");
   const [reminderTime, setReminderTime] = useState<string>("09:00");
   const [reminderEnabled, setReminderEnabled] = useState(true);
 
@@ -37,6 +40,13 @@ export default function Onboarding() {
     { value: "20:00", label: "8:00 PM" },
   ];
 
+  const handleContinue = () => {
+    if (inviteCode) {
+      localStorage.setItem("fitword_invite_code", inviteCode);
+    }
+    setStep("welcome");
+  };
+
   const handleComplete = () => {
     localStorage.setItem("fitword_reminder_time", reminderTime);
     localStorage.setItem("fitword_reminder_enabled", reminderEnabled ? "true" : "false");
@@ -50,6 +60,62 @@ export default function Onboarding() {
     navigate("/");
   };
 
+  if (step === "welcome") {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center px-6">
+        <div className="max-w-3xl w-full text-center">
+          <div className="mb-8">
+            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+              <Play className="w-12 h-12 text-white" />
+            </div>
+            <h1 className="text-h1 font-bold text-foreground mb-4">
+              Welcome to FitWord!
+            </h1>
+            <p className="text-body-lg text-muted-foreground max-w-xl mx-auto mb-8">
+              Let's get moving and thinking together. Watch this quick intro to get started.
+            </p>
+          </div>
+
+          <div className="mb-8">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl max-w-2xl mx-auto bg-gradient-to-br from-primary/20 to-secondary/20 p-1">
+              <div className="bg-black rounded-xl overflow-hidden">
+                <iframe
+                  width="100%"
+                  height="400"
+                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1"
+                  title="Welcome to FitWord"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full aspect-video"
+                  data-testid="video-welcome"
+                ></iframe>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-primary/10 to-secondary/10 rounded-xl p-6 mb-8 max-w-2xl mx-auto">
+            <h3 className="text-h4 font-bold text-foreground mb-3">
+              You're All Set!
+            </h3>
+            <p className="text-body-md text-muted-foreground">
+              Complete your daily workout to unlock today's word puzzle. Build your streak, earn points, and join our community on the leaderboard!
+            </p>
+          </div>
+
+          <Button
+            onClick={handleComplete}
+            size="lg"
+            className="w-full max-w-md mx-auto h-16 text-body-lg font-semibold group"
+            data-testid="button-finish-onboarding"
+          >
+            Let's Go! 💪
+            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-6">
       <div className="max-w-2xl w-full">
@@ -58,12 +124,34 @@ export default function Onboarding() {
             <CheckCircle className="w-12 h-12 text-white" />
           </div>
           <h1 className="text-h1 font-bold text-foreground mb-4">
-            Welcome to FitWord!
+            Move your body, sharpen your mind.
           </h1>
           <p className="text-body-lg text-muted-foreground max-w-xl mx-auto">
             Your journey to fitness and mental sharpness starts here. Let's personalize your experience.
           </p>
         </div>
+
+        <Card className="p-8 mb-6">
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <Label htmlFor="invite-code" className="text-body-lg font-semibold">
+                Invite Code (Optional)
+              </Label>
+              <Input
+                id="invite-code"
+                type="text"
+                placeholder="Enter your invite code"
+                value={inviteCode}
+                onChange={(e) => setInviteCode(e.target.value)}
+                className="h-14 text-body-lg"
+                data-testid="input-invite-code"
+              />
+              <p className="text-body-sm text-muted-foreground">
+                Have an invite code? Enter it here to unlock special features and connect with your group.
+              </p>
+            </div>
+          </div>
+        </Card>
 
         <Card className="p-8 mb-8">
           <div className="flex items-start gap-4 mb-6">
@@ -166,12 +254,12 @@ export default function Onboarding() {
         </div>
 
         <Button
-          onClick={handleComplete}
+          onClick={handleContinue}
           size="lg"
           className="w-full h-16 text-body-lg font-semibold group"
-          data-testid="button-complete-onboarding"
+          data-testid="button-continue-onboarding"
         >
-          Get Started
+          Continue
           <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
         </Button>
       </div>
