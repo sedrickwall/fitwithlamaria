@@ -1,0 +1,144 @@
+# 🧠 PROJECT UPGRADE PROMPT — FitWithLaMaria MVP (Secure Puzzle + API Integration)
+
+# GOAL:
+# Refine existing project without breaking current functionality.
+# Add backend puzzle API, frontend integration, and a clean file structure for scaling.
+
+# CONTEXT:
+# - Stack: TypeScript + React + Vite + Express + Drizzle
+# - Replit JSON, build, and dependencies already configured
+# - Currently running via `npm run dev`
+# - Keep puzzles server-side for security
+# - Don’t use Firebase for now
+
+###########################################################
+# STEP 1: PROJECT STRUCTURE
+###########################################################
+
+# 1️⃣ Create new folder for routes
+mkdir -p server/routes
+
+# 2️⃣ Create new puzzle API route
+cat <<'EOF' > server/routes/puzzle.ts
+import { Router } from "express";
+import { randomInt } from "crypto";
+
+const router = Router();
+
+const WORDS = ["faith", "grace", "peace", "light", "truth", "praise"];
+
+router.get("/", (req, res) => {
+  const word = WORDS[randomInt(WORDS.length)];
+  res.json({ wordLength: word.length, attempts: 6 });
+});
+
+router.post("/guess", (req, res) => {
+  const { guess, answer } = req.body;
+  const result = guess.split("").map((letter: string, i: number) => {
+    if (letter === answer[i]) return "correct";
+    if (answer.includes(letter)) return "present";
+    return "absent";
+  });
+  res.json(result);
+});
+
+export default router;
+EOF
+
+# 3️⃣ Update main server entry (server/index.ts) to use this route
+cat <<'EOF' > server/index.ts
+import express from "express";
+import cors from "cors";
+import session from "express-session";
+import puzzleRoutes from "./routes/puzzle.js";
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+app.use("/api/puzzle", puzzleRoutes);
+
+app.listen(3000, () => console.log("✅ Server running on http://localhost:3000"));
+EOF
+
+###########################################################
+# STEP 2: FRONTEND UPDATE (Puzzle Page)
+###########################################################
+
+# 4️⃣ Update Puzzle.tsx to use API
+cat <<'EOF' > src/pages/Puzzle.tsx
+import { useEffect, useState } from "react";
+import { PuzzleGrid } from "@/components/PuzzleGrid";
+
+export default function Puzzle() {
+  const [puzzle, setPuzzle] = useState<{ wordLength: number; attempts: number }>({ wordLength: 5, attempts: 6 });
+  const [guesses, setGuesses] = useState<string[]>([]);
+  const [currentGuess, setCurrentGuess] = useState("");
+  const [evaluation, setEvaluation] = useState<string[][]>([]);
+
+  useEffect(() => {
+    fetch("/api/puzzle")
+      .then(res => res.json())
+      .then(setPuzzle)
+      .catch(console.error);
+  }, []);
+
+  const handleSubmit = async () => {
+    const res = await fetch("/api/puzzle/guess", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ guess: currentGuess, answer: "faith" }), // temporary demo word
+    });
+    const result = await res.json();
+    setEvaluation(prev => [...prev, result]);
+    setGuesses(prev => [...prev, currentGuess]);
+    setCurrentGuess("");
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-4">
+      <h1 className="text-3xl font-bold">Daily Puzzle</h1>
+      <PuzzleGrid
+        guesses={guesses}
+        currentGuess={currentGuess}
+        currentRow={guesses.length}
+        evaluation={evaluation as any}
+      />
+      <input
+        value={currentGuess}
+        onChange={(e) => setCurrentGuess(e.target.value.toLowerCase())}
+        maxLength={puzzle.wordLength}
+        className="border px-2 py-1 rounded"
+      />
+      <button onClick={handleSubmit} className="bg-primary text-white px-4 py-2 rounded">
+        Submit
+      </button>
+    </div>
+  );
+}
+EOF
+
+###########################################################
+# STEP 3: RUN + VERIFY
+###########################################################
+
+# 5️⃣ Run the app in EDIT MODE (not build)
+# On Replit, click ▶️ “Run” and ensure it executes `npm run dev`
+
+# Or run manually in shell:
+npm run dev
+
+# 6️⃣ Visit your app URL (e.g., https://fitwithlamaria.replit.app/puzzle)
+# You should now see the updated “Daily Puzzle” pulling from server API.
+
+###########################################################
+# STEP 4: NEXT PHASE PREP (optional)
+###########################################################
+
+# Optional upcoming enhancements:
+# - Add user tracking (auth + puzzle attempts)
+# - Add /admin route to track plays
+# - Add payment integration (Stripe or LemonSqueezy)
+# - Migrate DB to NeonDB or Firebase when ready
+
+echo "✅ Setup complete! Your MVP now uses secure backend puzzle logic."
