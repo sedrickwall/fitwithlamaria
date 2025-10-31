@@ -4,6 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Workouts from "@/pages/Workouts";
 import WorkoutPlayer from "@/pages/WorkoutPlayer";
@@ -15,6 +16,7 @@ import NotFound from "@/pages/not-found";
 function Router() {
   return (
     <Switch>
+      <Route path="/login" component={Login} />
       <Route path="/" component={Dashboard} />
       <Route path="/workouts" component={Workouts} />
       <Route path="/workout/:id" component={WorkoutPlayer} />
