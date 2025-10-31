@@ -53,14 +53,23 @@ export const puzzleAttemptSchema = z.object({
 
 export type PuzzleAttempt = z.infer<typeof puzzleAttemptSchema>;
 
-// Daily status schema
+// Daily status schema - supports multiple workouts/puzzles per day
 export const dailyStatusSchema = z.object({
   date: z.string(),
-  workoutCompleted: z.boolean(),
-  puzzleUnlocked: z.boolean(),
+  
+  // Multiple workout system
+  workoutCompletionCount: z.number().default(0), // How many workouts completed today
+  
+  // Multiple puzzle system
+  completedPuzzleIndices: z.array(z.number()).default([]), // Array of completed puzzle indices [0, 1, 2, ...]
+  
+  // Backward compatibility fields (deprecated)
+  workoutCompleted: z.boolean().default(false),
+  puzzleUnlocked: z.boolean().default(false),
   wordleSolved: z.boolean().default(false),
   wordSearchSolved: z.boolean().default(false),
-  puzzleSolved: z.boolean().default(false), // Deprecated: kept for backward compatibility
+  puzzleSolved: z.boolean().default(false),
+  
   totalPointsEarned: z.number(),
 });
 

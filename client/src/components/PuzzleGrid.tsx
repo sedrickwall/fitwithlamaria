@@ -3,16 +3,18 @@ interface PuzzleGridProps {
   currentGuess: string;
   currentRow: number;
   evaluation: Array<Array<"correct" | "present" | "absent" | "empty">>;
+  wordLength: number;
+  maxAttempts: number;
 }
 
-export function PuzzleGrid({ guesses, currentGuess, currentRow, evaluation }: PuzzleGridProps) {
-  const rows = Array.from({ length: 6 }, (_, i) => {
+export function PuzzleGrid({ guesses, currentGuess, currentRow, evaluation, wordLength, maxAttempts }: PuzzleGridProps) {
+  const rows = Array.from({ length: maxAttempts }, (_, i) => {
     if (i < guesses.length) {
-      return guesses[i].padEnd(5, " ");
+      return guesses[i].padEnd(wordLength, " ");
     } else if (i === currentRow) {
-      return currentGuess.padEnd(5, " ");
+      return currentGuess.padEnd(wordLength, " ");
     }
-    return "     ";
+    return " ".repeat(wordLength);
   });
 
   const getBoxStyles = (rowIndex: number, colIndex: number) => {
@@ -41,7 +43,7 @@ export function PuzzleGrid({ guesses, currentGuess, currentRow, evaluation }: Pu
     <div className="flex flex-col gap-2" data-testid="puzzle-grid">
       {rows.map((row, rowIndex) => (
         <div key={rowIndex} className="flex gap-2 justify-center">
-          {Array.from({ length: 5 }).map((_, colIndex) => {
+          {Array.from({ length: wordLength }).map((_, colIndex) => {
             const letter = row[colIndex];
             return (
               <div

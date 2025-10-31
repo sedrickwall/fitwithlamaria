@@ -12,11 +12,16 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { savePuzzleAttempt } from "@/lib/localStorage";
 
-export default function WordSearch() {
+interface WordSearchProps {
+  puzzleIndex: number;
+  difficultyLevel: number;
+}
+
+export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchProps) {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const { profile, addPoints } = useUserProfile();
-  const { status, solveWordSearch } = useDailyStatus();
+  const { status, solveWordSearch, isPuzzleCompleted } = useDailyStatus();
   const { user, isAuthenticated } = useAuth();
   
   const [grid, setGrid] = useState<string[][]>([]);
@@ -28,11 +33,10 @@ export default function WordSearch() {
 
   const totalPoints = profile?.totalPoints || 0;
   const workoutCompleted = status?.workoutCompleted || false;
-  const wordSearchSolved = status?.wordSearchSolved || false;
-  const puzzleSolved = wordSearchSolved; // Use word search specific status
+  const puzzleSolved = isPuzzleCompleted(puzzleIndex); // Check if THIS specific puzzle is completed
 
   useEffect(() => {
-    fetch("/api/wordsearch")
+    fetch(`/api/wordsearch?index=${puzzleIndex}`)
       .then(res => res.json())
       .then(data => {
         setGrid(data.grid);
@@ -42,11 +46,11 @@ export default function WordSearch() {
         console.error("Failed to load word search:", error);
         toast({
           title: "Error",
-          description: "Failed to load today's word search",
+          description: "Failed to load word search",
           variant: "destructive",
         });
       });
-  }, [toast]);
+  }, [puzzleIndex, toast]);
 
   useEffect(() => {
     if (puzzleSolved) {
@@ -74,7 +78,7 @@ export default function WordSearch() {
       const response = await fetch("/api/wordsearch/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ word, coordinates }),
+        body: JSON.stringify({ word, coordinates, puzzleIndex }),
       });
 
       const data = await response.json();
@@ -108,7 +112,7 @@ export default function WordSearch() {
 
     const pointsEarned = 50;
     addPoints(pointsEarned);
-    await solveWordSearch(pointsEarned);
+    await solveWordSearch(puzzleIndex, pointsEarned);
 
     const today = new Date().toISOString().split('T')[0];
     savePuzzleAttempt({

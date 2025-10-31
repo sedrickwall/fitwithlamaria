@@ -24,11 +24,16 @@ import { puzzleOperations } from "@/services/firestore";
 import { isFirebaseReady } from "@/services/firebase";
 import { PuzzleAttempt } from "@shared/schema";
 
-export default function Puzzle() {
+interface PuzzleProps {
+  puzzleIndex: number;
+  difficultyLevel: number;
+}
+
+export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const { profile, addPoints } = useUserProfile();
-  const { status, solveWordle } = useDailyStatus();
+  const { status, solveWordle, isPuzzleCompleted } = useDailyStatus();
   const { user, isAuthenticated } = useAuth();
   
   const [guesses, setGuesses] = useState<string[]>([]);
@@ -41,28 +46,31 @@ export default function Puzzle() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [puzzleNumber, setPuzzleNumber] = useState<number>(0);
   const [dailyWord, setDailyWord] = useState<string>("");
+  const [wordLength, setWordLength] = useState<number>(5); // Dynamic word length based on difficulty
+  const [maxAttempts, setMaxAttempts] = useState<number>(6); // Dynamic max attempts
 
   const currentRow = guesses.length;
   const totalPoints = profile?.totalPoints || 0;
   const workoutCompleted = status?.workoutCompleted || false;
-  const wordleSolved = status?.wordleSolved || false;
-  const puzzleSolved = wordleSolved; // Use wordle specific status
+  const puzzleSolved = isPuzzleCompleted(puzzleIndex); // Check if THIS specific puzzle is completed
 
   useEffect(() => {
-    fetch("/api/puzzle")
+    fetch(`/api/puzzle?index=${puzzleIndex}`)
       .then(res => res.json())
       .then(data => {
         setPuzzleNumber(data.puzzleNumber);
+        setWordLength(data.wordLength);
+        setMaxAttempts(data.maxAttempts);
       })
       .catch(error => {
         console.error("Failed to load puzzle:", error);
         toast({
           title: "Error",
-          description: "Failed to load today's puzzle",
+          description: "Failed to load puzzle",
           variant: "destructive",
         });
       });
-  }, [toast]);
+  }, [puzzleIndex, toast]);
 
   useEffect(() => {
     if (puzzleSolved) {
@@ -80,7 +88,7 @@ export default function Puzzle() {
             fetch("/api/puzzle/guess", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ guess }),
+              body: JSON.stringify({ guess, puzzleIndex }),
             }).then(res => res.json())
           )
         ).then(results => {
@@ -111,7 +119,7 @@ export default function Puzzle() {
   };
 
   const handleKeyPress = (key: string) => {
-    if (gameOver || currentGuess.length >= 5) return;
+    if (gameOver || currentGuess.length >= wordLength) return;
     setCurrentGuess(currentGuess + key);
   };
 
@@ -120,10 +128,10 @@ export default function Puzzle() {
   };
 
   const handleEnter = async () => {
-    if (currentGuess.length !== 5) {
+    if (currentGuess.length !== wordLength) {
       toast({
         title: "Not enough letters",
-        description: "Please enter a 5-letter word",
+        description: `Please enter a ${wordLength}-letter word`,
         variant: "destructive",
       });
       return;
@@ -133,7 +141,7 @@ export default function Puzzle() {
       const response = await fetch("/api/puzzle/guess", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ guess: currentGuess }),
+        body: JSON.stringify({ guess: currentGuess, puzzleIndex }),
       });
 
       const data = await response.json();
@@ -179,7 +187,7 @@ export default function Puzzle() {
           };
           
           savePuzzleAttempt(attempt);
-          solveWordle(totalPoints);
+          solveWordle(puzzleIndex, totalPoints);
           addPoints(totalPoints);
 
           if (isFirebaseReady() && isAuthenticated && user) {
@@ -326,13 +334,13 @@ export default function Puzzle() {
       <main className="max-w-7xl mx-auto px-6 md:px-8 py-8">
         <div className="mb-8 text-center">
           <h2 className="text-h1 font-bold text-secondary mb-2">
-            Brain Game #{puzzleNumber}
+            Brain Game #{puzzleIndex}
           </h2>
           <p className="text-body-lg text-muted-foreground">
-            Guess the 5-letter word in 6 tries
+            Guess the {wordLength}-letter word in {maxAttempts} tries
           </p>
           <p className="text-body-md text-muted-foreground mt-2">
-            Tries: {guesses.length}/6
+            Tries: {guesses.length}/{maxAttempts}
           </p>
         </div>
 
@@ -342,6 +350,8 @@ export default function Puzzle() {
             currentGuess={currentGuess}
             currentRow={currentRow}
             evaluation={evaluation}
+            wordLength={wordLength}
+            maxAttempts={maxAttempts}
           />
         </div>
 

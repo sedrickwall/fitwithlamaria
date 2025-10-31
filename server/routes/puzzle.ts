@@ -3,59 +3,67 @@ import { Router } from "express";
 const router = Router();
 
 // ============================================================
-// WORD BANK - Wellness & Faith-Themed Words
+// WORD BANK - Wellness & Faith-Themed Words by Length
 // ============================================================
-// These positive, uplifting words align with the FitWithLaMaria
-// brand values and are appropriate for the target audience (65+)
-const WORD_LIST = [
-  "HAPPY", "SMILE", "PEACE", "LIGHT", "BRAVE",
-  "FAITH", "GRACE", "HEART", "DREAM", "TRUST",
-  "POWER", "MUSIC", "DANCE", "LAUGH", "ENJOY",
-  "CHARM", "PRIDE", "WORTH", "NOBLE", "HONOR",
-  "GLORY", "CHEER", "MIRTH", "JOLLY", "BLISS",
-  "LUCKY", "SUNNY", "GRAND", "SWEET", "FRESH",
-  "CLEAR", "TRUTH", "SMART", "SHARP", "QUICK",
-  "AGILE", "FOCUS", "ALERT", "AWARE", "AWAKE",
-  "ALIVE", "VITAL", "SPARK", "SHINE", "BRING",
-  "RELAX", "QUIET", "STILL", "GIFTS", "LOVED",
-  "SHARE", "HELPS", "GUIDE", "TEACH", "LEARN",
-  "THINK", "WALKS", "BUILD", "REACH", "CLIMB",
-];
+// Progressive difficulty: longer words as users advance
+const WORD_LISTS: Record<number, string[]> = {
+  5: [
+    "HAPPY", "SMILE", "PEACE", "LIGHT", "BRAVE",
+    "FAITH", "GRACE", "HEART", "DREAM", "TRUST",
+    "POWER", "MUSIC", "DANCE", "LAUGH", "ENJOY",
+    "CHARM", "PRIDE", "WORTH", "NOBLE", "HONOR",
+    "GLORY", "CHEER", "MIRTH", "JOLLY", "BLISS",
+    "LUCKY", "SUNNY", "GRAND", "SWEET", "FRESH",
+  ],
+  6: [
+    "JOYFUL", "STRONG", "WISDOM", "HEALTH", "SPIRIT",
+    "KINDLY", "GENTLE", "SECURE", "THRIVE", "UPLIFT",
+    "WARMTH", "ENERGY", "LIVELY", "ROBUST", "BRIGHT",
+    "MINDFUL", "WONDER", "PRAISE", "SMILE", "BEAUTY",
+    "CREATE", "GROWTH", "ACTIVE", "CARING", "HOPING",
+  ],
+  7: [
+    "COURAGE", "HEALING", "GRATEFL", "BALANCE", "SUCCESS",
+    "HARMONY", "BLESSED", "FREEDOM", "PASSION", "RENEWED",
+    "FOREVER", "HOPEFUL", "SHARING", "TRIUMPH", "DELIGHT",
+    "RADIANT", "SINCERE", "VIBRANT", "WELNESS", "AMAZING",
+  ],
+};
 
 // ============================================================
-// DAILY WORD SELECTION LOGIC
+// WORD SELECTION BASED ON PUZZLE INDEX & DIFFICULTY
 // ============================================================
-// Deterministic selection based on days since epoch
-// Ensures all users see the same word on the same day
-function getDailyWord(): string {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const daysSinceEpoch = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
-  const index = daysSinceEpoch % WORD_LIST.length;
-  return WORD_LIST[index];
+// Deterministic selection based on puzzle index
+// Word length increases with difficulty level
+function getPuzzleWord(puzzleIndex: number, difficultyLevel: number): string {
+  // Calculate word length based on difficulty (5, 6, 7 letters)
+  const wordLength = Math.min(5 + difficultyLevel, 7);
+  
+  // Get word list for this difficulty
+  const wordList = WORD_LISTS[wordLength] || WORD_LISTS[5];
+  
+  // Select word deterministically based on puzzle index
+  const index = puzzleIndex % wordList.length;
+  return wordList[index];
 }
 
 // ============================================================
-// PUZZLE NUMBER CALCULATION
-// ============================================================
-// Used for display purposes and sharing (e.g., "Puzzle #20392")
-function getPuzzleNumber(): number {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
-}
-
-// ============================================================
-// ROUTE: GET /api/puzzle
+// ROUTE: GET /api/puzzle?index=0
 // ============================================================
 // Returns puzzle metadata without revealing the answer
-// Response: { puzzleNumber, wordLength, maxAttempts }
+// Response: { puzzleNumber, puzzleIndex, wordLength, maxAttempts, difficultyLevel }
 router.get("/", (req, res) => {
-  const puzzleNumber = getPuzzleNumber();
+  const puzzleIndex = parseInt(req.query.index as string) || 0;
+  const difficultyLevel = Math.floor(puzzleIndex / 2);
+  const wordLength = Math.min(5 + difficultyLevel, 7);
+  const maxAttempts = 6 + Math.floor(difficultyLevel / 2); // More attempts for longer words
+  
   res.json({
-    puzzleNumber,
-    wordLength: 5,
-    maxAttempts: 6
+    puzzleNumber: puzzleIndex,
+    puzzleIndex,
+    wordLength,
+    maxAttempts,
+    difficultyLevel,
   });
 });
 
@@ -63,11 +71,11 @@ router.get("/", (req, res) => {
 // ROUTE: POST /api/puzzle/guess
 // ============================================================
 // Validates a user's guess and returns letter-by-letter feedback
-// Security: Daily word never sent to client unless guess is correct
-// Request: { guess: string }
+// Security: Puzzle word never sent to client unless guess is correct
+// Request: { guess: string, puzzleIndex: number }
 // Response: { result: Array<"correct"|"present"|"absent">, isCorrect: boolean, word?: string }
 router.post("/guess", (req, res) => {
-  const { guess } = req.body;
+  const { guess, puzzleIndex = 0 } = req.body;
   
   // Validate input
   if (!guess || typeof guess !== "string") {
@@ -75,17 +83,19 @@ router.post("/guess", (req, res) => {
   }
 
   const normalizedGuess = guess.toUpperCase();
+  const difficultyLevel = Math.floor(puzzleIndex / 2);
+  const expectedLength = Math.min(5 + difficultyLevel, 7);
   
-  if (normalizedGuess.length !== 5) {
-    return res.status(400).json({ error: "Guess must be 5 letters" });
+  if (normalizedGuess.length !== expectedLength) {
+    return res.status(400).json({ error: `Guess must be ${expectedLength} letters` });
   }
 
-  // Get today's word (server-side only)
-  const dailyWord = getDailyWord();
+  // Get puzzle word for this index (server-side only)
+  const puzzleWord = getPuzzleWord(puzzleIndex, difficultyLevel);
   
   // Evaluate each letter in the guess
-  const result: Array<"correct" | "present" | "absent"> = Array(5).fill("absent");
-  const wordArray = dailyWord.split("");
+  const result: Array<"correct" | "present" | "absent"> = Array(expectedLength).fill("absent");
+  const wordArray = puzzleWord.split("");
   const guessArray = normalizedGuess.split("");
 
   guessArray.forEach((letter, i) => {
@@ -96,13 +106,13 @@ router.post("/guess", (req, res) => {
     }
   });
 
-  const isCorrect = normalizedGuess === dailyWord;
+  const isCorrect = normalizedGuess === puzzleWord;
 
   // Only reveal the word if the guess is correct
   res.json({
     result,
     isCorrect,
-    word: isCorrect ? dailyWord : undefined
+    word: isCorrect ? puzzleWord : undefined
   });
 });
 

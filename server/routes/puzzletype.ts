@@ -2,19 +2,23 @@ import { Router } from "express";
 
 const router = Router();
 
-// GET /api/puzzletype - Get today's puzzle type
+// GET /api/puzzletype?index=0 - Get puzzle type for a specific puzzle index
 router.get("/", (req, res) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const daysSinceEpoch = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
+  // Get puzzle index from query parameter (default to 0)
+  const puzzleIndex = parseInt(req.query.index as string) || 0;
   
-  // Alternate: even days = wordle, odd days = word search
-  const puzzleType = daysSinceEpoch % 2 === 0 ? "wordle" : "wordsearch";
+  // Alternate based on puzzle index: even index = wordle, odd index = word search
+  const puzzleType = puzzleIndex % 2 === 0 ? "wordle" : "wordsearch";
+  
+  // Calculate difficulty based on puzzle index
+  // Every 2 puzzles increases difficulty
+  const difficultyLevel = Math.floor(puzzleIndex / 2);
   
   res.json({
     puzzleType,
-    puzzleNumber: daysSinceEpoch,
-    date: today.toISOString().split('T')[0],
+    puzzleIndex,
+    difficultyLevel,
+    date: new Date().toISOString().split('T')[0],
   });
 });
 

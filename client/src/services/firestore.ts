@@ -226,11 +226,18 @@ export const puzzleOperations = {
 export interface FirestoreDailyStatus {
   userId: string;
   date: string;
+  
+  // Multiple workout/puzzle system
+  workoutCompletionCount?: number;
+  completedPuzzleIndices?: number[];
+  
+  // Backward compatibility fields (deprecated)
   workoutCompleted: boolean;
   puzzleUnlocked: boolean;
   wordleSolved?: boolean;
   wordSearchSolved?: boolean;
-  puzzleSolved: boolean; // Deprecated: kept for backward compatibility
+  puzzleSolved: boolean;
+  
   totalPointsEarned: number;
   updatedAt: any;
 }

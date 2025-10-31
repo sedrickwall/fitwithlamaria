@@ -13,13 +13,16 @@ const WORD_LISTS = [
   ["QUIET", "STILL", "REST", "RELAX", "EASE"],
 ];
 
-// Helper function to get word list for a specific day
-function getDailyWords(): string[] {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const daysSinceEpoch = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
-  const index = daysSinceEpoch % WORD_LISTS.length;
+// Helper function to get word list for a specific puzzle index
+function getPuzzleWords(puzzleIndex: number): string[] {
+  const index = puzzleIndex % WORD_LISTS.length;
   return WORD_LISTS[index];
+}
+
+// Calculate grid size based on difficulty level
+function getGridSize(difficultyLevel: number): number {
+  // Start at 10x10, increase by 2 for each difficulty level (max 16x16)
+  return Math.min(10 + (difficultyLevel * 2), 16);
 }
 
 // Deterministic random number generator using date as seed
@@ -118,40 +121,41 @@ function generateWordSearchGrid(words: string[], size: number = 10, seed: number
   return { grid, placements };
 }
 
-// GET /api/wordsearch - Get daily word search puzzle
+// GET /api/wordsearch?index=0 - Get word search puzzle for specific index
 router.get("/", (req, res) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const daysSinceEpoch = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
+  const puzzleIndex = parseInt(req.query.index as string) || 0;
+  const difficultyLevel = Math.floor(puzzleIndex / 2);
+  const gridSize = getGridSize(difficultyLevel);
   
-  const words = getDailyWords();
-  const { grid, placements } = generateWordSearchGrid(words, 10, daysSinceEpoch);
+  const words = getPuzzleWords(puzzleIndex);
+  const { grid, placements } = generateWordSearchGrid(words, gridSize, puzzleIndex);
 
   res.json({
     grid,
     words,
     size: grid.length,
-    puzzleNumber: daysSinceEpoch,
+    puzzleIndex,
+    puzzleNumber: puzzleIndex,
+    difficultyLevel,
   });
 });
 
 // POST /api/wordsearch/validate - Validate found word
 router.post("/validate", (req, res) => {
-  const { word, coordinates } = req.body;
+  const { word, coordinates, puzzleIndex = 0 } = req.body;
 
   if (!word || !coordinates) {
     return res.status(400).json({ error: "Word and coordinates required" });
   }
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const daysSinceEpoch = Math.floor(today.getTime() / (1000 * 60 * 60 * 24));
-
-  const dailyWords = getDailyWords();
-  const { placements } = generateWordSearchGrid(dailyWords, 10, daysSinceEpoch);
+  const difficultyLevel = Math.floor(puzzleIndex / 2);
+  const gridSize = getGridSize(difficultyLevel);
+  
+  const puzzleWords = getPuzzleWords(puzzleIndex);
+  const { placements } = generateWordSearchGrid(puzzleWords, gridSize, puzzleIndex);
   
   const wordUpper = word.toUpperCase();
-  const isValid = dailyWords.includes(wordUpper);
+  const isValid = puzzleWords.includes(wordUpper);
   
   // Verify coordinates match the actual word placement
   let coordinatesValid = false;
