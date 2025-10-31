@@ -98,17 +98,32 @@ export default function Premium() {
   const { profile } = useUserProfile();
   const { toast } = useToast();
   const [showCheckout, setShowCheckout] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("monthly");
   const totalPoints = profile?.totalPoints || 0;
 
-  const handleUpgrade = async () => {
+  const handleUpgrade = async (planType: "monthly" | "yearly") => {
     try {
+      // Use environment variables for price IDs
+      const priceId = planType === "monthly" 
+        ? import.meta.env.VITE_STRIPE_MONTHLY_PRICE_ID 
+        : import.meta.env.VITE_STRIPE_YEARLY_PRICE_ID;
+
+      if (!priceId) {
+        toast({
+          title: "Configuration Error",
+          description: "Payment system is not fully configured. Please contact support.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const response = await fetch("/api/stripe/create-checkout-session", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          priceId: import.meta.env.VITE_STRIPE_PRICE_ID || "price_1234567890",
+          priceId,
           successUrl: `${window.location.origin}/success`,
           cancelUrl: `${window.location.origin}/premium`,
         }),
@@ -156,42 +171,12 @@ export default function Premium() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 mb-12">
-          <Card className="border-2">
+          <Card className="border-2 hover:border-primary/50 transition-colors">
             <CardHeader>
-              <CardTitle className="text-h3">Free</CardTitle>
-              <CardDescription>Current Plan</CardDescription>
+              <CardTitle className="text-h3">Monthly</CardTitle>
+              <CardDescription>Pay month-to-month</CardDescription>
               <div className="mt-4">
-                <span className="text-4xl font-bold">$0</span>
-                <span className="text-muted-foreground">/month</span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-3">
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
-                  <span>1 workout per day</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
-                  <span>1 puzzle per day</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <Check className="w-5 h-5 text-success mt-0.5 flex-shrink-0" />
-                  <span>Basic progress tracking</span>
-                </li>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="border-2 border-primary shadow-lg relative overflow-hidden">
-            <div className="absolute top-0 right-0 bg-gradient-to-br from-purple-500 to-pink-500 text-white px-4 py-1 text-sm font-semibold">
-              Popular
-            </div>
-            <CardHeader>
-              <CardTitle className="text-h3">Premium</CardTitle>
-              <CardDescription>Full Access</CardDescription>
-              <div className="mt-4">
-                <span className="text-4xl font-bold">$9.99</span>
+                <span className="text-4xl font-bold">$4.99</span>
                 <span className="text-muted-foreground">/month</span>
               </div>
             </CardHeader>
@@ -209,13 +194,58 @@ export default function Premium() {
               </ul>
               
               <Button 
-                onClick={handleUpgrade}
+                onClick={() => handleUpgrade("monthly")}
                 className="w-full h-14 text-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                data-testid="button-upgrade"
+                data-testid="button-upgrade-monthly"
               >
                 <Crown className="w-5 h-5 mr-2" />
-                Upgrade to Premium
+                Subscribe Monthly
               </Button>
+              <p className="text-sm text-center text-muted-foreground">
+                Billed monthly • Cancel anytime
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-2 border-primary shadow-lg relative overflow-hidden">
+            <div className="absolute top-0 right-0 bg-gradient-to-br from-green-500 to-emerald-500 text-white px-4 py-1 text-sm font-semibold">
+              Best Value
+            </div>
+            <CardHeader>
+              <CardTitle className="text-h3">Yearly</CardTitle>
+              <CardDescription>Save $10.88 per year</CardDescription>
+              <div className="mt-4">
+                <span className="text-4xl font-bold">$49</span>
+                <span className="text-muted-foreground">/year</span>
+              </div>
+              <p className="text-sm text-success font-medium">
+                Only $4.08/month
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <ul className="space-y-3">
+                {features.map((feature, index) => {
+                  const Icon = feature.icon;
+                  return (
+                    <li key={index} className="flex items-start gap-2">
+                      <Icon className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span>{feature.text}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+              
+              <Button 
+                onClick={() => handleUpgrade("yearly")}
+                className="w-full h-14 text-lg bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
+                data-testid="button-upgrade-yearly"
+              >
+                <Crown className="w-5 h-5 mr-2" />
+                Subscribe Yearly
+              </Button>
+              <p className="text-sm text-center text-muted-foreground">
+                One-time yearly payment • Best value
+              </p>
             </CardContent>
           </Card>
         </div>
