@@ -1,0 +1,63 @@
+# 🏡 PHASE 2B – Home Dashboard Setup
+# Mode: EDIT
+
+# 1️⃣ Create Dashboard page
+cat <<'EOF' > src/pages/Home.tsx
+import { useLocation } from "wouter";
+
+export default function Home() {
+  const [, setLocation] = useLocation();
+  const username = localStorage.getItem("userName") || "Friend";
+  const streak = localStorage.getItem("streak") || "0";
+
+  return (
+    <div className="min-h-screen flex flex-col gap-6 p-6 text-center">
+      <header className="flex flex-col items-center gap-2">
+        <h2 className="text-2xl font-semibold">Hi, {username} 👋</h2>
+        <p className="text-sm text-muted-foreground">🔥 Streak: {streak} days</p>
+      </header>
+
+      <section className="flex flex-col items-center gap-3">
+        <div className="border rounded-xl p-4 w-full max-w-sm shadow-md">
+          <h3 className="font-bold mb-2">Today’s Workout</h3>
+          <img
+            src="https://img.youtube.com/vi/YOUR_VIDEO_ID/hqdefault.jpg"
+            alt="Workout thumbnail"
+            className="rounded-lg mb-2"
+          />
+          <button
+            onClick={() => setLocation("/workout/1")}
+            className="bg-primary text-white w-full py-2 rounded"
+          >
+            Start Workout
+          </button>
+        </div>
+
+        <div className="border rounded-xl p-4 w-full max-w-sm opacity-60">
+          <h3 className="font-bold mb-2 flex items-center justify-center gap-2">
+            <span role="img" aria-label="lock">🔒</span> Brain Puzzle
+          </h3>
+          <p className="text-sm">Complete your workout to unlock today’s puzzle!</p>
+        </div>
+      </section>
+
+      <section className="border rounded-xl p-4 w-full max-w-sm mx-auto shadow-md">
+        <h3 className="font-semibold mb-2">Community Highlights</h3>
+        <ul className="text-sm text-muted-foreground text-left">
+          <li>✨ 5 people completed Balance Boost today!</li>
+          <li>💬 “Feeling great after Day 3!”</li>
+        </ul>
+        <button
+          onClick={() => setLocation("/community")}
+          className="mt-3 bg-secondary text-white py-2 px-4 rounded"
+        >
+          View Community Feed
+        </button>
+      </section>
+    </div>
+  );
+}
+EOF
+
+# 2️⃣ Add route in App.tsx:
+# <Route path="/home" component={Home} />
