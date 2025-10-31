@@ -56,6 +56,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
   const [showFailureDialog, setShowFailureDialog] = useState(false);
+  const [wasSkipped, setWasSkipped] = useState(false);
   const [puzzleNumber, setPuzzleNumber] = useState<number>(0);
   const [dailyWord, setDailyWord] = useState<string>("");
   const [wordLength, setWordLength] = useState<number>(5); // Dynamic word length based on difficulty
@@ -267,6 +268,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
           }
         }
 
+        setWasSkipped(false);
         setGameOver(true);
         setShowFailureDialog(true);
       }
@@ -324,6 +326,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
         }
       }
 
+      setWasSkipped(true);
       setGameOver(true);
       setShowFailureDialog(true);
     } catch (error) {
@@ -557,12 +560,12 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
               <AlertCircle className="w-32 h-32 text-muted-foreground" />
             </div>
             <DialogTitle className="text-h2 text-center">
-              {guesses.length === 0 ? "Puzzle Skipped" : "Nice Try!"}
+              {wasSkipped ? "That's Okay!" : "Nice Try!"}
             </DialogTitle>
             <DialogDescription className="text-body-lg text-center">
-              {guesses.length === 0 
-                ? "You can try again tomorrow with a new puzzle."
-                : "You ran out of attempts, but that's okay! Every puzzle is a chance to learn."}
+              {wasSkipped 
+                ? "Sometimes it's good to take a break. Come back tomorrow for a fresh puzzle!"
+                : "You gave it your best effort! Every puzzle helps keep your mind active and sharp."}
             </DialogDescription>
           </DialogHeader>
           <div className="bg-card rounded-lg p-6 text-center border-2 border-muted">
