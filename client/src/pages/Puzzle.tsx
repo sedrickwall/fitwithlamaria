@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Lock, Share2, CheckCircle } from "lucide-react";
+import { Lock, Share2, CheckCircle, SkipForward, AlertCircle } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { PuzzleGrid } from "@/components/PuzzleGrid";
@@ -14,6 +14,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
@@ -44,6 +54,8 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
   const [letterStatus, setLetterStatus] = useState<Record<string, "correct" | "present" | "absent" | "unused">>({});
   const [showSuccess, setShowSuccess] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showSkipConfirm, setShowSkipConfirm] = useState(false);
+  const [showFailureDialog, setShowFailureDialog] = useState(false);
   const [puzzleNumber, setPuzzleNumber] = useState<number>(0);
   const [dailyWord, setDailyWord] = useState<string>("");
   const [wordLength, setWordLength] = useState<number>(5); // Dynamic word length based on difficulty
@@ -218,13 +230,15 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
             setTimeout(() => setShowLoginModal(true), 2000);
           }
         }
-      } else if (newGuesses.length >= 6) {
+      } else if (newGuesses.length >= maxAttempts) {
+        setDailyWord(word);
+        
         if (profile) {
           const attempt: PuzzleAttempt = {
             id: `puzzle_${Date.now()}`,
             userId: profile.id,
             date: new Date().toISOString().split('T')[0],
-            word: "",
+            word: word,
             guesses: newGuesses,
             solved: false,
             attempts: newGuesses.length,
@@ -233,6 +247,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
           };
           
           savePuzzleAttempt(attempt);
+          solveWordle(puzzleIndex, 0);
 
           if (isFirebaseReady() && isAuthenticated && user) {
             try {
@@ -240,7 +255,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
                 userId: user.uid,
                 puzzleId: `puzzle_${puzzleNumber}`,
                 date: new Date().toISOString().split('T')[0],
-                word: "",
+                word: word,
                 guesses: newGuesses,
                 solved: false,
                 attempts: newGuesses.length,
@@ -253,17 +268,69 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
         }
 
         setGameOver(true);
-        toast({
-          title: "Game Over",
-          description: "Better luck tomorrow! The word remains a mystery.",
-          variant: "destructive",
-        });
+        setShowFailureDialog(true);
       }
     } catch (error) {
       console.error("Failed to submit guess:", error);
       toast({
         title: "Error",
         description: "Failed to submit guess. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleSkip = async () => {
+    setShowSkipConfirm(false);
+    
+    try {
+      const response = await fetch(`/api/puzzle?index=${puzzleIndex}`);
+      const data = await response.json();
+      const word = data.word;
+      
+      setDailyWord(word);
+      
+      if (profile) {
+        const attempt: PuzzleAttempt = {
+          id: `puzzle_${Date.now()}`,
+          userId: profile.id,
+          date: new Date().toISOString().split('T')[0],
+          word: word,
+          guesses: guesses,
+          solved: false,
+          attempts: guesses.length,
+          pointsEarned: 0,
+          completedAt: new Date().toISOString(),
+        };
+        
+        savePuzzleAttempt(attempt);
+        solveWordle(puzzleIndex, 0);
+
+        if (isFirebaseReady() && isAuthenticated && user) {
+          try {
+            await puzzleOperations.addAttempt({
+              userId: user.uid,
+              puzzleId: `puzzle_${puzzleNumber}`,
+              date: new Date().toISOString().split('T')[0],
+              word: word,
+              guesses: guesses,
+              solved: false,
+              attempts: guesses.length,
+              pointsEarned: 0,
+            });
+          } catch (error) {
+            console.error("Error syncing skipped puzzle to Firestore:", error);
+          }
+        }
+      }
+
+      setGameOver(true);
+      setShowFailureDialog(true);
+    } catch (error) {
+      console.error("Failed to skip puzzle:", error);
+      toast({
+        title: "Error",
+        description: "Failed to skip puzzle. Please try again.",
         variant: "destructive",
       });
     }
@@ -365,6 +432,21 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
           />
         </div>
 
+        {!gameOver && (
+          <div className="max-w-md mx-auto mt-6">
+            <Button
+              onClick={() => setShowSkipConfirm(true)}
+              size="lg"
+              variant="outline"
+              className="w-full h-14 text-body-md font-medium border-2"
+              data-testid="button-skip-puzzle"
+            >
+              <SkipForward className="w-5 h-5 mr-2" />
+              Skip This Puzzle
+            </Button>
+          </div>
+        )}
+
         {gameOver && (
           <div className="max-w-md mx-auto mt-8">
             <Button
@@ -438,6 +520,69 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
               onClick={() => navigate("/")}
               className="flex-1 h-14 text-body-md"
               data-testid="button-done"
+            >
+              Done
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <AlertDialog open={showSkipConfirm} onOpenChange={setShowSkipConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-h3">Skip This Puzzle?</AlertDialogTitle>
+            <AlertDialogDescription className="text-body-md">
+              Skipping won't earn you any points, but you'll be able to move on to the next puzzle. The correct answer will be revealed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="h-12 text-body-md" data-testid="button-cancel-skip">
+              Keep Playing
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleSkip}
+              className="h-12 text-body-md bg-muted hover:bg-muted/80"
+              data-testid="button-confirm-skip"
+            >
+              Skip Puzzle
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Dialog open={showFailureDialog} onOpenChange={setShowFailureDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="flex justify-center mb-4">
+              <AlertCircle className="w-32 h-32 text-muted-foreground" />
+            </div>
+            <DialogTitle className="text-h2 text-center">
+              {guesses.length === 0 ? "Puzzle Skipped" : "Nice Try!"}
+            </DialogTitle>
+            <DialogDescription className="text-body-lg text-center">
+              {guesses.length === 0 
+                ? "You can try again tomorrow with a new puzzle."
+                : "You ran out of attempts, but that's okay! Every puzzle is a chance to learn."}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="bg-card rounded-lg p-6 text-center border-2 border-muted">
+            <p className="text-body-md text-muted-foreground mb-3">The word was</p>
+            <p className="text-4xl font-bold text-foreground uppercase tracking-wider">{dailyWord}</p>
+          </div>
+          <div className="flex gap-4">
+            <Button
+              onClick={handleShare}
+              variant="outline"
+              className="flex-1 h-14 text-body-md"
+              data-testid="button-share-failure"
+            >
+              <Share2 className="w-5 h-5 mr-2" />
+              Share
+            </Button>
+            <Button
+              onClick={() => navigate("/")}
+              className="flex-1 h-14 text-body-md"
+              data-testid="button-done-failure"
             >
               Done
             </Button>
