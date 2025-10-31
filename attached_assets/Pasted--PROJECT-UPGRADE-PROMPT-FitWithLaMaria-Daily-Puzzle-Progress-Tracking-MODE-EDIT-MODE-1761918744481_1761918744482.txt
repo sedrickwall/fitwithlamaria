@@ -1,0 +1,173 @@
+# 🧠 PROJECT UPGRADE PROMPT — FitWithLaMaria (Daily Puzzle + Progress Tracking)
+# MODE: ⚙️ EDIT MODE (not Build)
+# Run using “npm run dev” or the default Replit Run button.
+
+###########################################################
+# STEP 1: DAILY PUZZLE LOGIC (Server Side)
+###########################################################
+
+# Update your puzzle route to rotate a new word daily and track user progress.
+cat <<'EOF' > server/routes/puzzle.ts
+import { Router } from "express";
+import crypto from "crypto";
+
+const router = Router();
+
+// --- Word Bank ---
+const WORDS = ["faith", "grace", "peace", "light", "truth", "praise", "hope", "smile", "shine", "move"];
+
+// --- Daily Word Logic ---
+function getDailyWord() {
+  const dayIndex = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+  const seed = crypto.createHash("sha256").update(dayIndex.toString()).digest("hex");
+  const randomIndex = parseInt(seed.substring(0, 8), 16) % WORDS.length;
+  return WORDS[randomIndex];
+}
+
+// --- GET Daily Puzzle ---
+router.get("/", (req, res) => {
+  const word = getDailyWord();
+  res.json({ wordLength: word.length, attempts: 6, date: new Date().toISOString().split("T")[0] });
+});
+
+// --- POST Guess Validation ---
+router.post("/guess", (req, res) => {
+  const { guess } = req.body;
+  const answer = getDailyWord();
+  const result = guess.split("").map((letter: string, i: number) => {
+    if (letter === answer[i]) return "correct";
+    if (answer.includes(letter)) return "present";
+    return "absent";
+  });
+  const isSolved = guess === answer;
+  res.json({ result, isSolved });
+});
+
+export default router;
+EOF
+
+###########################################################
+# STEP 2: ADD LOCAL PROGRESS TRACKING (Client Side)
+###########################################################
+
+# Enhance Puzzle.tsx to track daily streaks and solved history
+cat <<'EOF' > src/pages/Puzzle.tsx
+import { useEffect, useState } from "react";
+import { PuzzleGrid } from "@/components/PuzzleGrid";
+
+export default function Puzzle() {
+  const [puzzle, setPuzzle] = useState<{ wordLength: number; attempts: number; date?: string }>({ wordLength: 5, attempts: 6 });
+  const [guesses, setGuesses] = useState<string[]>([]);
+  const [currentGuess, setCurrentGuess] = useState("");
+  const [evaluation, setEvaluation] = useState<string[][]>([]);
+  const [isSolved, setIsSolved] = useState(false);
+  const [streak, setStreak] = useState<number>(() => parseInt(localStorage.getItem("streak") || "0"));
+  const [lastPlayed, setLastPlayed] = useState<string | null>(localStorage.getItem("lastPlayed"));
+
+  // Load daily puzzle
+  useEffect(() => {
+    fetch("/api/puzzle")
+      .then(res => res.json())
+      .then(data => {
+        setPuzzle(data);
+        if (lastPlayed !== data.date) {
+          setGuesses([]);
+          setEvaluation([]);
+          setIsSolved(false);
+        }
+      });
+  }, []);
+
+  // Handle guess submission
+  const handleSubmit = async () => {
+    if (isSolved || currentGuess.length !== puzzle.wordLength) return;
+
+    const res = await fetch("/api/puzzle/guess", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ guess: currentGuess }),
+    });
+    const data = await res.json();
+
+    setEvaluation(prev => [...prev, data.result]);
+    setGuesses(prev => [...prev, currentGuess]);
+    setCurrentGuess("");
+
+    if (data.isSolved) {
+      setIsSolved(true);
+      const newStreak = lastPlayed === puzzle.date ? streak : streak + 1;
+      setStreak(newStreak);
+      localStorage.setItem("streak", newStreak.toString());
+      localStorage.setItem("lastPlayed", puzzle.date || "");
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center gap-4 text-center">
+      <h1 className="text-3xl font-bold">🧩 Daily Puzzle</h1>
+      <p className="text-muted-foreground">Keep your streak alive — {streak} days strong!</p>
+      <PuzzleGrid
+        guesses={guesses}
+        currentGuess={currentGuess}
+        currentRow={guesses.length}
+        evaluation={evaluation as any}
+      />
+      <input
+        value={currentGuess}
+        onChange={(e) => setCurrentGuess(e.target.value.toLowerCase())}
+        maxLength={puzzle.wordLength}
+        disabled={isSolved}
+        className="border px-3 py-2 rounded text-lg tracking-widest text-center uppercase"
+        placeholder="Type guess..."
+      />
+      <button
+        onClick={handleSubmit}
+        className="bg-primary text-white px-4 py-2 rounded mt-2 disabled:bg-gray-400"
+        disabled={isSolved}
+      >
+        Submit
+      </button>
+      {isSolved && <p className="text-green-600 font-semibold mt-2">🎉 You solved it! Come back tomorrow!</p>}
+    </div>
+  );
+}
+EOF
+
+###########################################################
+# STEP 3: FUTURE-READY DATABASE PREP (OPTIONAL)
+###########################################################
+
+# Create server/db/schema.ts to prepare for user tracking or subscriptions
+mkdir -p server/db
+cat <<'EOF' > server/db/schema.ts
+import { pgTable, serial, text, integer, timestamp } from "drizzle-orm/pg-core";
+
+export const users = pgTable("users", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull().unique(),
+  streak: integer("streak").default(0),
+  lastPlayed: timestamp("last_played"),
+});
+
+export const puzzles = pgTable("puzzles", {
+  id: serial("id").primaryKey(),
+  word: text("word").notNull(),
+  date: timestamp("date").notNull().defaultNow(),
+});
+EOF
+
+###########################################################
+# STEP 4: RUN AND TEST
+###########################################################
+
+# Switch Replit to EDIT MODE if not already.
+# Then run the project:
+npm run dev
+
+# Visit: https://fitwithlamaria.replit.app/puzzle
+# You’ll now have:
+# ✅ Daily rotating puzzles
+# ✅ Local streak + progress tracking
+# ✅ Secure backend logic
+# ✅ Future DB schema for subscriptions
+echo "🎯 Success! FitWithLaMaria daily puzzle and progress tracking are now live."
