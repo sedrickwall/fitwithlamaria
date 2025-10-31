@@ -1,0 +1,76 @@
+# 🧩 PHASE 2A – Onboarding Flow Setup
+# Mode: EDIT
+
+# 1️⃣ Create new screen
+mkdir -p src/pages && touch src/pages/Onboarding.tsx
+
+cat <<'EOF' > src/pages/Onboarding.tsx
+import { useState } from "react";
+import { useLocation } from "wouter";
+
+export default function Onboarding() {
+  const [, setLocation] = useLocation();
+  const [inviteCode, setInviteCode] = useState("");
+  const [reminderTime, setReminderTime] = useState("Morning");
+  const [showVideo, setShowVideo] = useState(false);
+
+  const handleNext = () => setShowVideo(true);
+  const handleFinish = () => setLocation("/home");
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen gap-6 text-center px-4">
+      <h1 className="text-4xl font-bold">Move your body, sharpen your mind.</h1>
+      {!showVideo ? (
+        <div className="flex flex-col gap-4 w-full max-w-sm">
+          <input
+            placeholder="Invite Code (optional)"
+            value={inviteCode}
+            onChange={(e) => setInviteCode(e.target.value)}
+            className="border p-2 rounded w-full"
+          />
+          <label className="font-semibold">Select reminder time:</label>
+          <select
+            className="border p-2 rounded"
+            value={reminderTime}
+            onChange={(e) => setReminderTime(e.target.value)}
+          >
+            <option>Morning</option>
+            <option>Afternoon</option>
+            <option>Evening</option>
+            <option>Skip</option>
+          </select>
+          <button
+            onClick={handleNext}
+            className="bg-primary text-white py-2 rounded font-semibold"
+          >
+            Continue →
+          </button>
+        </div>
+      ) : (
+        <div className="flex flex-col items-center gap-4">
+          <iframe
+            width="320"
+            height="180"
+            src="https://www.youtube.com/embed/YOUR_WELCOME_VIDEO_ID?autoplay=1&mute=1"
+            title="Welcome video"
+            className="rounded-lg shadow-lg"
+          ></iframe>
+          <p className="text-lg font-semibold">
+            Welcome to Fit with LaMaria! Let’s get moving and thinking together.
+          </p>
+          <button
+            onClick={handleFinish}
+            className="bg-green-600 text-white py-2 px-4 rounded"
+          >
+            Let’s Go 💪
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+EOF
+
+# 2️⃣ Add route in App.tsx (or Router component)
+# Insert before the Dashboard route:
+# <Route path="/onboarding" component={Onboarding} />
