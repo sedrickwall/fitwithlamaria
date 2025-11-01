@@ -5,11 +5,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import onboardingConfig from "@/config/onboarding.json";
 
 // Dynamically import images based on config
-const imageModules = import.meta.glob('@assets/stock_images/*.{jpg,jpeg,png}', { eager: true });
+const imageModules = import.meta.glob('/attached_assets/stock_images/*.{jpg,jpeg,png}', { eager: true });
 
 const slides = onboardingConfig.slides.map((slide) => {
-  const imagePath = `@assets/stock_images/${slide.image}`;
-  const imageModule = imageModules[`/attached_assets/stock_images/${slide.image}`] as { default: string };
+  const imagePath = `/attached_assets/stock_images/${slide.image}`;
+  const imageModule = imageModules[imagePath] as { default: string };
   
   return {
     image: imageModule?.default || '',
