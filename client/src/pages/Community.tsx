@@ -30,6 +30,10 @@ export default function Community() {
       }
 
       try {
+        // TEMPORARY: Premium gating disabled for testing
+        setIsPremium(true);
+        
+        /* PRODUCTION CODE - Uncomment to re-enable premium gating
         const firestoreUser = await userOperations.getUser(user.uid);
         const premium = firestoreUser?.premium === true;
         setIsPremium(premium);
@@ -37,6 +41,7 @@ export default function Community() {
         if (!premium) {
           setShowPremiumModal(true);
         }
+        */
       } catch (error) {
         console.error("Error checking premium status:", error);
         setIsPremium(false);

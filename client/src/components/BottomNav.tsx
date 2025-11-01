@@ -22,8 +22,13 @@ export function BottomNav() {
       }
 
       try {
+        // TEMPORARY: Premium gating disabled for testing
+        setIsPremium(true);
+        
+        /* PRODUCTION CODE - Uncomment to re-enable premium gating
         const firestoreUser = await userOperations.getUser(user.uid);
         setIsPremium(firestoreUser?.premium === true);
+        */
       } catch (error) {
         console.error("Error checking premium status:", error);
         setIsPremium(false);

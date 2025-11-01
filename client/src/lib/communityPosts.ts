@@ -5,8 +5,11 @@ export async function createWorkoutPost(userId: string, userName: string, workou
   if (!isFirebaseReady()) return;
   
   try {
+    // TEMPORARY: Premium check disabled for testing
+    /* PRODUCTION CODE - Uncomment to re-enable premium gating
     const firestoreUser = await userOperations.getUser(userId);
     if (!firestoreUser?.premium) return;
+    */
     
     const categoryEmojis: Record<string, string> = {
       seated: "🪑",
@@ -30,8 +33,11 @@ export async function createPuzzlePost(userId: string, userName: string, puzzleT
   if (!isFirebaseReady()) return;
   
   try {
+    // TEMPORARY: Premium check disabled for testing
+    /* PRODUCTION CODE - Uncomment to re-enable premium gating
     const firestoreUser = await userOperations.getUser(userId);
     if (!firestoreUser?.premium) return;
+    */
     
     if (!solved) return; // Only create posts for successful completions
     
