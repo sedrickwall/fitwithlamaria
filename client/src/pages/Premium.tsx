@@ -103,6 +103,15 @@ export default function Premium() {
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("monthly");
   const totalPoints = profile?.totalPoints || 0;
 
+  // Calculate trial end date (7 days from now)
+  const trialEndDate = new Date();
+  trialEndDate.setDate(trialEndDate.getDate() + 7);
+  const formattedTrialEndDate = trialEndDate.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric', 
+    year: 'numeric' 
+  });
+
   const handleUpgrade = async (planType: "monthly" | "yearly") => {
     try {
       // Use environment variables for price IDs
@@ -174,84 +183,79 @@ export default function Premium() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 mb-12">
-          <Card className="border-2 hover:border-primary/50 transition-colors">
-            <CardHeader>
-              <CardTitle className="text-h3">Monthly</CardTitle>
-              <CardDescription>Pay month-to-month</CardDescription>
-              <div className="mt-4">
-                <span className="text-4xl font-bold">$4.99</span>
-                <span className="text-muted-foreground">/month</span>
+        <div className="space-y-6 mb-12 max-w-2xl mx-auto">
+          <Card className="border-2 border-primary shadow-lg relative overflow-hidden">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-1">
+                    ANNUAL SUBSCRIPTION
+                  </p>
+                  <span className="inline-block bg-red-100 text-red-600 text-xs font-bold px-2 py-1 rounded">
+                    Save 59%
+                  </span>
+                </div>
+                <input 
+                  type="radio" 
+                  checked={selectedPlan === "yearly"}
+                  onChange={() => setSelectedPlan("yearly")}
+                  className="w-6 h-6 text-primary cursor-pointer"
+                  data-testid="radio-yearly"
+                />
               </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <ul className="space-y-3">
-                {features.map((feature, index) => {
-                  const Icon = feature.icon;
-                  return (
-                    <li key={index} className="flex items-start gap-2">
-                      <Icon className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span>{feature.text}</span>
-                    </li>
-                  );
-                })}
-              </ul>
               
-              <Button 
-                onClick={() => handleUpgrade("monthly")}
-                className="w-full h-14 text-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
-                data-testid="button-upgrade-monthly"
-              >
-                <Crown className="w-5 h-5 mr-2" />
-                Subscribe Monthly
-              </Button>
-              <p className="text-sm text-center text-muted-foreground">
-                Billed monthly • Cancel anytime
+              <div className="mb-3">
+                <span className="text-4xl font-bold">$49</span>
+                <span className="text-xl text-muted-foreground">/year</span>
+              </div>
+              
+              <p className="text-green-600 font-semibold mb-2" data-testid="text-trial-yearly">
+                7 days free trial
+              </p>
+              
+              <p className="text-sm text-muted-foreground">
+                then <span className="font-semibold text-foreground">$49</span> per year starting on {formattedTrialEndDate}. Cancel anytime.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-primary shadow-lg relative overflow-hidden">
-            <div className="absolute top-0 right-0 bg-gradient-to-br from-green-500 to-emerald-500 text-white px-4 py-1 text-sm font-semibold">
-              Best Value
-            </div>
-            <CardHeader>
-              <CardTitle className="text-h3">Yearly</CardTitle>
-              <CardDescription>Save $10.88 per year</CardDescription>
-              <div className="mt-4">
-                <span className="text-4xl font-bold">$49</span>
-                <span className="text-muted-foreground">/year</span>
+          <Card className="border-2 hover:border-primary/50 transition-colors">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between mb-4">
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+                  MONTHLY SUBSCRIPTION
+                </p>
+                <input 
+                  type="radio" 
+                  checked={selectedPlan === "monthly"}
+                  onChange={() => setSelectedPlan("monthly")}
+                  className="w-6 h-6 text-primary cursor-pointer"
+                  data-testid="radio-monthly"
+                />
               </div>
-              <p className="text-sm text-success font-medium">
-                Only $4.08/month
-              </p>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <ul className="space-y-3">
-                {features.map((feature, index) => {
-                  const Icon = feature.icon;
-                  return (
-                    <li key={index} className="flex items-start gap-2">
-                      <Icon className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-                      <span>{feature.text}</span>
-                    </li>
-                  );
-                })}
-              </ul>
               
-              <Button 
-                onClick={() => handleUpgrade("yearly")}
-                className="w-full h-14 text-lg bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600"
-                data-testid="button-upgrade-yearly"
-              >
-                <Crown className="w-5 h-5 mr-2" />
-                Subscribe Yearly
-              </Button>
-              <p className="text-sm text-center text-muted-foreground">
-                One-time yearly payment • Best value
+              <div className="mb-3">
+                <span className="text-4xl font-bold">$4.99</span>
+                <span className="text-xl text-muted-foreground">/month</span>
+              </div>
+              
+              <p className="text-green-600 font-semibold mb-2" data-testid="text-trial-monthly">
+                7 days free trial
+              </p>
+              
+              <p className="text-sm text-muted-foreground">
+                then <span className="font-semibold text-foreground">$4.99</span> per month starting on {formattedTrialEndDate}. Cancel anytime.
               </p>
             </CardContent>
           </Card>
+
+          <Button 
+            onClick={() => handleUpgrade(selectedPlan)}
+            className="w-full h-14 text-lg bg-[#8B7355] hover:bg-[#75614A] text-white rounded-full"
+            data-testid="button-continue-checkout"
+          >
+            Continue to Checkout
+          </Button>
         </div>
 
         <div className="text-center text-sm text-muted-foreground">
