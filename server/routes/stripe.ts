@@ -8,7 +8,7 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2025-10-29.clover",
+  apiVersion: "2024-06-20",
 });
 
 // Webhook endpoint needs raw body for signature verification
@@ -56,9 +56,13 @@ router.post(
           metadata: session.metadata,
         });
 
-        // TODO: Update user premium status in Firestore
-        // This will be handled on the client side after redirect for MVP
-        // For production, implement Firebase Admin SDK here
+        // NOTE: Firestore premium status update for production
+        // To implement server-side premium status updates:
+        // 1. Install Firebase Admin SDK: npm install firebase-admin
+        // 2. Initialize with service account credentials
+        // 3. Update user document: admin.firestore().doc(`users/${metadata.userId}`).update({premium: true})
+        // 
+        // For MVP, premium status is updated client-side in Success.tsx after session verification
         
         break;
       }
