@@ -21,6 +21,7 @@ import { useDailyStatus } from "@/hooks/useDailyStatus";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { savePuzzleAttempt } from "@/lib/localStorage";
+import { createPuzzlePost } from "@/lib/communityPosts";
 
 interface WordSearchProps {
   puzzleIndex: number;
@@ -136,6 +137,11 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
       attempts: allFoundWords.length,
       pointsEarned,
     });
+
+    // Create community post for premium users
+    if (isAuthenticated && user) {
+      await createPuzzlePost(user.uid, user.displayName || "Member", "wordsearch", allFoundWords.length, true);
+    }
 
     setTimeout(() => {
       setShowSuccess(false);

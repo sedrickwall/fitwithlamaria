@@ -33,6 +33,7 @@ import { savePuzzleAttempt, getPuzzleAttempts } from "@/lib/localStorage";
 import { puzzleOperations } from "@/services/firestore";
 import { isFirebaseReady } from "@/services/firebase";
 import { PuzzleAttempt } from "@shared/schema";
+import { createPuzzlePost } from "@/lib/communityPosts";
 
 interface PuzzleProps {
   puzzleIndex: number;
@@ -215,6 +216,9 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
                 attempts: newGuesses.length,
                 pointsEarned: totalPoints,
               });
+              
+              // Create community post for premium users
+              await createPuzzlePost(user.uid, user.displayName || "Member", "wordle", newGuesses.length, true);
             } catch (error) {
               console.error("Error syncing puzzle attempt to Firestore:", error);
             }

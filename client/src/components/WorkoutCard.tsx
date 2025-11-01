@@ -22,10 +22,10 @@ export function WorkoutCard({ workout, onClick }: WorkoutCardProps) {
     <button
       onClick={onClick}
       data-testid={`workout-card-${workout.id}`}
-      className="w-full bg-card rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all focus:outline-none focus:ring-4 focus:ring-ring group"
+      className="w-full bg-card rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all focus:outline-none focus:ring-4 focus:ring-ring group flex flex-col"
       aria-label={`${workout.title} - ${workout.duration} minute ${workout.difficulty} workout`}
     >
-      <div className="relative aspect-video bg-gradient-to-br from-primary/20 to-accent overflow-hidden">
+      <div className="relative w-full h-48 bg-gradient-to-br from-primary/20 to-accent overflow-hidden flex-shrink-0">
         {workout.thumbnail ? (
           <img 
             src={workout.thumbnail} 
@@ -47,7 +47,7 @@ export function WorkoutCard({ workout, onClick }: WorkoutCardProps) {
           </span>
         </div>
       </div>
-      <div className="p-6">
+      <div className="p-6 flex-grow">
         <h3 className="text-h3 font-semibold text-card-foreground mb-2">
           {workout.title}
         </h3>

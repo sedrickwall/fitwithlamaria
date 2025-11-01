@@ -1,28 +1,16 @@
-import { TrendingUp, User, Settings, HelpCircle, Info, LogOut } from "lucide-react";
+import { TrendingUp, User, Settings, HelpCircle, Info, LogOut, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 import { BottomNav } from "@/components/BottomNav";
-import { Card } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 
 export default function More() {
   const { user, signOut } = useAuth();
-  const { toast } = useToast();
 
   const handleSignOut = async () => {
     try {
       await signOut();
-      toast({
-        title: "Signed out",
-        description: "You've been successfully signed out",
-      });
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to sign out. Please try again.",
-        variant: "destructive",
-      });
+      console.error("Error signing out:", error);
     }
   };
 
@@ -30,99 +18,105 @@ export default function More() {
     {
       icon: TrendingUp,
       label: "Progress",
-      description: "View your streaks and achievements",
-      path: "/progress",
-      color: "from-primary to-primary/80",
-      testId: "menu-progress",
+      href: "/progress",
+      testId: "link-progress"
     },
     {
       icon: User,
-      label: user ? "My Account" : "Sign In or Join Now",
-      description: user ? "Manage your profile and settings" : "Create an account or sign in",
-      path: user ? "/account" : "/login",
-      color: "from-secondary to-secondary/80",
-      testId: "menu-account",
+      label: "Account",
+      href: "/account",
+      testId: "link-account",
+      requiresAuth: true
     },
     {
       icon: Settings,
       label: "Settings",
-      description: "Customize your experience",
-      path: "/settings",
-      color: "from-accent to-accent/80",
-      testId: "menu-settings",
+      href: "/settings",
+      testId: "link-settings"
     },
     {
       icon: HelpCircle,
       label: "FAQ",
-      description: "Get answers to common questions",
-      path: "/faq",
-      color: "from-warning to-warning/80",
-      testId: "menu-faq",
+      href: "/faq",
+      testId: "link-faq"
     },
     {
       icon: Info,
-      label: "About Fit with LaMaria",
-      description: "Learn more about our mission",
-      path: "/about",
-      color: "from-primary to-secondary",
-      testId: "menu-about",
-    },
+      label: "About",
+      href: "/about",
+      testId: "link-about"
+    }
   ];
+
+  const visibleMenuItems = menuItems.filter(item => !item.requiresAuth || user);
 
   return (
     <div className="min-h-screen bg-background pb-24">
       <div className="max-w-2xl mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-h1 font-bold text-foreground mb-2" data-testid="text-more-title">
-            More
-          </h1>
-          <p className="text-body-lg text-muted-foreground">
-            {user ? `Welcome back, ${user.displayName || 'there'}!` : 'Explore more options'}
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <Link key={item.path} href={item.path}>
-                <Card 
-                  className="p-6 hover:shadow-lg transition-all cursor-pointer border-2 hover:border-primary/20"
-                  data-testid={item.testId}
+        {!user && (
+          <div className="mb-8 text-center">
+            <h2 className="text-h2 font-bold text-foreground mb-2">
+              Sign In or Join Now
+            </h2>
+            <p className="text-body-md text-muted-foreground mb-6">
+              Log in on any platform, sync Favorites & more!
+            </p>
+            <div className="flex items-center justify-center gap-4">
+              <Link href="/login">
+                <button
+                  className="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-full font-semibold hover:shadow-lg transition-all text-body-lg"
+                  data-testid="button-signin-more"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${item.color} flex items-center justify-center flex-shrink-0`}>
-                      <Icon className="w-7 h-7 text-white" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-h4 font-bold text-foreground mb-1">
-                        {item.label}
-                      </h3>
-                      <p className="text-body-md text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-                </Card>
+                  Sign In
+                </button>
               </Link>
-            );
-          })}
-        </div>
-
-        {user && (
-          <div className="mt-8 pt-8 border-t border-border">
-            <Button
-              onClick={handleSignOut}
-              variant="outline"
-              size="lg"
-              className="w-full h-14 text-body-lg font-semibold gap-2"
-              data-testid="button-sign-out"
-            >
-              <LogOut className="w-5 h-5" />
-              Sign Out
-            </Button>
+              <Link href="/login">
+                <button
+                  className="px-8 py-3 bg-muted text-foreground rounded-full font-semibold hover:bg-muted/70 transition-all text-body-lg"
+                  data-testid="button-joinnow-more"
+                >
+                  Join Now
+                </button>
+              </Link>
+            </div>
           </div>
         )}
+
+        <div className="space-y-2">
+          {visibleMenuItems.map((item) => (
+            <Link key={item.href} href={item.href}>
+              <button className="w-full p-5 bg-card rounded-lg hover:bg-muted/30 transition-colors border border-border flex items-center gap-4 group">
+                <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                  <item.icon className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
+                </div>
+                <span className="text-body-lg font-medium text-foreground flex-1 text-left" data-testid={item.testId}>
+                  {item.label}
+                </span>
+                <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" aria-hidden="true" />
+              </button>
+            </Link>
+          ))}
+
+          {user && (
+            <button
+              onClick={handleSignOut}
+              className="w-full p-5 bg-card rounded-lg hover:bg-muted/30 transition-colors border border-border flex items-center gap-4 group mt-6"
+              data-testid="button-signout"
+            >
+              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                <LogOut className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
+              </div>
+              <span className="text-body-lg font-medium text-foreground flex-1 text-left">
+                Sign Out
+              </span>
+              <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" aria-hidden="true" />
+            </button>
+          )}
+        </div>
+
+        <div className="mt-12 text-center">
+          <p className="text-body-sm text-muted-foreground">v1.0.0</p>
+        </div>
       </div>
 
       <BottomNav />

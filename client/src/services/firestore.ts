@@ -27,9 +27,12 @@ import {
   getDocs,
   addDoc,
   serverTimestamp,
+  onSnapshot,
+  increment,
   type Firestore,
   type CollectionReference,
-  type DocumentData
+  type DocumentData,
+  type Unsubscribe
 } from "firebase/firestore";
 import { db, isFirebaseReady } from "./firebase";
 
@@ -287,6 +290,24 @@ export interface FirestoreLeaderboardEntry {
   rank?: number;
 }
 
+export interface FirestoreCommunityPost {
+  id: string;
+  userId: string;
+  userName: string;
+  text: string;
+  type: "activity" | "discussion";
+  cheersCount: number;
+  createdAt: any;
+}
+
+export interface FirestoreCommunityComment {
+  id: string;
+  userId: string;
+  userName: string;
+  text: string;
+  createdAt: any;
+}
+
 export const communityOperations = {
   // Get top users for leaderboard
   async getLeaderboard(limitCount: number = 10): Promise<FirestoreLeaderboardEntry[]> {
@@ -308,6 +329,96 @@ export const communityOperations = {
         currentStreak: data.currentStreak || 0,
         rank: index + 1
       } as FirestoreLeaderboardEntry;
+    });
+  },
+
+  // Create a community post
+  async createPost(post: Omit<FirestoreCommunityPost, "id" | "createdAt" | "cheersCount">): Promise<string> {
+    if (!db) throw new Error("Firebase not initialized");
+    
+    const docRef = await addDoc(collection(db, "community_posts"), {
+      ...post,
+      cheersCount: 0,
+      createdAt: serverTimestamp()
+    });
+    
+    return docRef.id;
+  },
+
+  // Subscribe to community posts (realtime)
+  subscribeToPosts(
+    limitCount: number = 10,
+    onUpdate: (posts: FirestoreCommunityPost[]) => void
+  ): Unsubscribe {
+    if (!db) {
+      return () => {};
+    }
+    
+    const q = query(
+      collection(db, "community_posts"),
+      orderBy("createdAt", "desc"),
+      limit(limitCount)
+    );
+    
+    return onSnapshot(q, (snapshot) => {
+      const posts = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as FirestoreCommunityPost));
+      
+      onUpdate(posts);
+    });
+  },
+
+  // Increment cheer count on a post
+  async cheerPost(postId: string): Promise<void> {
+    if (!db) throw new Error("Firebase not initialized");
+    
+    const postRef = doc(db, "community_posts", postId);
+    await updateDoc(postRef, {
+      cheersCount: increment(1)
+    });
+  },
+
+  // Add a comment to a post
+  async addComment(
+    postId: string,
+    comment: Omit<FirestoreCommunityComment, "id" | "createdAt">
+  ): Promise<string> {
+    if (!db) throw new Error("Firebase not initialized");
+    
+    const docRef = await addDoc(
+      collection(db, "community_posts", postId, "comments"),
+      {
+        ...comment,
+        createdAt: serverTimestamp()
+      }
+    );
+    
+    return docRef.id;
+  },
+
+  // Subscribe to comments for a post (realtime)
+  subscribeToComments(
+    postId: string,
+    onUpdate: (comments: FirestoreCommunityComment[]) => void
+  ): Unsubscribe {
+    if (!db) {
+      return () => {};
+    }
+    
+    const q = query(
+      collection(db, "community_posts", postId, "comments"),
+      orderBy("createdAt", "desc")
+    );
+    
+    return onSnapshot(q, (snapshot) => {
+      const comments = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      } as FirestoreCommunityComment));
+      
+      onUpdate(comments);
     });
   }
 };

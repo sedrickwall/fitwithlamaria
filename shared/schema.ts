@@ -86,11 +86,39 @@ export const leaderboardEntrySchema = z.object({
 
 export type LeaderboardEntry = z.infer<typeof leaderboardEntrySchema>;
 
+// Community post schema
+export const communityPostSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  userName: z.string(),
+  text: z.string(),
+  type: z.enum(["activity", "discussion"]),
+  cheersCount: z.number().default(0),
+  createdAt: z.any(), // Firestore Timestamp
+});
+
+export type CommunityPost = z.infer<typeof communityPostSchema>;
+
+// Community comment schema
+export const communityCommentSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  userName: z.string(),
+  text: z.string(),
+  createdAt: z.any(), // Firestore Timestamp
+});
+
+export type CommunityComment = z.infer<typeof communityCommentSchema>;
+
 // Insert schemas (for creating new records)
 export const insertUserProfileSchema = userProfileSchema.omit({ id: true });
 export const insertWorkoutCompletionSchema = workoutCompletionSchema.omit({ id: true });
 export const insertPuzzleAttemptSchema = puzzleAttemptSchema.omit({ id: true });
+export const insertCommunityPostSchema = communityPostSchema.omit({ id: true, createdAt: true });
+export const insertCommunityCommentSchema = communityCommentSchema.omit({ id: true, createdAt: true });
 
 export type InsertUserProfile = z.infer<typeof insertUserProfileSchema>;
 export type InsertWorkoutCompletion = z.infer<typeof insertWorkoutCompletionSchema>;
 export type InsertPuzzleAttempt = z.infer<typeof insertPuzzleAttemptSchema>;
+export type InsertCommunityPost = z.infer<typeof insertCommunityPostSchema>;
+export type InsertCommunityComment = z.infer<typeof insertCommunityCommentSchema>;

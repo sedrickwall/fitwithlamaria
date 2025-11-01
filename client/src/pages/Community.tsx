@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { Users, MessageCircle, Trophy, Heart } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { useLocation } from "wouter";
 import { BottomNav } from "@/components/BottomNav";
-import { Card } from "@/components/ui/card";
 import { PremiumLockedModal } from "@/components/PremiumLockedModal";
+import { PostCard } from "@/components/PostCard";
+import { CommentModal } from "@/components/CommentModal";
 import { useAuth } from "@/contexts/AuthContext";
-import { userOperations } from "@/services/firestore";
+import { userOperations, communityOperations, type FirestoreCommunityPost } from "@/services/firestore";
 import { isFirebaseReady } from "@/services/firebase";
 
 export default function Community() {
@@ -14,6 +15,10 @@ export default function Community() {
   const [isPremium, setIsPremium] = useState<boolean | null>(null);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [posts, setPosts] = useState<FirestoreCommunityPost[]>([]);
+  const [cheeredPosts, setCheeredPosts] = useState<Set<string>>(new Set());
+  const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
+  const [selectedPostText, setSelectedPostText] = useState("");
 
   useEffect(() => {
     const checkPremiumStatus = async () => {
@@ -44,6 +49,39 @@ export default function Community() {
     checkPremiumStatus();
   }, [user]);
 
+  // Subscribe to realtime posts updates
+  useEffect(() => {
+    if (!isPremium || !isFirebaseReady()) return;
+
+    const unsubscribe = communityOperations.subscribeToPosts(10, (updatedPosts) => {
+      setPosts(updatedPosts);
+    });
+
+    return () => unsubscribe();
+  }, [isPremium]);
+
+  const handleCheer = async (postId: string) => {
+    try {
+      await communityOperations.cheerPost(postId);
+      setCheeredPosts(prev => new Set(prev).add(postId));
+    } catch (error) {
+      console.error("Error cheering post:", error);
+    }
+  };
+
+  const handleComment = (postId: string) => {
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      setSelectedPostId(postId);
+      setSelectedPostText(post.text);
+    }
+  };
+
+  const handleCloseComments = () => {
+    setSelectedPostId(null);
+    setSelectedPostText("");
+  };
+
   const handleModalClose = () => {
     setShowPremiumModal(false);
     navigate("/");
@@ -72,81 +110,52 @@ export default function Community() {
 
   return (
     <div className="min-h-screen bg-background pb-24">
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-3xl mx-auto px-6 py-8">
         <div className="mb-8">
-          <h1 className="text-h1 font-bold text-foreground mb-2" data-testid="text-community-title">
-            Community
-          </h1>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-white" aria-hidden="true" />
+            </div>
+            <h1 className="text-h1 font-bold text-foreground" data-testid="text-community-title">
+              Community Feed
+            </h1>
+          </div>
           <p className="text-body-lg text-muted-foreground">
-            Connect with others on their fitness journey
+            Stay motivated with your community
           </p>
         </div>
 
-        <div className="space-y-6">
-          <Card className="p-6 bg-gradient-to-br from-primary/5 to-secondary/5">
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
-                <Users className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h2 className="text-h3 font-bold text-foreground">Welcome to the Community!</h2>
-                <p className="text-body-sm text-muted-foreground">Coming soon</p>
-              </div>
+        <div className="space-y-4">
+          {posts.length === 0 ? (
+            <div className="text-center py-12 bg-muted/30 rounded-lg">
+              <Sparkles className="w-16 h-16 text-primary/40 mx-auto mb-4" aria-hidden="true" />
+              <h2 className="text-h3 font-bold text-foreground mb-2">
+                No posts yet
+              </h2>
+              <p className="text-body-lg text-muted-foreground max-w-md mx-auto">
+                Complete a workout or puzzle to be the first to share your progress with the community!
+              </p>
             </div>
-            <p className="text-body-md text-foreground">
-              This is where you'll connect with other members, share your progress, and stay motivated together.
-            </p>
-          </Card>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card className="p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <MessageCircle className="w-8 h-8 text-primary" />
-                <h3 className="text-h4 font-bold text-foreground">Group Chat</h3>
-              </div>
-              <p className="text-body-md text-muted-foreground">
-                Chat with fellow members and share your fitness journey
-              </p>
-            </Card>
-
-            <Card className="p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <Trophy className="w-8 h-8 text-warning" />
-                <h3 className="text-h4 font-bold text-foreground">Challenges</h3>
-              </div>
-              <p className="text-body-md text-muted-foreground">
-                Join weekly challenges and compete with friends
-              </p>
-            </Card>
-
-            <Card className="p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <Heart className="w-8 h-8 text-accent" />
-                <h3 className="text-h4 font-bold text-foreground">Support</h3>
-              </div>
-              <p className="text-body-md text-muted-foreground">
-                Give and receive encouragement from the community
-              </p>
-            </Card>
-
-            <Card className="p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <Users className="w-8 h-8 text-secondary" />
-                <h3 className="text-h4 font-bold text-foreground">Member Stories</h3>
-              </div>
-              <p className="text-body-md text-muted-foreground">
-                Read inspiring stories from other members
-              </p>
-            </Card>
-          </div>
-
-          <Card className="p-6 bg-muted/50">
-            <p className="text-body-md text-center text-muted-foreground">
-              🚧 Community features are currently under development and will be available soon!
-            </p>
-          </Card>
+          ) : (
+            posts.map((post) => (
+              <PostCard
+                key={post.id}
+                post={post}
+                onCheer={handleCheer}
+                onComment={handleComment}
+                cheeredPosts={cheeredPosts}
+              />
+            ))
+          )}
         </div>
       </div>
+
+      <CommentModal
+        postId={selectedPostId}
+        postText={selectedPostText}
+        isOpen={selectedPostId !== null}
+        onClose={handleCloseComments}
+      />
 
       <BottomNav />
     </div>

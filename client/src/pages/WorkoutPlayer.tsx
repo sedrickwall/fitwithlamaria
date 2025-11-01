@@ -10,6 +10,7 @@ import { useDailyStatus } from "@/hooks/useDailyStatus";
 import { useAuth } from "@/contexts/AuthContext";
 import { saveWorkoutCompletion, getWorkoutCompletions } from "@/lib/localStorage";
 import { calculateWorkoutPoints } from "@/lib/points";
+import { createWorkoutPost } from "@/lib/communityPosts";
 
 const SAMPLE_WORKOUTS: Workout[] = [
   {
@@ -101,7 +102,7 @@ export default function WorkoutPlayer() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const { profile, addPoints } = useUserProfile();
   const { completeWorkout } = useDailyStatus();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const workout = SAMPLE_WORKOUTS.find(w => w.id === params?.id);
   const totalPoints = profile?.totalPoints || 0;
@@ -116,7 +117,7 @@ export default function WorkoutPlayer() {
     return null;
   }
 
-  const handleComplete = () => {
+  const handleComplete = async () => {
     if (!profile) return;
 
     const today = new Date().toISOString().split('T')[0];
@@ -146,6 +147,11 @@ export default function WorkoutPlayer() {
     saveWorkoutCompletion(completion);
     completeWorkout();
     addPoints(points);
+
+    // Create community post for premium users
+    if (isAuthenticated && user) {
+      await createWorkoutPost(user.uid, user.displayName || "Member", workout.title, workout.category);
+    }
 
     setCompleted(true);
     
