@@ -26,6 +26,7 @@ Preferred communication style: Simple, everyday language.
 **Framework:** React 18 with TypeScript, built using Vite for fast development and optimized production builds
 
 **Routing:** Wouter (lightweight React router) with the following pages:
+- Onboarding (/onboarding) - First-time user experience with carousel (Growth, Wellness, Journey)
 - Dashboard (/) - Main hub showing daily status
 - Workouts (/workouts) - Browse workout library
 - WorkoutPlayer (/workout/:id) - Video player for individual workouts
@@ -33,6 +34,15 @@ Preferred communication style: Simple, everyday language.
 - Progress (/progress) - Stats, calendar, and leaderboard
 - Premium (/premium) - Subscription upgrade page with Stripe checkout
 - Success (/success) - Payment confirmation page
+- Login (/login) - Firebase authentication
+
+**First-Time User Experience:**
+- New users automatically redirected to /onboarding on first visit
+- 3-slide carousel showcasing Growth, Wellness, and Journey themes
+- Each slide features inspiring imagery and motivational messaging
+- Users can skip to Premium page or navigate as "already a subscriber" to Dashboard
+- Once completed, flag stored in localStorage prevents re-showing
+- Design matches modern fitness app patterns with clean imagery and rounded buttons
 
 **State Management:** React hooks with custom hooks for domain logic:
 - `useUserProfile` - User data and points management
