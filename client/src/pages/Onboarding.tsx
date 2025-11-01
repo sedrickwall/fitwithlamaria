@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import growthImage from "@assets/stock_images/happy_senior_woman_s_9d6d1d16.jpg";
+import growthImage from "@assets/stock_images/active_senior_woman__75027367.jpg";
 import wellnessImage from "@assets/stock_images/woman_doing_home_wor_82e3f6e8.jpg";
 import journeyImage from "@assets/stock_images/joyful_woman_celebra_b93fe6ff.jpg";
 
