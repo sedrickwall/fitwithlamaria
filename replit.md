@@ -10,10 +10,11 @@ FitWord is a premium fitness and brain health application designed for active se
 
 **Core Features:**
 - Daily workout library (seated, standing, balance exercises)
-- Wordle-style daily puzzle unlocked after workout completion
+- Progressive puzzle system (alternating Wordle/Word Search with difficulty scaling)
 - Streak tracking and points system
 - Progress visualization with calendar and statistics
 - Leaderboard for community engagement
+- Community feed with realtime social interactions (premium feature)
 
 ## User Preferences
 
@@ -32,8 +33,14 @@ Preferred communication style: Simple, everyday language.
 - WorkoutPlayer (/workout/:id) - Video player for individual workouts
 - Puzzle (/puzzle) - Daily word puzzle game
 - Progress (/progress) - Stats, calendar, and leaderboard
+- Community (/community) - Premium social feed with posts, cheers, and comments
 - Premium (/premium) - Subscription upgrade page with Stripe checkout
 - Success (/success) - Payment confirmation page
+- More (/more) - Navigation hub with account access and app info
+- Account (/account) - User account management
+- Settings (/settings) - App settings
+- FAQ (/faq) - Frequently asked questions
+- About (/about) - About the app
 - Login (/login) - Firebase authentication
 
 **First-Time User Experience:**
@@ -151,6 +158,67 @@ Preferred communication style: Simple, everyday language.
 - Calculated by consecutive completion dates
 - Resets if day missed
 - Bonus points awarded for maintaining streaks
+
+### Community Features (Premium)
+
+**Social Feed System:**
+- Premium-only access with realtime updates using Firestore onSnapshot
+- Activity feed showing recent community posts
+- Auto-posting of user achievements (workouts and puzzles)
+- Social interactions: cheers (reactions) and comments
+
+**Data Models:**
+1. **CommunityPost**
+   - id, userId, userName, text, createdAt, cheerCount, commentCount
+   - Posts automatically generated from workouts and puzzles
+
+2. **CommunityComment**
+   - id, postId, userId, userName, text, createdAt
+   - Nested under posts with realtime updates
+
+**Implementation:**
+- **Firestore Operations** (`client/src/services/firestore.ts`):
+  - `createPost` - Creates new community posts
+  - `subscribeToPosts` - Realtime feed listener (10 most recent)
+  - `cheerPost` - Increments cheer count with Firestore increment
+  - `addComment` - Adds comment to post
+  - `subscribeToComments` - Realtime comment listener
+  
+- **UI Components**:
+  - `Community.tsx` - Main feed page with premium gating
+  - `PostCard.tsx` - Individual post display with cheer/comment actions
+  - `CommentModal.tsx` - Full-screen comment viewer/composer
+  
+- **Auto-Posting** (`client/src/lib/communityPosts.ts`):
+  - `createWorkoutPost` - Auto-generates posts on workout completion
+  - `createPuzzlePost` - Auto-generates posts on puzzle completion (Wordle/WordSearch)
+  - Template-based messaging with emojis
+  - Only creates posts for premium authenticated users
+  - Only posts successful completions
+
+**User Experience:**
+- Premium users see Community tab in bottom navigation
+- Non-premium users shown upgrade prompt when accessing Community
+- Realtime updates: new posts, cheers, and comments appear instantly
+- One cheer per user per post (session-scoped validation)
+- Comment character limit: 100 characters
+- Human-readable time stamps ("just now", "5 min ago", etc.)
+
+**Accessibility:**
+- Large touch targets (56x56px minimum)
+- Icons paired with text labels ("❤️ Cheer", "💬 Comment")
+- ARIA labels on all interactive elements
+- High-contrast design for readability
+- Keyboard navigation support
+- data-testid attributes for testing
+
+**Future Enhancements:**
+- Cache premium status in context to reduce Firestore reads
+- Server-side Firestore security rules for one-cheer-per-user validation
+- Pagination or infinite scroll for large feed volumes
+- User profiles and following system
+- Direct messaging between users
+- Hashtags and content filtering
 
 ## External Dependencies
 
