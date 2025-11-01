@@ -126,7 +126,7 @@ export default function Premium() {
         },
         body: JSON.stringify({
           priceId,
-          successUrl: `${window.location.origin}/success`,
+          successUrl: `${window.location.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
           cancelUrl: `${window.location.origin}/premium`,
           userId: user?.uid || profile?.id || "anonymous",
           userEmail: user?.email || "",
