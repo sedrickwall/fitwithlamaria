@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameDay, isToday } from "date-fns";
-import { Trophy, Calendar as CalendarIcon, Users, Flame, Target, Brain, Crown, Sparkles } from "lucide-react";
+import { Trophy, Calendar as CalendarIcon, Users, Flame, Target, Brain, Crown, Sparkles, TrendingUp } from "lucide-react";
 import { Link } from "wouter";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { useAuth } from "@/contexts/AuthContext";
 import { getWorkoutCompletions, getPuzzleAttempts, getCompletedDates } from "@/lib/localStorage";
 import { getWeeklyLeaderboard } from "@/lib/leaderboard";
 
 export default function Progress() {
   const [selectedTab, setSelectedTab] = useState("stats");
   const { profile } = useUserProfile();
+  const { user } = useAuth();
 
   const totalPoints = profile?.totalPoints || 0;
   const currentStreak = profile?.currentStreak || 0;
@@ -36,6 +39,77 @@ export default function Progress() {
     const dateStr = format(date, "yyyy-MM-dd");
     return completedDates.includes(dateStr);
   };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background pb-24">
+        <div className="max-w-2xl mx-auto px-6 py-16">
+          <div className="text-center mb-8">
+            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
+              <TrendingUp className="w-12 h-12 text-white" />
+            </div>
+            <h1 className="text-h1 font-bold text-foreground mb-4" data-testid="text-progress-placeholder-title">
+              Track Your Progress
+            </h1>
+            <p className="text-body-lg text-muted-foreground mb-8">
+              Track your progress and earn badges when you join Fit with LaMaria
+            </p>
+          </div>
+
+          <Card className="p-8 bg-gradient-to-br from-primary/5 to-secondary/5">
+            <div className="space-y-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center flex-shrink-0">
+                  <Flame className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-h4 font-bold text-foreground mb-1">Build Streaks</h3>
+                  <p className="text-body-md text-muted-foreground">
+                    Complete daily workouts and puzzles to build your streak
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-secondary to-secondary/80 flex items-center justify-center flex-shrink-0">
+                  <Trophy className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-h4 font-bold text-foreground mb-1">Earn Points</h3>
+                  <p className="text-body-md text-muted-foreground">
+                    Collect points for every workout and puzzle you complete
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-accent/80 flex items-center justify-center flex-shrink-0">
+                  <Brain className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-h4 font-bold text-foreground mb-1">Track Everything</h3>
+                  <p className="text-body-md text-muted-foreground">
+                    See your completed workouts, solved puzzles, and calendar view
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <Link href="/login">
+            <Button
+              size="lg"
+              className="w-full h-14 text-body-lg font-semibold mt-8"
+              data-testid="button-join-now-progress"
+            >
+              Join Now →
+            </Button>
+          </Link>
+        </div>
+        <BottomNav />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background pb-24">

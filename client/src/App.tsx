@@ -15,6 +15,11 @@ import Onboarding from "@/pages/Onboarding";
 import Premium from "@/pages/Premium";
 import Success from "@/pages/Success";
 import Community from "@/pages/Community";
+import More from "@/pages/More";
+import Account from "@/pages/Account";
+import Settings from "@/pages/Settings";
+import FAQ from "@/pages/FAQ";
+import About from "@/pages/About";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -51,6 +56,11 @@ function Router() {
       <Route path="/premium" component={Premium} />
       <Route path="/success" component={Success} />
       <Route path="/community" component={Community} />
+      <Route path="/more" component={More} />
+      <Route path="/account" component={Account} />
+      <Route path="/settings" component={Settings} />
+      <Route path="/faq" component={FAQ} />
+      <Route path="/about" component={About} />
       <Route component={NotFound} />
     </Switch>
   );

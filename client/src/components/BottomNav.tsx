@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Home, Dumbbell, TrendingUp, Users } from "lucide-react";
+import { Home, Dumbbell, Users, Menu } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useAuth } from "@/contexts/AuthContext";
 import { userOperations } from "@/services/firestore";
@@ -48,8 +48,8 @@ export function BottomNav() {
   const navItems = [
     { path: "/", icon: Home, label: "Home", testId: "nav-home", onClick: null },
     { path: "/workouts", icon: Dumbbell, label: "Workouts", testId: "nav-workouts", onClick: null },
-    { path: "/progress", icon: TrendingUp, label: "Progress", testId: "nav-progress", onClick: null },
     { path: "/community", icon: Users, label: "Community", testId: "nav-community", onClick: handleCommunityClick },
+    { path: "/more", icon: Menu, label: "More", testId: "nav-more", onClick: null },
   ];
 
   return (

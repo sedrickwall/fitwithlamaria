@@ -1,0 +1,260 @@
+USER STORY 1 — Add “More” Tab to Bottom Navigation
+
+As a user,
+I want to see a “More” icon in the bottom navigation bar,
+so that I can easily find additional options like Progress, Account, and Settings.
+
+🎯 Acceptance Criteria
+
+Bottom navigation includes a “More” icon (⋯ or ☰) on the far right.
+
+When tapped:
+
+Opens a simple menu sheet or navigates to /more.
+
+Shows options:
+
+Progress
+
+Account / Sign in or Join Now
+
+Settings
+
+FAQ
+
+About Fit with LaMaria
+
+Accessible at all times (no login required).
+
+⚙️ Technical Notes
+
+Route: /more
+
+Component: <MoreMenu />
+
+Large text + icons for accessibility.
+
+Use soft animation (slide-up or fade-in).
+
+🔒 Access Control
+
+Always visible, but menu items are conditionally active:
+
+“Account” → dynamic: “Join Now” (logged-out) or “My Account” (logged-in)
+
+“Progress” → available to all, but personal data only if logged in.
+
+🧩 USER STORY 2 — Progress in “More” Menu
+
+As a user (anyone, logged in or not),
+I want to view my progress easily from the More section,
+so that I can check my consistency and feel encouraged.
+
+🎯 Acceptance Criteria
+
+“Progress” menu option opens /progress screen.
+
+If logged in:
+
+Shows personalized data:
+
+Completed workouts
+
+Solved puzzles
+
+Current streak
+
+Badges
+
+If not logged in:
+
+Shows friendly placeholder screen:
+
+“Track your progress and earn badges when you join Fit with LaMaria.”
+
+CTA button: “Join Now →” (redirect to /login or /onboarding).
+
+⚙️ Technical Notes
+
+Route: /progress
+
+Firestore reads from users/{uid} if logged in.
+
+LocalStorage fallback for streaks if logged out.
+
+🔒 Access Control
+
+View allowed to all.
+
+Personalized data only if authenticated (if user != null).
+
+🧩 USER STORY 3 — Sign In / Join Now Entry Point
+
+As a new or returning user,
+I want a simple “Sign In or Join Now” button in the More section,
+so that I can log in, register, or update my account info in one place.
+
+🎯 Acceptance Criteria
+
+When user taps “Sign In / Join Now”:
+
+If logged out → open /login (Google Sign-In via Firebase).
+
+If logged in → open /account (profile + settings).
+
+Button labeled:
+
+“Join Now” for new users.
+
+“My Account” for logged-in users.
+
+Always visible in More section.
+
+⚙️ Technical Notes
+
+Firebase Auth integration.
+
+Route: /login
+
+Post-login redirect → /onboarding (if first time) or /more.
+
+Store user.displayName, user.email in Firestore.
+
+🔒 Access Control
+
+Open to all.
+
+Profile updates restricted to authenticated users.
+
+🧩 USER STORY 4 — Account Management Screen
+
+As a logged-in user,
+I want to view and edit my account details in one place,
+so that I can manage reminders, profile name, and subscription status.
+
+🎯 Acceptance Criteria
+
+Route: /account
+
+Display:
+
+Name, email (non-editable for now)
+
+Reminder time (editable dropdown)
+
+Subscription status:
+
+“Premium Member ✅”
+or
+“Free Member — Upgrade Now →”
+
+Button: “Sign Out”
+
+Large font, minimal inputs, clear buttons.
+
+⚙️ Technical Notes
+
+Firestore fields: users.name, users.reminderTime, users.premium
+
+Update via updateDoc(doc(db, "users", user.uid), {...})
+
+Use existing firebaseUtils.signOut() on logout.
+
+🔒 Access Control
+
+Only visible if user != null.
+
+🧩 USER STORY 5 — Anonymous Browsing
+
+As a first-time visitor,
+I want to explore some parts of the app (like Dashboard or Progress) without logging in,
+so that I can experience Fit with LaMaria before committing.
+
+🎯 Acceptance Criteria
+
+App loads with limited anonymous state.
+
+“Progress,” “More,” and “Community” icons still visible, but gated as appropriate:
+
+Progress → shows encouragement screen
+
+Community → locked modal with upgrade prompt
+
+“Join Now” appears on More screen and locked content modals.
+
+⚙️ Technical Notes
+
+Use Firebase’s onAuthStateChanged to check if user is logged in.
+
+Conditional rendering for all gated routes.
+
+Use localStorage fallback for streaks until login.
+
+🔒 Access Control
+
+Read access for anonymous users allowed.
+
+Writes only after login.
+
+🧩 USER STORY 6 — Accessibility + UI Simplicity for “More” Section
+
+As a 65+ user,
+I want the “More” menu to feel calm, clear, and familiar,
+so that I don’t feel overwhelmed by options.
+
+🎯 Acceptance Criteria
+
+Menu options have both icon + label (e.g., 🧭 “Progress”).
+
+Use pastel high-contrast backgrounds.
+
+Minimum text size: 16–18px.
+
+Each button occupies full width (no small touch targets).
+
+“Sign Out” button at bottom, clearly separated from other options.
+
+Add screen reader labels and keyboard navigation support.
+
+⚙️ Technical Notes
+
+Component: <MoreMenuItem icon label onClick />
+
+Tailwind accessibility styling (focus:ring-2, aria-label).
+
+🔒 Access Control
+
+None — applies globally.
+
+🧩 USER STORY 7 — Premium Subscription Integration (Optional Next Phase)
+
+As a logged-in user,
+I want to view and manage my subscription directly from my account page,
+so that I can upgrade, cancel, or view billing info easily.
+
+🎯 Acceptance Criteria
+
+Display current subscription plan (Monthly / Yearly).
+
+“Manage Billing” → opens Stripe Customer Portal (via /api/payments/portal).
+
+If unsubscribed → show “Upgrade Now →” (Stripe Checkout link).
+
+⚙️ Technical Notes
+
+Store users.subscriptionId and users.premium in Firestore.
+
+Backend route connects to Stripe API:
+
+router.post("/portal", async (req, res) => {
+  const portalSession = await stripe.billingPortal.sessions.create({
+    customer: stripeCustomerId,
+    return_url: "https://fitwithlamaria.replit.app/account",
+  });
+  res.json({ url: portalSession.url });
+});
+
+
+🔒 Access Control
+
+Only logged-in users can open the portal.
