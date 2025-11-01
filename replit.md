@@ -43,6 +43,10 @@ Preferred communication style: Simple, everyday language.
 - Users can skip to Premium page or navigate as "already a subscriber" to Dashboard
 - Once completed, flag stored in localStorage prevents re-showing
 - Design matches modern fitness app patterns with clean imagery and rounded buttons
+- **Configurable Images:** Onboarding images can be easily swapped via `client/src/config/onboarding.json`
+  - Simply update image filenames in the config to change slides
+  - No code changes needed - app owner can manage images independently
+  - Images stored in `attached_assets/stock_images/` folder
 
 **State Management:** React hooks with custom hooks for domain logic:
 - `useUserProfile` - User data and points management
@@ -201,20 +205,26 @@ Preferred communication style: Simple, everyday language.
 **Stripe Subscription System:**
 - Integrated via Replit's Stripe blueprint for secure payment processing
 - Premium subscription pricing:
-  - Monthly: $4.99/month
-  - Yearly: $49/year (saves $10.88 vs monthly)
+  - Monthly: $4.99/month (with 7-day free trial)
+  - Yearly: $49/year (with 7-day free trial, saves 59%)
+- **Free Trial:** All subscriptions include a 7-day free trial period
+  - No charges during trial
+  - Users can cancel anytime during trial with no charge
+  - Trial end date displayed on Premium page
 - Stripe Checkout flow for secure card payments
 - Environment variables managed via Replit Secrets:
   - `STRIPE_SECRET_KEY` - Server-side secret key
   - `VITE_STRIPE_PUBLIC_KEY` - Client-side publishable key
   - `VITE_STRIPE_MONTHLY_PRICE_ID` - Monthly subscription price ID
   - `VITE_STRIPE_YEARLY_PRICE_ID` - Yearly subscription price ID
+  - `STRIPE_WEBHOOK_SECRET` - Webhook signature verification secret
   
 **Payment Features:**
-- Subscription checkout sessions via Stripe hosted pages
+- Subscription checkout sessions via Stripe hosted pages with trial period
 - Payment intent API for custom checkout flows
 - Success/cancel redirect handling
 - Automatic payment confirmation
+- Webhook handling for subscription events
 
 **Implementation:**
 - Backend: `server/routes/stripe.ts` handles payment session creation
