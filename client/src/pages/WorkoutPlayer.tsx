@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useRoute, useLocation } from "wouter";
-import { ArrowLeft, CheckCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle, Share2 } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { Button } from "@/components/ui/button";
 import { LoginModal } from "@/components/LoginModal";
+import { SocialShareModal } from "@/components/SocialShareModal";
 import { Workout, WorkoutCompletion } from "@shared/schema";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
@@ -99,7 +100,9 @@ export default function WorkoutPlayer() {
   const [, params] = useRoute("/workout/:id");
   const [, navigate] = useLocation();
   const [completed, setCompleted] = useState(false);
+  const [isRepeatCompletion, setIsRepeatCompletion] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const { profile, addPoints } = useUserProfile();
   const { completeWorkout } = useDailyStatus();
   const { isAuthenticated, user } = useAuth();
@@ -127,9 +130,12 @@ export default function WorkoutPlayer() {
     );
 
     if (alreadyCompleted) {
+      setIsRepeatCompletion(true);
       setCompleted(true);
+      
+      // Show share modal for repeat completions too (consistent UX)
       setTimeout(() => {
-        navigate("/puzzle");
+        setShowShareModal(true);
       }, 1500);
       return;
     }
@@ -155,16 +161,25 @@ export default function WorkoutPlayer() {
 
     setCompleted(true);
     
+    // Show share modal after a brief celebration
+    setTimeout(() => {
+      setShowShareModal(true);
+    }, 1500);
+  };
+
+  const handleShareModalClose = () => {
+    setShowShareModal(false);
+  };
+
+  const handleContinueToPuzzle = () => {
     if (!isAuthenticated) {
       const skipCount = parseInt(localStorage.getItem("fitword_login_skip_count") || "0");
       if (skipCount < 2) {
-        setTimeout(() => setShowLoginModal(true), 1000);
+        setShowLoginModal(true);
+        return;
       }
     }
-    
-    setTimeout(() => {
-      navigate("/puzzle");
-    }, 2000);
+    navigate("/puzzle");
   };
 
   return (
@@ -209,8 +224,31 @@ export default function WorkoutPlayer() {
               Wonderful Work!
             </h3>
             <p className="text-body-lg text-foreground mb-4">
-              You earned {calculateWorkoutPoints()} points. Preparing your brain game...
+              {isRepeatCompletion 
+                ? "Workout already logged today—share your win or continue to the puzzle!"
+                : `You earned ${calculateWorkoutPoints()} points!`
+              }
             </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-6">
+              <Button
+                onClick={() => setShowShareModal(true)}
+                size="lg"
+                variant="outline"
+                className="h-14 text-body-md font-semibold gap-2 w-full sm:w-auto"
+                data-testid="button-share-achievement"
+              >
+                <Share2 className="w-5 h-5" />
+                Share Your Achievement
+              </Button>
+              <Button
+                onClick={handleContinueToPuzzle}
+                size="lg"
+                className="h-14 text-body-md font-semibold gap-2 w-full sm:w-auto"
+                data-testid="button-continue-puzzle"
+              >
+                Continue to Puzzle
+              </Button>
+            </div>
           </div>
         ) : (
           <Button
@@ -253,6 +291,13 @@ export default function WorkoutPlayer() {
         open={showLoginModal}
         onOpenChange={setShowLoginModal}
         trigger="workout"
+      />
+      
+      <SocialShareModal
+        open={showShareModal}
+        onOpenChange={handleShareModalClose}
+        achievement={`You completed ${workout.title}!`}
+        shareText={`Just completed ${workout.title} on Fit with LaMaria! 💪 Staying active and sharp at any age! #FitWithLaMaria #SeniorFitness`}
       />
     </div>
   );
