@@ -2,27 +2,21 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import growthImage from "@assets/stock_images/active_senior_woman__75027367.jpg";
-import wellnessImage from "@assets/stock_images/woman_doing_home_wor_82e3f6e8.jpg";
-import journeyImage from "@assets/stock_images/joyful_woman_celebra_b93fe6ff.jpg";
+import onboardingConfig from "@/config/onboarding.json";
 
-const slides = [
-  {
-    image: growthImage,
-    title: "Growth",
-    description: "Become the strongest version of yourself. Every step forward is progress, no matter how small.",
-  },
-  {
-    image: wellnessImage,
-    title: "Wellness",
-    description: "Discover a new relationship with your body, mind, and spirit as you make movement a daily practice.",
-  },
-  {
-    image: journeyImage,
-    title: "Journey",
-    description: "Feel understood, get inspired, and celebrate your transformation.",
-  },
-];
+// Dynamically import images based on config
+const imageModules = import.meta.glob('@assets/stock_images/*.{jpg,jpeg,png}', { eager: true });
+
+const slides = onboardingConfig.slides.map((slide) => {
+  const imagePath = `@assets/stock_images/${slide.image}`;
+  const imageModule = imageModules[`/attached_assets/stock_images/${slide.image}`] as { default: string };
+  
+  return {
+    image: imageModule?.default || '',
+    title: slide.title,
+    description: slide.description,
+  };
+});
 
 export default function Onboarding() {
   const [, navigate] = useLocation();
