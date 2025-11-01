@@ -69,6 +69,8 @@ export interface FirestoreUser {
   fitnessLevel?: "beginner" | "intermediate" | "advanced";
   reminderTime?: string;
   emailNotifications: boolean;
+  premium?: boolean;
+  subscriptionId?: string;
   createdAt: any;
   updatedAt: any;
 }

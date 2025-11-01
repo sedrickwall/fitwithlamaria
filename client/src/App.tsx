@@ -14,6 +14,7 @@ import Progress from "@/pages/Progress";
 import Onboarding from "@/pages/Onboarding";
 import Premium from "@/pages/Premium";
 import Success from "@/pages/Success";
+import Community from "@/pages/Community";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -49,6 +50,7 @@ function Router() {
       <Route path="/progress" component={Progress} />
       <Route path="/premium" component={Premium} />
       <Route path="/success" component={Success} />
+      <Route path="/community" component={Community} />
       <Route component={NotFound} />
     </Switch>
   );
