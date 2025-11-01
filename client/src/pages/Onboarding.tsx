@@ -42,11 +42,17 @@ export default function Onboarding() {
   };
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
+    if (currentSlide === slides.length - 1) {
+      handleChoosePlan();
+    } else {
+      setCurrentSlide((prev) => prev + 1);
+    }
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
+    if (currentSlide > 0) {
+      setCurrentSlide((prev) => prev - 1);
+    }
   };
 
   const goToSlide = (index: number) => {
@@ -75,20 +81,22 @@ export default function Onboarding() {
               data-testid={`image-onboarding-${currentSlide}`}
             />
             
-            <button
-              onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center hover:bg-white transition-colors"
-              data-testid="button-prev-slide"
-              aria-label="Previous slide"
-            >
-              <ChevronLeft className="w-6 h-6 text-gray-800" />
-            </button>
+            {currentSlide > 0 && (
+              <button
+                onClick={prevSlide}
+                className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center hover:bg-white transition-colors"
+                data-testid="button-prev-slide"
+                aria-label="Previous slide"
+              >
+                <ChevronLeft className="w-6 h-6 text-gray-800" />
+              </button>
+            )}
             
             <button
               onClick={nextSlide}
               className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center hover:bg-white transition-colors"
               data-testid="button-next-slide"
-              aria-label="Next slide"
+              aria-label={currentSlide === slides.length - 1 ? "Go to premium" : "Next slide"}
             >
               <ChevronRight className="w-6 h-6 text-gray-800" />
             </button>
