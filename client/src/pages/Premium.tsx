@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, Sparkles, Crown, Zap } from "lucide-react";
@@ -96,6 +97,7 @@ const CheckoutPage = ({ amount }: { amount: number }) => {
 
 export default function Premium() {
   const { profile } = useUserProfile();
+  const { user } = useAuth();
   const { toast } = useToast();
   const [showCheckout, setShowCheckout] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("monthly");
@@ -126,6 +128,8 @@ export default function Premium() {
           priceId,
           successUrl: `${window.location.origin}/success`,
           cancelUrl: `${window.location.origin}/premium`,
+          userId: user?.uid || profile?.id || "anonymous",
+          userEmail: user?.email || "",
         }),
       });
 
