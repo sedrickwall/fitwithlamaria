@@ -21,8 +21,8 @@ export default function Login() {
 
   useEffect(() => {
     if (user && !loading) {
-      const onboardingComplete = localStorage.getItem("fitword_onboarding_complete");
-      if (onboardingComplete === "true") {
+      const hasSeenOnboarding = localStorage.getItem("hasSeenOnboarding");
+      if (hasSeenOnboarding === "true") {
         navigate("/");
       } else {
         navigate("/onboarding");
