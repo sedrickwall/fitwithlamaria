@@ -21,9 +21,13 @@
   ],
   "instructions": {
     "howToUpdate": [
+      "HOW TO CHANGE ONBOARDING IMAGES:",
       "1. Add your images to the attached_assets/stock_images/ folder",
-      "2. Update the 'image' field above with your image filename",
-      "3. The app will automatically use your new images"
+      "2. Open client/src/pages/Onboarding.tsx",
+      "3. Add your image import (e.g., import myImage from '@assets/stock_images/my-image.jpg')",
+      "4. Add the filename to the imageMap object (e.g., 'my-image.jpg': myImage)",
+      "5. Update the 'image' field in this config file to use your new filename",
+      "6. You can also change the title and description text here without touching code"
     ]
   }
 }

@@ -4,19 +4,23 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import onboardingConfig from "@/config/onboarding.json";
 
-// Dynamically import images based on config
-const imageModules = import.meta.glob('/attached_assets/stock_images/*.{jpg,jpeg,png}', { eager: true });
+// Import all available images
+import image1 from "@assets/stock_images/active_senior_woman__75027367.jpg";
+import image2 from "@assets/stock_images/woman_doing_home_wor_82e3f6e8.jpg";
+import image3 from "@assets/stock_images/joyful_woman_celebra_b93fe6ff.jpg";
 
-const slides = onboardingConfig.slides.map((slide) => {
-  const imagePath = `/attached_assets/stock_images/${slide.image}`;
-  const imageModule = imageModules[imagePath] as { default: string };
-  
-  return {
-    image: imageModule?.default || '',
-    title: slide.title,
-    description: slide.description,
-  };
-});
+// Map filenames to imported images for easy configuration
+const imageMap: Record<string, string> = {
+  "active_senior_woman__75027367.jpg": image1,
+  "woman_doing_home_wor_82e3f6e8.jpg": image2,
+  "joyful_woman_celebra_b93fe6ff.jpg": image3,
+};
+
+const slides = onboardingConfig.slides.map((slide) => ({
+  image: imageMap[slide.image] || '',
+  title: slide.title,
+  description: slide.description,
+}));
 
 export default function Onboarding() {
   const [, navigate] = useLocation();
