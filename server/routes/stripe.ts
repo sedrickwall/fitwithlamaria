@@ -120,7 +120,8 @@ router.post("/create-checkout-session", async (req, res) => {
   try {
     const { priceId, successUrl, cancelUrl, userId, userEmail } = req.body;
     
-    const session = await stripe.checkout.sessions.create({
+    // Build session config with optional email
+    const sessionConfig: any = {
       mode: "subscription",
       payment_method_types: ["card"],
       line_items: [
@@ -131,7 +132,6 @@ router.post("/create-checkout-session", async (req, res) => {
       ],
       success_url: successUrl || `${req.headers.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl || `${req.headers.origin}/premium`,
-      customer_email: userEmail,
       metadata: {
         userId: userId || "anonymous",
       },
@@ -140,7 +140,14 @@ router.post("/create-checkout-session", async (req, res) => {
           userId: userId || "anonymous",
         },
       },
-    });
+    };
+
+    // Only include customer_email if valid email provided
+    if (userEmail && userEmail.includes('@')) {
+      sessionConfig.customer_email = userEmail;
+    }
+    
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     res.json({ url: session.url, sessionId: session.id });
   } catch (error: any) {
