@@ -120,7 +120,7 @@ router.post("/create-checkout-session", async (req, res) => {
   try {
     const { priceId, successUrl, cancelUrl, userId, userEmail } = req.body;
     
-    // Build session config with optional email
+    // Build session config with optional email and 7-day free trial
     const sessionConfig: any = {
       mode: "subscription",
       payment_method_types: ["card"],
@@ -136,6 +136,7 @@ router.post("/create-checkout-session", async (req, res) => {
         userId: userId || "anonymous",
       },
       subscription_data: {
+        trial_period_days: 7,
         metadata: {
           userId: userId || "anonymous",
         },
