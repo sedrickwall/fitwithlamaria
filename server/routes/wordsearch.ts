@@ -14,9 +14,16 @@ const WORD_LISTS = [
 ];
 
 // Helper function to get word list for a specific puzzle index
-function getPuzzleWords(puzzleIndex: number): string[] {
-  const index = puzzleIndex % WORD_LISTS.length;
-  return WORD_LISTS[index];
+function getPuzzleWords(puzzleIndex: number, isPremium: boolean = false): string[] {
+  if (isPremium) {
+    // Random selection for premium users
+    const randomIndex = Math.floor(Math.random() * WORD_LISTS.length);
+    return WORD_LISTS[randomIndex];
+  } else {
+    // Deterministic selection for free users
+    const index = puzzleIndex % WORD_LISTS.length;
+    return WORD_LISTS[index];
+  }
 }
 
 // Calculate grid size based on difficulty level
@@ -121,14 +128,17 @@ function generateWordSearchGrid(words: string[], size: number = 10, seed: number
   return { grid, placements };
 }
 
-// GET /api/wordsearch?index=0 - Get word search puzzle for specific index
+// GET /api/wordsearch?index=0&premium=false - Get word search puzzle for specific index
 router.get("/", (req, res) => {
   const puzzleIndex = parseInt(req.query.index as string) || 0;
+  const isPremium = req.query.premium === 'true';
   const difficultyLevel = Math.floor(puzzleIndex / 2);
   const gridSize = getGridSize(difficultyLevel);
   
-  const words = getPuzzleWords(puzzleIndex);
-  const { grid, placements } = generateWordSearchGrid(words, gridSize, puzzleIndex);
+  const words = getPuzzleWords(puzzleIndex, isPremium);
+  // Use random seed for premium users to get different grids
+  const seed = isPremium ? Date.now() : puzzleIndex;
+  const { grid, placements } = generateWordSearchGrid(words, gridSize, seed);
 
   res.json({
     grid,
@@ -137,38 +147,53 @@ router.get("/", (req, res) => {
     puzzleIndex,
     puzzleNumber: puzzleIndex,
     difficultyLevel,
+    isPremium,
   });
 });
 
 // POST /api/wordsearch/validate - Validate found word
 router.post("/validate", (req, res) => {
-  const { word, coordinates, puzzleIndex = 0 } = req.body;
+  const { word, coordinates, puzzleIndex = 0, isPremium = false, words: puzzleWords, grid } = req.body;
 
   if (!word || !coordinates) {
     return res.status(400).json({ error: "Word and coordinates required" });
   }
 
-  const difficultyLevel = Math.floor(puzzleIndex / 2);
-  const gridSize = getGridSize(difficultyLevel);
-  
-  const puzzleWords = getPuzzleWords(puzzleIndex);
-  const { placements } = generateWordSearchGrid(puzzleWords, gridSize, puzzleIndex);
-  
   const wordUpper = word.toUpperCase();
-  const isValid = puzzleWords.includes(wordUpper);
-  
-  // Verify coordinates match the actual word placement
-  let coordinatesValid = false;
-  if (isValid && placements[wordUpper]) {
-    const expectedCoords = placements[wordUpper];
-    coordinatesValid = JSON.stringify(coordinates) === JSON.stringify(expectedCoords) ||
-                       JSON.stringify(coordinates) === JSON.stringify(expectedCoords.reverse());
-  }
 
-  res.json({
-    valid: isValid && coordinatesValid,
-    word: wordUpper,
-  });
+  // For premium users, validate against the provided words and grid
+  if (isPremium && puzzleWords && grid) {
+    const isValid = puzzleWords.includes(wordUpper);
+    
+    // For premium, we trust the client's grid since it's random
+    // Just verify the word is in the puzzle word list
+    res.json({
+      valid: isValid,
+      word: wordUpper,
+    });
+  } else {
+    // For free users, regenerate the grid to validate
+    const difficultyLevel = Math.floor(puzzleIndex / 2);
+    const gridSize = getGridSize(difficultyLevel);
+    
+    const words = getPuzzleWords(puzzleIndex, false);
+    const { placements } = generateWordSearchGrid(words, gridSize, puzzleIndex);
+    
+    const isValid = words.includes(wordUpper);
+    
+    // Verify coordinates match the actual word placement
+    let coordinatesValid = false;
+    if (isValid && placements[wordUpper]) {
+      const expectedCoords = placements[wordUpper];
+      coordinatesValid = JSON.stringify(coordinates) === JSON.stringify(expectedCoords) ||
+                         JSON.stringify(coordinates) === JSON.stringify(expectedCoords.reverse());
+    }
+
+    res.json({
+      valid: isValid && coordinatesValid,
+      word: wordUpper,
+    });
+  }
 });
 
 export default router;
