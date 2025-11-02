@@ -70,13 +70,16 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
   const currentRow = guesses.length;
   const totalPoints = profile?.totalPoints || 0;
   const workoutCompleted = status?.workoutCompleted || false;
-  const puzzleSolved = isPuzzleCompleted(puzzleIndex); // Check if THIS specific puzzle is completed
+  
+  // Compute actual puzzle index based on user tier
+  const actualPuzzleIndex = isPremium ? getPuzzleIndexForTier(isPremium) : puzzleIndex;
+  const puzzleSolved = isPuzzleCompleted(actualPuzzleIndex); // Check if THIS specific puzzle is completed
 
   useEffect(() => {
     const loadPuzzle = async () => {
       try {
         // Load puzzle metadata
-        const puzzleRes = await fetch(`/api/puzzle?index=${puzzleIndex}`);
+        const puzzleRes = await fetch(`/api/puzzle?index=${actualPuzzleIndex}`);
         const puzzleData = await puzzleRes.json();
         setPuzzleNumber(puzzleData.puzzleNumber);
         setWordLength(puzzleData.wordLength);
@@ -85,7 +88,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
         // For premium users, fetch random word
         if (isPremium) {
           const today = new Date().toISOString().split('T')[0];
-          const storageKey = `puzzle-word-${today}-${puzzleIndex}`;
+          const storageKey = `puzzle-word-${today}-${actualPuzzleIndex}`;
           
           // Check sessionStorage first
           const storedWord = sessionStorage.getItem(storageKey);
@@ -93,7 +96,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
             setPremiumWord(storedWord);
           } else {
             // Fetch new random word
-            const wordRes = await fetch(`/api/puzzle/word?index=${puzzleIndex}`);
+            const wordRes = await fetch(`/api/puzzle/word?index=${actualPuzzleIndex}`);
             const wordData = await wordRes.json();
             if (wordData.word) {
               setPremiumWord(wordData.word);
@@ -112,7 +115,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
     };
 
     loadPuzzle();
-  }, [puzzleIndex, isPremium, toast]);
+  }, [actualPuzzleIndex, isPremium, toast]);
 
   useEffect(() => {
     if (puzzleSolved) {
@@ -132,7 +135,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ 
                 guess, 
-                puzzleIndex,
+                puzzleIndex: actualPuzzleIndex,
                 isPremium,
                 word: isPremium ? premiumWord : undefined
               }),
@@ -190,7 +193,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           guess: currentGuess, 
-          puzzleIndex,
+          puzzleIndex: actualPuzzleIndex,
           isPremium,
           word: isPremium ? premiumWord : undefined
         }),
@@ -239,7 +242,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
           };
           
           savePuzzleAttempt(attempt);
-          solveWordle(puzzleIndex, totalPoints);
+          solveWordle(actualPuzzleIndex, totalPoints);
           addPoints(totalPoints);
 
           if (isFirebaseReady() && isAuthenticated && user) {
@@ -290,7 +293,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
           };
           
           savePuzzleAttempt(attempt);
-          solveWordle(puzzleIndex, 0);
+          solveWordle(actualPuzzleIndex, 0);
 
           if (isFirebaseReady() && isAuthenticated && user) {
             try {
@@ -328,7 +331,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
     setShowSkipConfirm(false);
     
     try {
-      const response = await fetch(`/api/puzzle?index=${puzzleIndex}`);
+      const response = await fetch(`/api/puzzle?index=${actualPuzzleIndex}`);
       const data = await response.json();
       const word = data.word;
       
@@ -348,7 +351,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
         };
         
         savePuzzleAttempt(attempt);
-        solveWordle(puzzleIndex, 0);
+        solveWordle(actualPuzzleIndex, 0);
 
         if (isFirebaseReady() && isAuthenticated && user) {
           try {
