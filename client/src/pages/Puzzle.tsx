@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Lock, Share2, CheckCircle, SkipForward, AlertCircle, Crown } from "lucide-react";
+import { Lock, Share2, CheckCircle, SkipForward, AlertCircle, Crown, Dumbbell } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { PuzzleGrid } from "@/components/PuzzleGrid";
@@ -559,24 +559,53 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
               <p className="text-body-sm text-warning mt-2">+10 streak bonus for completing both today!</p>
             )}
           </div>
-          <div className="flex gap-4">
-            <Button
-              onClick={handleShare}
-              variant="outline"
-              className="flex-1 h-14 text-body-md"
-              data-testid="button-share-success"
-            >
-              <Share2 className="w-5 h-5 mr-2" />
-              Share
-            </Button>
-            <Button
-              onClick={() => navigate("/")}
-              className="flex-1 h-14 text-body-md"
-              data-testid="button-done"
-            >
-              Done
-            </Button>
-          </div>
+          
+          {isPremium ? (
+            <>
+              <p className="text-body-md text-center text-muted-foreground">
+                You're on a roll! Ready for another round?
+              </p>
+              <div className="flex flex-col gap-3">
+                <Button
+                  onClick={() => navigate("/workouts")}
+                  size="lg"
+                  className="h-16 text-body-lg font-semibold bg-gradient-to-br from-primary-start to-primary-end hover:opacity-90"
+                  data-testid="button-start-another-workout"
+                >
+                  <Dumbbell className="w-6 h-6 mr-2" />
+                  Start Another Workout
+                </Button>
+                <Button
+                  onClick={() => navigate("/")}
+                  variant="outline"
+                  size="lg"
+                  className="h-14 text-body-md"
+                  data-testid="button-back-dashboard"
+                >
+                  Back to Dashboard
+                </Button>
+              </div>
+            </>
+          ) : (
+            <div className="flex gap-4">
+              <Button
+                onClick={handleShare}
+                variant="outline"
+                className="flex-1 h-14 text-body-md"
+                data-testid="button-share-success"
+              >
+                <Share2 className="w-5 h-5 mr-2" />
+                Share
+              </Button>
+              <Button
+                onClick={() => navigate("/")}
+                className="flex-1 h-14 text-body-md"
+                data-testid="button-done"
+              >
+                Done
+              </Button>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 

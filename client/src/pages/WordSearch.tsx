@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { CheckCircle2, Lock, Trophy, SkipForward } from "lucide-react";
+import { CheckCircle2, Lock, Trophy, SkipForward, Dumbbell } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
@@ -317,14 +317,42 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
 
           {gameOver && (
             <div className="text-center">
-              <Button
-                size="lg"
-                onClick={() => navigate("/")}
-                className="h-16 text-body-lg font-semibold"
-                data-testid="button-back-to-dashboard"
-              >
-                Back to Dashboard
-              </Button>
+              {isPremium ? (
+                <>
+                  <p className="text-body-md text-muted-foreground mb-6">
+                    Keep the momentum going! Ready for another round?
+                  </p>
+                  <div className="flex flex-col gap-3 max-w-md mx-auto">
+                    <Button
+                      onClick={() => navigate("/workouts")}
+                      size="lg"
+                      className="h-16 text-body-lg font-semibold bg-gradient-to-br from-primary-start to-primary-end hover:opacity-90"
+                      data-testid="button-start-another-workout"
+                    >
+                      <Dumbbell className="w-6 h-6 mr-2" />
+                      Start Another Workout
+                    </Button>
+                    <Button
+                      onClick={() => navigate("/")}
+                      variant="outline"
+                      size="lg"
+                      className="h-14 text-body-md"
+                      data-testid="button-back-dashboard"
+                    >
+                      Back to Dashboard
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <Button
+                  size="lg"
+                  onClick={() => navigate("/")}
+                  className="h-16 text-body-lg font-semibold"
+                  data-testid="button-back-to-dashboard"
+                >
+                  Back to Dashboard
+                </Button>
+              )}
             </div>
           )}
         </div>
