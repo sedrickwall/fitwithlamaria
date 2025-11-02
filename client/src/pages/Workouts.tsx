@@ -5,6 +5,7 @@ import { WorkoutCard } from "@/components/WorkoutCard";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Workout } from "@shared/schema";
 import { useLocation } from "wouter";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 const SAMPLE_WORKOUTS: Workout[] = [
   {
@@ -92,7 +93,8 @@ const SAMPLE_WORKOUTS: Workout[] = [
 export default function Workouts() {
   const [, navigate] = useLocation();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const totalPoints = 0;
+  const { profile } = useUserProfile();
+  const totalPoints = profile?.totalPoints || 0;
 
   const filteredWorkouts = selectedCategory === "all"
     ? SAMPLE_WORKOUTS
