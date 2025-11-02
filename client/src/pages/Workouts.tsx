@@ -38,7 +38,7 @@ const SAMPLE_WORKOUTS: Workout[] = [
     category: "standing",
     duration: 10,
     difficulty: "low",
-    videoUrl: "https://www.youtube.com/embed/GFwk8FTp864",
+    videoUrl: "https://www.youtube.com/embed/fywl19sc35Y?si=2Yl07mqNsCoGWqGY",
   },
   {
     id: "5",
