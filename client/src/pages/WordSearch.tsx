@@ -6,6 +6,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { WordSearchGrid } from "@/components/WordSearchGrid";
 import { LoginModal } from "@/components/LoginModal";
+import { PremiumBadge } from "@/components/PremiumBadge";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
+import { usePremiumStatus } from "@/hooks/usePremiumStatus";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { savePuzzleAttempt } from "@/lib/localStorage";
@@ -32,7 +34,8 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const { profile, addPoints } = useUserProfile();
-  const { status, solveWordSearch, isPuzzleCompleted } = useDailyStatus();
+  const { status, solveWordSearch, isPuzzleCompleted, getPuzzleIndexForTier, canStartNewPuzzle } = useDailyStatus();
+  const { isPremium, isLoading: premiumLoading } = usePremiumStatus();
   const { user, isAuthenticated } = useAuth();
   
   const [grid, setGrid] = useState<string[][]>([]);
@@ -42,27 +45,56 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
   const [showSuccess, setShowSuccess] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
+  const [premiumPuzzleData, setPremiumPuzzleData] = useState<{grid: string[][], words: string[]} | null>(null);
 
   const totalPoints = profile?.totalPoints || 0;
   const workoutCompleted = status?.workoutCompleted || false;
-  const puzzleSolved = isPuzzleCompleted(puzzleIndex); // Check if THIS specific puzzle is completed
+  
+  const actualPuzzleIndex = isPremium ? getPuzzleIndexForTier(isPremium) : puzzleIndex;
+  const puzzleSolved = isPuzzleCompleted(actualPuzzleIndex);
 
   useEffect(() => {
-    fetch(`/api/wordsearch?index=${puzzleIndex}`)
-      .then(res => res.json())
-      .then(data => {
+    const loadPuzzle = async () => {
+      const today = new Date().toISOString().split('T')[0];
+      const storageKey = `wordsearch-data-${today}-${actualPuzzleIndex}`;
+      
+      try {
+        const cached = sessionStorage.getItem(storageKey);
+        if (cached) {
+          const data = JSON.parse(cached);
+          setGrid(data.grid);
+          setWords(data.words);
+          setPremiumPuzzleData(data);
+          return;
+        }
+
+        const url = isPremium 
+          ? `/api/wordsearch?index=${actualPuzzleIndex}&premium=true`
+          : `/api/wordsearch?index=${actualPuzzleIndex}`;
+        
+        const res = await fetch(url);
+        const data = await res.json();
+        
         setGrid(data.grid);
         setWords(data.words);
-      })
-      .catch(error => {
+        setPremiumPuzzleData({ grid: data.grid, words: data.words });
+        
+        sessionStorage.setItem(storageKey, JSON.stringify({ 
+          grid: data.grid, 
+          words: data.words 
+        }));
+      } catch (error) {
         console.error("Failed to load word search:", error);
         toast({
           title: "Error",
           description: "Failed to load word search",
           variant: "destructive",
         });
-      });
-  }, [puzzleIndex, toast]);
+      }
+    };
+
+    loadPuzzle();
+  }, [actualPuzzleIndex, isPremium, toast]);
 
   useEffect(() => {
     if (puzzleSolved) {
@@ -90,7 +122,14 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
       const response = await fetch("/api/wordsearch/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ word, coordinates, puzzleIndex }),
+        body: JSON.stringify({ 
+          word, 
+          coordinates, 
+          puzzleIndex: actualPuzzleIndex,
+          isPremium,
+          words,
+          grid
+        }),
       });
 
       const data = await response.json();
@@ -124,7 +163,7 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
 
     const pointsEarned = 50;
     addPoints(pointsEarned);
-    await solveWordSearch(puzzleIndex, pointsEarned);
+    await solveWordSearch(actualPuzzleIndex, pointsEarned);
 
     const today = new Date().toISOString().split('T')[0];
     savePuzzleAttempt({
@@ -167,15 +206,17 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
       pointsEarned: 0,
     });
 
-    await solveWordSearch(puzzleIndex, 0);
+    await solveWordSearch(actualPuzzleIndex, 0);
 
     toast({
       title: "Puzzle Skipped",
-      description: "You can try again with tomorrow's puzzle.",
+      description: isPremium ? "You can try another puzzle after your next workout." : "You can try again with tomorrow's puzzle.",
     });
   };
 
-  if (!workoutCompleted && !puzzleSolved) {
+  const canPlay = canStartNewPuzzle(isPremium, 'wordsearch');
+  
+  if (!canPlay && !puzzleSolved) {
     return (
       <div className="min-h-screen bg-background pb-24">
         <TopBar points={totalPoints} />
@@ -187,7 +228,9 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
                 Word Search Locked
               </h2>
               <p className="text-body-lg text-muted-foreground mb-8">
-                Complete today's workout to unlock this brain game
+                {isPremium 
+                  ? "Complete a workout to unlock your next puzzle"
+                  : "Complete today's workout to unlock this brain game"}
               </p>
             </div>
             <Button
@@ -221,6 +264,12 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
             <p className="text-body-md text-muted-foreground mt-2">
               Click and drag to select words
             </p>
+            
+            {isPremium && (
+              <div className="mt-4 flex justify-center">
+                <PremiumBadge />
+              </div>
+            )}
           </div>
 
           {showSuccess && (
