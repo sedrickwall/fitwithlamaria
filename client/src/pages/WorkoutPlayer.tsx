@@ -132,11 +132,6 @@ export default function WorkoutPlayer() {
     if (alreadyCompleted) {
       setIsRepeatCompletion(true);
       setCompleted(true);
-      
-      // Show share modal for repeat completions too (consistent UX)
-      setTimeout(() => {
-        setShowShareModal(true);
-      }, 1500);
       return;
     }
 
@@ -160,11 +155,6 @@ export default function WorkoutPlayer() {
     }
 
     setCompleted(true);
-    
-    // Show share modal after a brief celebration
-    setTimeout(() => {
-      setShowShareModal(true);
-    }, 1500);
   };
 
   const handleShareModalClose = () => {
@@ -231,6 +221,14 @@ export default function WorkoutPlayer() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mt-6">
               <Button
+                onClick={handleContinueToPuzzle}
+                size="lg"
+                className="h-16 text-body-lg font-bold gap-2 w-full sm:w-auto min-w-[240px]"
+                data-testid="button-continue-puzzle"
+              >
+                Continue to Puzzle
+              </Button>
+              <Button
                 onClick={() => setShowShareModal(true)}
                 size="lg"
                 variant="outline"
@@ -239,14 +237,6 @@ export default function WorkoutPlayer() {
               >
                 <Share2 className="w-5 h-5" />
                 Share Your Achievement
-              </Button>
-              <Button
-                onClick={handleContinueToPuzzle}
-                size="lg"
-                className="h-14 text-body-md font-semibold gap-2 w-full sm:w-auto"
-                data-testid="button-continue-puzzle"
-              >
-                Continue to Puzzle
               </Button>
             </div>
           </div>
