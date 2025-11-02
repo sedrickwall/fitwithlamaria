@@ -30,7 +30,7 @@ const SAMPLE_WORKOUTS: Workout[] = [
     category: "seated",
     duration: 15,
     difficulty: "medium",
-    videoUrl: "https://www.youtube-nocookie.com/embed/HC_45pfZy-w",
+    videoUrl: "https://player.vimeo.com/video/1132983491?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479",
   },
   {
     id: "4",
@@ -46,7 +46,7 @@ const SAMPLE_WORKOUTS: Workout[] = [
     category: "standing",
     duration: 10,
     difficulty: "medium",
-    videoUrl: "https://www.youtube-nocookie.com/embed/fywl19sc35Y",
+    videoUrl: "https://player.vimeo.com/video/1132984878?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479",
   },
   {
     id: "6",
