@@ -28,9 +28,9 @@ const SAMPLE_WORKOUTS: Workout[] = [
     id: "3",
     title: "Seated Cardio Workout",
     category: "seated",
-    duration: 20,
+    duration: 15,
     difficulty: "medium",
-    videoUrl: "https://www.youtube.com/embed/Og2KON4DpMw",
+    videoUrl: "https://www.youtube.com/embed/HC_45pfZy-w?si=pWWSUyoH4FUzrvqV",
   },
   {
     id: "4",
@@ -44,9 +44,9 @@ const SAMPLE_WORKOUTS: Workout[] = [
     id: "5",
     title: "Low Impact Cardio",
     category: "standing",
-    duration: 15,
+    duration: 10,
     difficulty: "medium",
-    videoUrl: "https://www.youtube.com/embed/gZJqYIy5IjA",
+    videoUrl: "https://www.youtube.com/embed/fywl19sc35Y?si=VtwjbW5EMITjb81d",
   },
   {
     id: "6",
