@@ -6,6 +6,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { PuzzleGrid } from "@/components/PuzzleGrid";
 import { PuzzleKeyboard } from "@/components/PuzzleKeyboard";
 import { LoginModal } from "@/components/LoginModal";
+import { PremiumBadge } from "@/components/PremiumBadge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,6 +28,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
+import { usePremiumStatus } from "@/hooks/usePremiumStatus";
 import { useAuth } from "@/contexts/AuthContext";
 import { calculatePuzzlePoints } from "@/lib/points";
 import { savePuzzleAttempt, getPuzzleAttempts } from "@/lib/localStorage";
@@ -44,8 +46,9 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
   const [, navigate] = useLocation();
   const { toast } = useToast();
   const { profile, addPoints } = useUserProfile();
-  const { status, solveWordle, isPuzzleCompleted } = useDailyStatus();
+  const { status, solveWordle, isPuzzleCompleted, getPuzzleIndexForTier, canStartNewPuzzle } = useDailyStatus();
   const { user, isAuthenticated } = useAuth();
+  const { isPremium, isLoading: premiumLoading } = usePremiumStatus();
   
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState("");
@@ -62,6 +65,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
   const [dailyWord, setDailyWord] = useState<string>("");
   const [wordLength, setWordLength] = useState<number>(5); // Dynamic word length based on difficulty
   const [maxAttempts, setMaxAttempts] = useState<number>(6); // Dynamic max attempts
+  const [premiumWord, setPremiumWord] = useState<string>("");
 
   const currentRow = guesses.length;
   const totalPoints = profile?.totalPoints || 0;
@@ -69,22 +73,46 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
   const puzzleSolved = isPuzzleCompleted(puzzleIndex); // Check if THIS specific puzzle is completed
 
   useEffect(() => {
-    fetch(`/api/puzzle?index=${puzzleIndex}`)
-      .then(res => res.json())
-      .then(data => {
-        setPuzzleNumber(data.puzzleNumber);
-        setWordLength(data.wordLength);
-        setMaxAttempts(data.maxAttempts);
-      })
-      .catch(error => {
+    const loadPuzzle = async () => {
+      try {
+        // Load puzzle metadata
+        const puzzleRes = await fetch(`/api/puzzle?index=${puzzleIndex}`);
+        const puzzleData = await puzzleRes.json();
+        setPuzzleNumber(puzzleData.puzzleNumber);
+        setWordLength(puzzleData.wordLength);
+        setMaxAttempts(puzzleData.maxAttempts);
+
+        // For premium users, fetch random word
+        if (isPremium) {
+          const today = new Date().toISOString().split('T')[0];
+          const storageKey = `puzzle-word-${today}-${puzzleIndex}`;
+          
+          // Check sessionStorage first
+          const storedWord = sessionStorage.getItem(storageKey);
+          if (storedWord) {
+            setPremiumWord(storedWord);
+          } else {
+            // Fetch new random word
+            const wordRes = await fetch(`/api/puzzle/word?index=${puzzleIndex}`);
+            const wordData = await wordRes.json();
+            if (wordData.word) {
+              setPremiumWord(wordData.word);
+              sessionStorage.setItem(storageKey, wordData.word);
+            }
+          }
+        }
+      } catch (error) {
         console.error("Failed to load puzzle:", error);
         toast({
           title: "Error",
           description: "Failed to load puzzle",
           variant: "destructive",
         });
-      });
-  }, [puzzleIndex, toast]);
+      }
+    };
+
+    loadPuzzle();
+  }, [puzzleIndex, isPremium, toast]);
 
   useEffect(() => {
     if (puzzleSolved) {
@@ -102,7 +130,12 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
             fetch("/api/puzzle/guess", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ guess, puzzleIndex }),
+              body: JSON.stringify({ 
+                guess, 
+                puzzleIndex,
+                isPremium,
+                word: isPremium ? premiumWord : undefined
+              }),
             }).then(res => res.json())
           )
         ).then(results => {
@@ -155,7 +188,12 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
       const response = await fetch("/api/puzzle/guess", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ guess: currentGuess, puzzleIndex }),
+        body: JSON.stringify({ 
+          guess: currentGuess, 
+          puzzleIndex,
+          isPremium,
+          word: isPremium ? premiumWord : undefined
+        }),
       });
 
       const data = await response.json();
@@ -410,6 +448,11 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
           <h2 className="text-h1 font-bold text-secondary mb-2">
             Brain Game #{puzzleIndex}
           </h2>
+          {isPremium && (
+            <div className="flex justify-center mb-4">
+              <PremiumBadge />
+            </div>
+          )}
           <p className="text-body-lg text-muted-foreground">
             Guess the {wordLength}-letter word in {maxAttempts} tries
           </p>
