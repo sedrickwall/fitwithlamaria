@@ -200,8 +200,9 @@ export default function WorkoutPlayer() {
           <iframe
             src={workout.videoUrl}
             title={workout.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
+            referrerPolicy="strict-origin-when-cross-origin"
             className="w-full h-full"
             data-testid="video-player"
           />
