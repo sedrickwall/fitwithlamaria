@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Lock, Share2, CheckCircle, SkipForward, AlertCircle } from "lucide-react";
+import { Lock, Share2, CheckCircle, SkipForward, AlertCircle, Crown } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { PuzzleGrid } from "@/components/PuzzleGrid";
@@ -30,7 +30,7 @@ import { useDailyStatus } from "@/hooks/useDailyStatus";
 import { useAuth } from "@/contexts/AuthContext";
 import { calculatePuzzlePoints } from "@/lib/points";
 import { savePuzzleAttempt, getPuzzleAttempts } from "@/lib/localStorage";
-import { puzzleOperations } from "@/services/firestore";
+import { puzzleOperations, userOperations } from "@/services/firestore";
 import { isFirebaseReady } from "@/services/firebase";
 import { PuzzleAttempt } from "@shared/schema";
 import { createPuzzlePost } from "@/lib/communityPosts";

@@ -193,9 +193,56 @@ export function useDailyStatus() {
   };
 
   // Check if puzzle is unlocked (at least one workout completed)
-  const isPuzzleUnlocked = (): boolean => {
+  const isPuzzleUnlocked = (isPremium: boolean = false): boolean => {
     if (!status) return false;
+    
+    // Premium users: always unlocked if any workout completed
+    if (isPremium) {
+      return status.workoutCompletionCount > 0;
+    }
+    
+    // Free users: check if today's puzzle is unlocked
     return status.workoutCompletionCount > 0;
+  };
+
+  // Get the appropriate puzzle index based on user tier
+  // Free users: one puzzle per day (alternating wordle/wordsearch)
+  // Premium users: unlimited puzzles, index based on total completions
+  const getPuzzleIndexForTier = (isPremium: boolean): number => {
+    if (!status) return 0;
+    
+    if (isPremium) {
+      // Premium: next puzzle index is total completed + 1
+      return status.completedPuzzleIndices.length;
+    } else {
+      // Free: date-based index (one puzzle per day)
+      const statusDate = new Date(status.date);
+      statusDate.setHours(0, 0, 0, 0);
+      const daysSinceEpoch = Math.floor(statusDate.getTime() / (1000 * 60 * 60 * 24));
+      return daysSinceEpoch;
+    }
+  };
+
+  // Check if user can start a new puzzle (premium-aware)
+  const canStartNewPuzzle = (isPremium: boolean, puzzleType: 'wordle' | 'wordsearch'): boolean => {
+    if (!status) return false;
+    
+    // Must have completed at least one workout
+    if (status.workoutCompletionCount === 0) return false;
+    
+    if (isPremium) {
+      // Premium: can always start new puzzle after workout
+      // Check if current puzzle index is already completed
+      const currentIndex = status.completedPuzzleIndices.length;
+      return !status.completedPuzzleIndices.includes(currentIndex);
+    } else {
+      // Free: limited to one of each type per day
+      if (puzzleType === 'wordle') {
+        return !status.wordleSolved;
+      } else {
+        return !status.wordSearchSolved;
+      }
+    }
   };
 
   const completeWorkout = () => {
@@ -266,5 +313,7 @@ export function useDailyStatus() {
     getCurrentPuzzleIndex,
     isPuzzleCompleted,
     isPuzzleUnlocked,
+    getPuzzleIndexForTier,
+    canStartNewPuzzle,
   };
 }
