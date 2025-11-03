@@ -5,13 +5,13 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import onboardingConfig from "@/config/onboarding.json";
 
 // Import all available images
-import image1 from "@assets/stock_images/senior_woman_running_5c5c40aa.jpg";
+import image1 from "@assets/stock_images/pixabay_senior_woman_gym.jpg";
 import image2 from "@assets/stock_images/senior_woman_lifting_f4e8aa94.jpg";
 import image3 from "@assets/stock_images/senior_woman_doing_p_fa5ad789.jpg";
 
 // Map filenames to imported images for easy configuration
 const imageMap: Record<string, string> = {
-  "senior_woman_running_5c5c40aa.jpg": image1,
+  "pixabay_senior_woman_gym.jpg": image1,
   "senior_woman_lifting_f4e8aa94.jpg": image2,
   "senior_woman_doing_p_fa5ad789.jpg": image3,
 };
