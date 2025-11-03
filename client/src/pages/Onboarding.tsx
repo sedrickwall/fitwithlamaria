@@ -5,15 +5,15 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import onboardingConfig from "@/config/onboarding.json";
 
 // Import all available images
-import image1 from "@assets/stock_images/active_senior_woman__75027367.jpg";
-import image2 from "@assets/stock_images/woman_doing_home_wor_82e3f6e8.jpg";
-import image3 from "@assets/stock_images/joyful_woman_celebra_b93fe6ff.jpg";
+import image1 from "@assets/stock_images/senior_woman_exercis_0e1e8c66.jpg";
+import image2 from "@assets/stock_images/senior_woman_stretch_2b3e6712.jpg";
+import image3 from "@assets/stock_images/diverse_senior_woman_ca75de71.jpg";
 
 // Map filenames to imported images for easy configuration
 const imageMap: Record<string, string> = {
-  "active_senior_woman__75027367.jpg": image1,
-  "woman_doing_home_wor_82e3f6e8.jpg": image2,
-  "joyful_woman_celebra_b93fe6ff.jpg": image3,
+  "senior_woman_exercis_0e1e8c66.jpg": image1,
+  "senior_woman_stretch_2b3e6712.jpg": image2,
+  "diverse_senior_woman_ca75de71.jpg": image3,
 };
 
 const slides = onboardingConfig.slides.map((slide) => ({
