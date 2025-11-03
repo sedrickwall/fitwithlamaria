@@ -8,6 +8,7 @@ const ALL_WORKOUTS: Workout[] = [
     duration: 10,
     difficulty: "low",
     videoUrl: "https://www.youtube.com/embed/4pKly2JojMw",
+    visible: false,  // ← Add this to hide it
   },
   {
     id: "2",
@@ -16,6 +17,7 @@ const ALL_WORKOUTS: Workout[] = [
     duration: 15,
     difficulty: "low",
     videoUrl: "https://www.youtube.com/embed/KLGkCOMMbSs",
+    visible: false,  // ← Add this to hide it
   },
   {
     id: "3",
@@ -32,6 +34,7 @@ const ALL_WORKOUTS: Workout[] = [
     duration: 10,
     difficulty: "low",
     videoUrl: "https://www.youtube.com/embed/fywl19sc35Y?si=2Yl07mqNsCoGWqGY",
+    visible: false,  // ← Add this to hide it
   },
   {
     id: "5",
@@ -48,6 +51,7 @@ const ALL_WORKOUTS: Workout[] = [
     duration: 20,
     difficulty: "medium",
     videoUrl: "https://www.youtube.com/embed/dtGAcoOwkfI",
+    visible: false,  // ← Add this to hide it
   },
   {
     id: "7",
@@ -56,6 +60,7 @@ const ALL_WORKOUTS: Workout[] = [
     duration: 5,
     difficulty: "low",
     videoUrl: "https://www.youtube.com/embed/1ogJBXcDAbA",
+    visible: false,  // ← Add this to hide it
   },
   {
     id: "8",
@@ -72,6 +77,7 @@ const ALL_WORKOUTS: Workout[] = [
     duration: 15,
     difficulty: "low",
     videoUrl: "https://www.youtube.com/embed/gZoMmI_dNmk",
+    visible: false,  // ← Add this to hide it
   },
   {
     id: "10",
@@ -80,6 +86,7 @@ const ALL_WORKOUTS: Workout[] = [
     duration: 20,
     difficulty: "low",
     videoUrl: "https://www.youtube.com/embed/L_xrDAtykMI",
+    visible: false,  // ← Add this to hide it
   },
 ];
 
