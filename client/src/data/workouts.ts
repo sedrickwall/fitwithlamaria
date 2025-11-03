@@ -1,6 +1,6 @@
 import { Workout } from "@shared/schema";
 
-export const SAMPLE_WORKOUTS: Workout[] = [
+const ALL_WORKOUTS: Workout[] = [
   {
     id: "1",
     title: "Gentle Seated Stretches",
@@ -83,6 +83,8 @@ export const SAMPLE_WORKOUTS: Workout[] = [
   },
 ];
 
+export const SAMPLE_WORKOUTS = ALL_WORKOUTS.filter(w => w.visible !== false);
+
 export function getWorkoutById(id: string): Workout | undefined {
-  return SAMPLE_WORKOUTS.find(w => w.id === id);
+  return ALL_WORKOUTS.find(w => w.id === id);
 }

@@ -9,6 +9,7 @@ export const workoutSchema = z.object({
   difficulty: z.enum(["low", "medium"]),
   videoUrl: z.string(),
   thumbnail: z.string().optional(),
+  visible: z.boolean().optional(),
 });
 
 export type Workout = z.infer<typeof workoutSchema>;
