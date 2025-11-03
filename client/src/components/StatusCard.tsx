@@ -6,9 +6,10 @@ interface StatusCardProps {
   description: string;
   status: "complete" | "locked" | "unlocked" | "pending";
   testId: string;
+  onClick?: () => void;
 }
 
-export function StatusCard({ icon: Icon, title, description, status, testId }: StatusCardProps) {
+export function StatusCard({ icon: Icon, title, description, status, testId, onClick }: StatusCardProps) {
   const statusColors = {
     complete: "bg-card border-success",
     unlocked: "bg-card border-primary",
@@ -25,8 +26,17 @@ export function StatusCard({ icon: Icon, title, description, status, testId }: S
 
   return (
     <div
-      className={`p-8 rounded-lg border-2 ${statusColors[status]} shadow-md transition-all hover:shadow-lg`}
+      className={`p-8 rounded-lg border-2 ${statusColors[status]} shadow-md transition-all hover:shadow-lg ${onClick ? 'cursor-pointer' : ''}`}
       data-testid={testId}
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      } : undefined}
     >
       <div className="flex items-start gap-6">
         <div 

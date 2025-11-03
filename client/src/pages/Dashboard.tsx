@@ -1,5 +1,5 @@
 import { CheckCircle2, Lock, Puzzle, Dumbbell } from "lucide-react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { StatusCard } from "@/components/StatusCard";
@@ -7,10 +7,13 @@ import { StreakDisplay } from "@/components/StreakDisplay";
 import { Button } from "@/components/ui/button";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
+import { SAMPLE_WORKOUTS } from "@/data/workouts";
+import { getWorkoutCompletions } from "@/lib/localStorage";
 
 export default function Dashboard() {
   const { profile, loading: profileLoading } = useUserProfile();
   const { status, loading: statusLoading } = useDailyStatus();
+  const [, navigate] = useLocation();
 
   if (profileLoading || statusLoading) {
     return (
@@ -28,6 +31,27 @@ export default function Dashboard() {
   const puzzleSolved = status?.puzzleSolved || false;
   const currentStreak = profile?.currentStreak || 0;
   const totalPoints = profile?.totalPoints || 0;
+
+  const handleStartRandomWorkout = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const completions = getWorkoutCompletions();
+    const todayCompletedIds = completions
+      .filter(c => c.date === today)
+      .map(c => c.workoutId);
+
+    const uncompletedWorkouts = SAMPLE_WORKOUTS.filter(
+      w => !todayCompletedIds.includes(w.id)
+    );
+
+    if (uncompletedWorkouts.length > 0) {
+      const randomWorkout = uncompletedWorkouts[
+        Math.floor(Math.random() * uncompletedWorkouts.length)
+      ];
+      navigate(`/workout/${randomWorkout.id}`);
+    } else {
+      navigate("/workouts");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -54,10 +78,11 @@ export default function Dashboard() {
             description={
               workoutCompleted 
                 ? "Wonderful work! You're building strength every day." 
-                : "Choose a gentle workout to start your day"
+                : "Click to start a workout"
             }
             status={workoutCompleted ? "complete" : "pending"}
             testId="status-workout"
+            onClick={!workoutCompleted ? handleStartRandomWorkout : undefined}
           />
 
           <StatusCard
