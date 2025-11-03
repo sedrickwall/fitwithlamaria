@@ -30,7 +30,7 @@ const SAMPLE_WORKOUTS: Workout[] = [
     category: "seated",
     duration: 15,
     difficulty: "medium",
-    videoUrl: "https://player.vimeo.com/video/1132983491?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479",
+    videoUrl: "https://www.dropbox.com/scl/fi/04p9z9koxztoizs1zhn2c/Seated-Strength-Day-1-Final.mp4?rlkey=3g7fympl5qt3d0669i490s283&st=5epldprt?raw=1",
   },
   {
     id: "4",
@@ -46,7 +46,7 @@ const SAMPLE_WORKOUTS: Workout[] = [
     category: "standing",
     duration: 10,
     difficulty: "medium",
-    videoUrl: "https://player.vimeo.com/video/1132984878?badge=0&amp;autopause=0&amp;player_id=0&amp;app_id=58479",
+    videoUrl: "https://www.dropbox.com/scl/fi/xoojn6qebkaayvqtmbqzi/10-Minute-Low-Impact-Cardio-for-Beginners-Seniors-Standing-No-Jumping-Fitness-Challenge.mp4?rlkey=c98ymkmy8d9hx4wgd5o8fmxss&st=lysww5cb?raw=1",
   },
   {
     id: "6",
@@ -68,9 +68,9 @@ const SAMPLE_WORKOUTS: Workout[] = [
     id: "8",
     title: "Balance & Flexibility",
     category: "balance",
-    duration: 10,
+    duration: 5,
     difficulty: "low",
-    videoUrl: "https://www.youtube.com/embed/qs3FQ0z7zUc",
+    videoUrl: "https://www.dropbox.com/scl/fi/kigvno487io2dq4esae2q/Sqaut-Challenge-final.mp4?rlkey=6v7zv0l7pgxx9lczjyba0e0ib&st=gr8dkofb?raw=1",
   },
   {
     id: "9",
