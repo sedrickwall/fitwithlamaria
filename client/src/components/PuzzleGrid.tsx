@@ -40,19 +40,19 @@ export function PuzzleGrid({ guesses, currentGuess, currentRow, evaluation, word
   };
 
   return (
-    <div className="flex flex-col gap-2" data-testid="puzzle-grid">
+    <div className="flex flex-col gap-1.5 sm:gap-2" data-testid="puzzle-grid">
       {rows.map((row, rowIndex) => (
-        <div key={rowIndex} className="flex gap-2 justify-center">
+        <div key={rowIndex} className="flex gap-1.5 sm:gap-2 justify-center">
           {Array.from({ length: wordLength }).map((_, colIndex) => {
             const letter = row[colIndex];
             return (
               <div
                 key={colIndex}
                 className={`
-                  w-16 h-16 md:w-18 md:h-18 
+                  w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16
                   flex items-center justify-center 
-                  border-[3px] rounded-lg
-                  font-mono font-bold text-[40px] uppercase
+                  border-2 sm:border-[3px] rounded-md sm:rounded-lg
+                  font-mono font-bold text-2xl sm:text-3xl md:text-[40px] uppercase
                   transition-all duration-300
                   ${getBoxStyles(rowIndex, colIndex)}
                 `}

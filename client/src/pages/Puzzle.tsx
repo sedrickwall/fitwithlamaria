@@ -446,25 +446,25 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
     <div className="min-h-screen bg-background pb-24">
       <TopBar points={totalPoints} />
       
-      <main className="max-w-7xl mx-auto px-6 md:px-8 py-8">
-        <div className="mb-8 text-center">
-          <h2 className="text-h1 font-bold text-secondary mb-2">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8">
+        <div className="mb-4 sm:mb-6 text-center">
+          <h2 className="text-2xl sm:text-h1 font-bold text-secondary mb-1 sm:mb-2">
             Brain Game #{puzzleIndex}
           </h2>
           {isPremium && (
-            <div className="flex justify-center mb-4">
+            <div className="flex justify-center mb-2 sm:mb-4">
               <PremiumBadge />
             </div>
           )}
-          <p className="text-body-lg text-muted-foreground">
+          <p className="text-sm sm:text-body-lg text-muted-foreground">
             Guess the {wordLength}-letter word in {maxAttempts} tries
           </p>
-          <p className="text-body-md text-muted-foreground mt-2">
+          <p className="text-xs sm:text-body-md text-muted-foreground mt-1 sm:mt-2">
             Tries: {guesses.length}/{maxAttempts}
           </p>
         </div>
 
-        <div className="max-w-2xl mx-auto mb-8">
+        <div className="max-w-2xl mx-auto mb-4 sm:mb-6">
           <PuzzleGrid
             guesses={guesses}
             currentGuess={currentGuess}
@@ -475,7 +475,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
           />
         </div>
 
-        <div className="max-w-3xl mx-auto mb-8">
+        <div className="max-w-3xl mx-auto mb-4 sm:mb-6">
           <PuzzleKeyboard
             onKeyPress={handleKeyPress}
             onDelete={handleDelete}
