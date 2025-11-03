@@ -115,11 +115,12 @@ export default function Dashboard() {
               puzzleSolved 
                 ? "Excellent focus! You're keeping your mind sharp." 
                 : (puzzleUnlocked 
-                  ? "You've earned today's puzzle. Ready to play?" 
+                  ? "Click to start a workout" 
                   : "Complete your workout to unlock")
             }
             status={puzzleSolved ? "complete" : (puzzleUnlocked ? "unlocked" : "locked")}
             testId="status-puzzle"
+            onClick={!puzzleSolved ? handleStartRandomWorkout : undefined}
           />
         </div>
 
