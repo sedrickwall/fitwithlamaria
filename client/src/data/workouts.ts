@@ -23,7 +23,7 @@ export const SAMPLE_WORKOUTS: Workout[] = [
     category: "seated",
     duration: 15,
     difficulty: "medium",
-    videoUrl: "https://www.dropbox.com/scl/fi/04p9z9koxztoizs1zhn2c/Seated-Strength-Day-1-Final.mp4?rlkey=3g7fympl5qt3d0669i490s283&st=5epldprt?raw=1",
+    videoUrl: "https://www.youtube.com/embed/HC_45pfZy-w?si=_M9-j56XTPOue7j9",
   },
   {
     id: "4",
@@ -39,7 +39,7 @@ export const SAMPLE_WORKOUTS: Workout[] = [
     category: "standing",
     duration: 10,
     difficulty: "medium",
-    videoUrl: "https://www.dropbox.com/scl/fi/xoojn6qebkaayvqtmbqzi/10-Minute-Low-Impact-Cardio-for-Beginners-Seniors-Standing-No-Jumping-Fitness-Challenge.mp4?rlkey=c98ymkmy8d9hx4wgd5o8fmxss&st=lysww5cb?raw=1",
+    videoUrl: "https://www.youtube.com/embed/fywl19sc35Y?si=2Yl07mqNsCoGWqGY",
   },
   {
     id: "6",
@@ -63,7 +63,7 @@ export const SAMPLE_WORKOUTS: Workout[] = [
     category: "balance",
     duration: 5,
     difficulty: "low",
-    videoUrl: "https://www.dropbox.com/scl/fi/kigvno487io2dq4esae2q/Sqaut-Challenge-final.mp4?rlkey=6v7zv0l7pgxx9lczjyba0e0ib&st=gr8dkofb?raw=1",
+    videoUrl: "https://www.youtube.com/embed/8FvlCbqUOWE?si=iUof2MThK2EN2I2U",
   },
   {
     id: "9",
