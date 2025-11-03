@@ -7,12 +7,13 @@ router.get("/", (req, res) => {
   // Get puzzle index from query parameter (default to 0)
   const puzzleIndex = parseInt(req.query.index as string) || 0;
   
-  // Alternate based on puzzle index: even index = wordle, odd index = word search
-  const puzzleType = puzzleIndex % 2 === 0 ? "wordle" : "wordsearch";
+  // Rotate between 3 puzzle types: wordle -> wordsearch -> crossword
+  const puzzleTypes = ["wordle", "wordsearch", "crossword"];
+  const puzzleType = puzzleTypes[puzzleIndex % 3];
   
   // Calculate difficulty based on puzzle index
-  // Every 2 puzzles increases difficulty
-  const difficultyLevel = Math.floor(puzzleIndex / 2);
+  // Every 3 puzzles increases difficulty
+  const difficultyLevel = Math.floor(puzzleIndex / 3);
   
   res.json({
     puzzleType,

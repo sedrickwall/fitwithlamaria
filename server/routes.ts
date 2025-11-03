@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import puzzleRouter from "./routes/puzzle";
 import wordsearchRouter from "./routes/wordsearch";
+import crosswordRouter from "./routes/crossword";
 import puzzletypeRouter from "./routes/puzzletype";
 import stripeRouter from "./routes/stripe";
 
@@ -28,6 +29,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Register word search routes under /api/wordsearch
   app.use("/api/wordsearch", wordsearchRouter);
+  
+  // Register crossword routes under /api/crossword
+  app.use("/api/crossword", crosswordRouter);
   
   // Register puzzle type detection under /api/puzzletype
   app.use("/api/puzzletype", puzzletypeRouter);

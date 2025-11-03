@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import Puzzle from "@/pages/Puzzle";
 import WordSearch from "@/pages/WordSearch";
+import Crossword from "@/pages/Crossword";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
 
 export default function PuzzleRouter() {
   const { status, getCurrentPuzzleIndex, isPuzzleUnlocked } = useDailyStatus();
-  const [puzzleType, setPuzzleType] = useState<"wordle" | "wordsearch" | null>(null);
+  const [puzzleType, setPuzzleType] = useState<"wordle" | "wordsearch" | "crossword" | null>(null);
   const [puzzleIndex, setPuzzleIndex] = useState<number>(0);
   const [difficultyLevel, setDifficultyLevel] = useState<number>(0);
 
@@ -27,8 +28,9 @@ export default function PuzzleRouter() {
       .catch(error => {
         console.error("Failed to load puzzle type:", error);
         // Fallback to client-side detection based on puzzle index
-        setPuzzleType(currentPuzzleIndex % 2 === 0 ? "wordle" : "wordsearch");
-        setDifficultyLevel(Math.floor(currentPuzzleIndex / 2));
+        const types: ("wordle" | "wordsearch" | "crossword")[] = ["wordle", "wordsearch", "crossword"];
+        setPuzzleType(types[currentPuzzleIndex % 3]);
+        setDifficultyLevel(Math.floor(currentPuzzleIndex / 3));
       });
   }, [status, getCurrentPuzzleIndex]);
 
@@ -59,6 +61,10 @@ export default function PuzzleRouter() {
 
   if (puzzleType === "wordsearch") {
     return <WordSearch puzzleIndex={puzzleIndex} difficultyLevel={difficultyLevel} />;
+  }
+
+  if (puzzleType === "crossword") {
+    return <Crossword />;
   }
 
   return <Puzzle puzzleIndex={puzzleIndex} difficultyLevel={difficultyLevel} />;
