@@ -182,6 +182,19 @@ export default function Crossword() {
               Solve health and fitness clues to complete the puzzle
             </p>
             
+            {/* Instructions */}
+            <div className="mt-3 sm:mt-4 max-w-md mx-auto bg-primary/5 border border-primary/20 rounded-lg p-3 sm:p-4">
+              <p className="text-xs sm:text-sm font-semibold text-foreground mb-2">
+                How to Play:
+              </p>
+              <ul className="text-xs sm:text-sm text-muted-foreground space-y-1 text-left">
+                <li>• <strong>Select a clue:</strong> Tap any clue from Across or Down</li>
+                <li>• <strong>Type your answer:</strong> Enter the word in the box</li>
+                <li>• <strong>Check answers:</strong> See which ones are correct</li>
+                <li>• <strong>Keep trying:</strong> Fix incorrect answers until all are right</li>
+              </ul>
+            </div>
+            
             {isPremium && (
               <div className="mt-2 sm:mt-4 flex justify-center">
                 <PremiumBadge />

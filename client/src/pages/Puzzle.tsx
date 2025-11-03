@@ -478,7 +478,22 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
           <p className="text-sm sm:text-body-lg text-muted-foreground">
             Guess any {wordLength}-letter word
           </p>
-          <p className="text-xs sm:text-body-md text-muted-foreground mt-1 sm:mt-2">
+          
+          {/* Instructions */}
+          <div className="mt-3 sm:mt-4 max-w-md mx-auto bg-secondary/5 border border-secondary/20 rounded-lg p-3 sm:p-4">
+            <p className="text-xs sm:text-sm font-semibold text-foreground mb-2">
+              How to Play:
+            </p>
+            <ul className="text-xs sm:text-sm text-muted-foreground space-y-1 text-left">
+              <li>• <strong>Type:</strong> Use the keyboard to enter letters</li>
+              <li>• <strong>Green:</strong> Letter is correct and in the right spot</li>
+              <li>• <strong>Yellow:</strong> Letter is in the word but wrong spot</li>
+              <li>• <strong>Gray:</strong> Letter is not in the word</li>
+              <li>• You have {maxAttempts} tries to guess the word</li>
+            </ul>
+          </div>
+          
+          <p className="text-xs sm:text-body-md text-muted-foreground mt-3 sm:mt-4">
             Tries: {guesses.length}/{maxAttempts}
           </p>
           
