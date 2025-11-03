@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { Lock, Share2, CheckCircle, SkipForward, AlertCircle, Crown, Dumbbell } from "lucide-react";
+import { Lock, Share2, CheckCircle, SkipForward, AlertCircle, Crown, Dumbbell, Lightbulb } from "lucide-react";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { PuzzleGrid } from "@/components/PuzzleGrid";
@@ -66,6 +66,9 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
   const [wordLength, setWordLength] = useState<number>(5); // Dynamic word length based on difficulty
   const [maxAttempts, setMaxAttempts] = useState<number>(6); // Dynamic max attempts
   const [premiumWord, setPremiumWord] = useState<string>("");
+  const [showHintModal, setShowHintModal] = useState(false);
+  const [hintCategory, setHintCategory] = useState<string>("");
+  const [hintText, setHintText] = useState<string>("");
 
   const currentRow = guesses.length;
   const totalPoints = profile?.totalPoints || 0;
@@ -116,6 +119,22 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
 
     loadPuzzle();
   }, [actualPuzzleIndex, isPremium, toast]);
+
+  // Load hint for the puzzle
+  useEffect(() => {
+    const loadHint = async () => {
+      try {
+        const res = await fetch(`/api/puzzle/hint?index=${actualPuzzleIndex}`);
+        const data = await res.json();
+        setHintCategory(data.category);
+        setHintText(data.hint);
+      } catch (error) {
+        console.error("Failed to load hint:", error);
+      }
+    };
+
+    loadHint();
+  }, [actualPuzzleIndex]);
 
   useEffect(() => {
     if (puzzleSolved) {
@@ -457,11 +476,26 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
             </div>
           )}
           <p className="text-sm sm:text-body-lg text-muted-foreground">
-            Guess the {wordLength}-letter word in {maxAttempts} tries
+            Guess any {wordLength}-letter word
           </p>
           <p className="text-xs sm:text-body-md text-muted-foreground mt-1 sm:mt-2">
             Tries: {guesses.length}/{maxAttempts}
           </p>
+          
+          {!gameOver && (
+            <div className="mt-3 sm:mt-4">
+              <Button
+                onClick={() => setShowHintModal(true)}
+                variant="outline"
+                size="sm"
+                className="h-10 text-sm font-medium border-2"
+                data-testid="button-show-hint"
+              >
+                <Lightbulb className="w-4 h-4 mr-2" />
+                Get a Hint
+              </Button>
+            </div>
+          )}
         </div>
 
         <div className="max-w-2xl mx-auto mb-4 sm:mb-6">
@@ -686,6 +720,40 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
               Done
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showHintModal} onOpenChange={setShowHintModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="flex justify-center mb-4">
+              <Lightbulb className="w-20 h-20 text-warning" />
+            </div>
+            <DialogTitle className="text-h2 text-center">
+              Health Hint
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="bg-secondary/10 rounded-lg p-4 border-2 border-secondary">
+              <p className="text-sm font-semibold text-secondary mb-2">CATEGORY</p>
+              <p className="text-h3 font-bold text-foreground">{hintCategory}</p>
+            </div>
+            <div className="bg-card rounded-lg p-4 border-2 border-border">
+              <p className="text-sm font-semibold text-muted-foreground mb-2">DID YOU KNOW?</p>
+              <p className="text-body-md text-foreground leading-relaxed">{hintText}</p>
+            </div>
+            <p className="text-xs text-muted-foreground text-center italic">
+              This hint relates to today's puzzle word. Use it to help you guess!
+            </p>
+          </div>
+          <Button
+            onClick={() => setShowHintModal(false)}
+            size="lg"
+            className="w-full h-14 text-body-md"
+            data-testid="button-close-hint"
+          >
+            Got It!
+          </Button>
         </DialogContent>
       </Dialog>
 
