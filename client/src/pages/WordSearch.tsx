@@ -252,21 +252,21 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
     <div className="min-h-screen bg-background pb-24">
       <TopBar points={totalPoints} />
       
-      <main className="max-w-7xl mx-auto px-6 md:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-4 sm:py-6 md:py-8">
         <div className="max-w-4xl mx-auto">
-          <div className="mb-8 text-center">
-            <h2 className="text-h1 font-bold text-foreground mb-2">
+          <div className="mb-4 sm:mb-6 text-center">
+            <h2 className="text-2xl sm:text-h1 font-bold text-foreground mb-1 sm:mb-2">
               Word Search Puzzle
             </h2>
-            <p className="text-body-lg text-muted-foreground">
+            <p className="text-sm sm:text-body-lg text-muted-foreground">
               Find all the wellness words hidden in the grid
             </p>
-            <p className="text-body-md text-muted-foreground mt-2">
+            <p className="text-xs sm:text-body-md text-muted-foreground mt-1 sm:mt-2">
               Click and drag to select words
             </p>
             
             {isPremium && (
-              <div className="mt-4 flex justify-center">
+              <div className="mt-2 sm:mt-4 flex justify-center">
                 <PremiumBadge />
               </div>
             )}
@@ -305,7 +305,7 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
             </div>
           )}
 
-          <div className="flex justify-center mb-8">
+          <div className="flex justify-center mb-4 sm:mb-6">
             {grid.length > 0 && (
               <WordSearchGrid
                 grid={grid}

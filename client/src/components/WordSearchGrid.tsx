@@ -66,16 +66,16 @@ export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled 
 
   return (
     <div 
-      className="inline-block select-none" 
+      className="inline-block select-none w-full" 
       onMouseLeave={() => {
         setIsSelecting(false);
         setSelectedCells([]);
       }}
       data-testid="word-search-grid"
     >
-      <div className="grid gap-1">
+      <div className="grid gap-0.5 sm:gap-1">
         {grid.map((rowData, rowIndex) => (
-          <div key={rowIndex} className="flex gap-1">
+          <div key={rowIndex} className="flex gap-0.5 sm:gap-1">
             {rowData.map((letter, colIndex) => {
               const isSelected = isCellSelected(rowIndex, colIndex);
               const isFound = isCellInFoundWord(rowIndex, colIndex);
@@ -87,10 +87,10 @@ export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled 
                   onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
                   onMouseUp={handleMouseUp}
                   className={`
-                    w-12 h-12 md:w-14 md:h-14
+                    w-7 h-7 sm:w-10 sm:h-10 md:w-12 md:h-12
                     flex items-center justify-center
-                    font-mono font-bold text-[24px] md:text-[28px] uppercase
-                    border-2 rounded-lg cursor-pointer
+                    font-mono font-bold text-sm sm:text-xl md:text-2xl uppercase
+                    border sm:border-2 rounded sm:rounded-lg cursor-pointer
                     transition-all duration-150
                     ${isSelected ? "bg-primary text-primary-foreground border-primary scale-105" : ""}
                     ${isFound ? "bg-success/30 text-success border-success" : ""}
@@ -107,18 +107,18 @@ export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled 
         ))}
       </div>
 
-      <div className="mt-6">
-        <h3 className="text-h4 font-semibold text-foreground mb-3">
+      <div className="mt-4 sm:mt-6">
+        <h3 className="text-base sm:text-h4 font-semibold text-foreground mb-2 sm:mb-3">
           Find these words:
         </h3>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-2 gap-1.5 sm:gap-2">
           {words.map((word) => {
             const isFound = foundWords.includes(word);
             return (
               <div
                 key={word}
                 className={`
-                  text-body-md font-semibold px-4 py-2 rounded-lg
+                  text-sm sm:text-body-md font-semibold px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg
                   ${isFound ? "bg-success/20 text-success line-through" : "bg-muted text-foreground"}
                 `}
                 data-testid={`word-${word.toLowerCase()}`}
