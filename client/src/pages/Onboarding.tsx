@@ -26,24 +26,14 @@ export default function Onboarding() {
   const [, navigate] = useLocation();
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const handleSkip = () => {
-    localStorage.setItem("hasSeenOnboarding", "true");
-    navigate("/premium");
-  };
-
-  const handleChoosePlan = () => {
-    localStorage.setItem("hasSeenOnboarding", "true");
-    navigate("/premium");
-  };
-
-  const handleAlreadySubscriber = () => {
+  const handleGetStarted = () => {
     localStorage.setItem("hasSeenOnboarding", "true");
     navigate("/");
   };
 
   const nextSlide = () => {
     if (currentSlide === slides.length - 1) {
-      handleChoosePlan();
+      handleGetStarted();
     } else {
       setCurrentSlide((prev) => prev + 1);
     }
@@ -63,7 +53,7 @@ export default function Onboarding() {
     <div className="min-h-screen bg-background flex flex-col">
       <div className="flex justify-end p-6">
         <button
-          onClick={handleSkip}
+          onClick={handleGetStarted}
           className="text-muted-foreground hover:text-foreground transition-colors text-lg"
           data-testid="button-skip-onboarding"
         >
@@ -127,26 +117,22 @@ export default function Onboarding() {
             ))}
           </div>
 
-          <div className="w-full max-w-md space-y-6">
-            <p className="text-center text-muted-foreground">
-              Save up to 59% <span className="text-foreground/70">with annual subscription</span>
+          <div className="w-full max-w-md space-y-4">
+            <p className="text-center text-muted-foreground text-base">
+              {currentSlide === slides.length - 1 
+                ? "Ready to start your wellness journey?" 
+                : "Swipe to learn more"}
             </p>
 
-            <Button
-              onClick={handleChoosePlan}
-              className="w-full h-14 text-lg bg-[#8B7355] hover:bg-[#75614A] text-white rounded-full"
-              data-testid="button-choose-plan"
-            >
-              Choose Your Plan
-            </Button>
-
-            <button
-              onClick={handleAlreadySubscriber}
-              className="w-full text-center text-muted-foreground hover:text-foreground transition-colors"
-              data-testid="button-already-subscriber"
-            >
-              Already a subscriber?
-            </button>
+            {currentSlide === slides.length - 1 && (
+              <Button
+                onClick={handleGetStarted}
+                className="w-full h-14 text-lg rounded-full"
+                data-testid="button-get-started"
+              >
+                Start Free
+              </Button>
+            )}
           </div>
         </div>
       </div>

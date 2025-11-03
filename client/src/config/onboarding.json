@@ -1,21 +1,21 @@
 {
   "slides": [
     {
-      "id": "growth",
-      "title": "Growth",
-      "description": "Become the strongest version of yourself. Every step forward is progress, no matter how small.",
+      "id": "step1",
+      "title": "Move Your Body",
+      "description": "Start with gentle workouts designed for active seniors. Choose from seated, standing, or balance exercises.",
       "image": "active_senior_woman__75027367.jpg"
     },
     {
-      "id": "wellness",
-      "title": "Wellness",
-      "description": "Discover a new relationship with your body, mind, and spirit as you make movement a daily practice.",
+      "id": "step2",
+      "title": "Play Brain Games",
+      "description": "Complete a workout to unlock daily word puzzles. Keep your mind sharp while you build strength.",
       "image": "woman_doing_home_wor_82e3f6e8.jpg"
     },
     {
-      "id": "journey",
-      "title": "Journey",
-      "description": "Feel understood, get inspired, and celebrate your transformation.",
+      "id": "step3",
+      "title": "Build Your Streak",
+      "description": "Earn points, track your progress, and celebrate consistency. Every day you show up is a win!",
       "image": "joyful_woman_celebra_b93fe6ff.jpg"
     }
   ],
