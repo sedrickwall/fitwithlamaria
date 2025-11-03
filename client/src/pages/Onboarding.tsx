@@ -61,9 +61,9 @@ export default function Onboarding() {
         </button>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-between px-6 pb-12 max-w-2xl mx-auto w-full">
+      <div className="flex-1 flex flex-col items-center justify-between px-6 pb-8 max-w-2xl mx-auto w-full">
         <div className="w-full flex-1 flex flex-col items-center justify-center">
-          <div className="relative w-full max-w-md aspect-[3/4] mb-8 rounded-2xl overflow-hidden shadow-2xl">
+          <div className="relative w-full max-w-xs aspect-[4/5] mb-6 rounded-2xl overflow-hidden shadow-2xl">
             <img
               src={slides[currentSlide].image}
               alt={slides[currentSlide].title}
@@ -92,16 +92,16 @@ export default function Onboarding() {
             </button>
           </div>
 
-          <div className="text-center space-y-4 mb-8">
-            <h1 className="text-4xl md:text-5xl font-bold" data-testid={`text-title-${currentSlide}`}>
+          <div className="text-center space-y-3 mb-6">
+            <h1 className="text-3xl md:text-4xl font-bold" data-testid={`text-title-${currentSlide}`}>
               {slides[currentSlide].title}
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-lg mx-auto" data-testid={`text-description-${currentSlide}`}>
+            <p className="text-base md:text-lg text-muted-foreground max-w-lg mx-auto" data-testid={`text-description-${currentSlide}`}>
               {slides[currentSlide].description}
             </p>
           </div>
 
-          <div className="flex gap-2 mb-8">
+          <div className="flex gap-2 mb-6">
             {slides.map((_, index) => (
               <button
                 key={index}
