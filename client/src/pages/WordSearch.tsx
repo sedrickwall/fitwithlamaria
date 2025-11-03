@@ -261,9 +261,19 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
             <p className="text-sm sm:text-body-lg text-muted-foreground">
               Find all the wellness words hidden in the grid
             </p>
-            <p className="text-xs sm:text-body-md text-muted-foreground mt-1 sm:mt-2">
-              Click and drag to select words
-            </p>
+            
+            {/* Instructions */}
+            <div className="mt-3 sm:mt-4 max-w-md mx-auto bg-primary/5 border border-primary/20 rounded-lg p-3 sm:p-4">
+              <p className="text-xs sm:text-sm font-semibold text-foreground mb-2">
+                How to Play:
+              </p>
+              <ul className="text-xs sm:text-sm text-muted-foreground space-y-1 text-left">
+                <li>• <strong>Click & Drag:</strong> Hold and drag across letters</li>
+                <li>• <strong>Click to Select:</strong> Tap letters one by one</li>
+                <li>• Words can be horizontal, vertical, or diagonal</li>
+                <li>• Words may be forwards or backwards</li>
+              </ul>
+            </div>
             
             {isPremium && (
               <div className="mt-2 sm:mt-4 flex justify-center">
