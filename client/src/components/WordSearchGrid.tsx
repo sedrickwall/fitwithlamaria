@@ -66,7 +66,7 @@ export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled 
 
   return (
     <div 
-      className="inline-block select-none w-full" 
+      className="inline-block select-none" 
       onMouseLeave={() => {
         setIsSelecting(false);
         setSelectedCells([]);
