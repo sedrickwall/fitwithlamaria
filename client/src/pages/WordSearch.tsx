@@ -209,9 +209,13 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
     await solveWordSearch(actualPuzzleIndex, 0);
 
     toast({
-      title: "Puzzle Skipped",
-      description: isPremium ? "You can try another puzzle after your next workout." : "You can try again with tomorrow's puzzle.",
+      title: "That's Okay!",
+      description: isPremium 
+        ? "Take a break and try another puzzle after your next workout." 
+        : "Come back tomorrow with a fresh mind for a new challenge!",
     });
+
+    setTimeout(() => navigate("/"), 1500);
   };
 
   const canPlay = canStartNewPuzzle(isPremium, 'wordsearch');
@@ -392,7 +396,7 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
           <AlertDialogHeader>
             <AlertDialogTitle className="text-h3">Skip This Puzzle?</AlertDialogTitle>
             <AlertDialogDescription className="text-body-md">
-              Skipping won't earn you any points, but you'll be able to move on to the next puzzle. You've found {foundWords.length} out of {words.length} words.
+              Great job finding {foundWords.length} out of {words.length} words! It's okay to take a break and try a fresh puzzle tomorrow.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

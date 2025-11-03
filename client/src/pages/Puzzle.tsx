@@ -680,7 +680,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
           <AlertDialogHeader>
             <AlertDialogTitle className="text-h3">Skip This Puzzle?</AlertDialogTitle>
             <AlertDialogDescription className="text-body-md">
-              Skipping won't earn you any points, but you'll be able to move on to the next puzzle. The correct answer will be revealed.
+              It's okay to take a break! The correct answer will be revealed, and you can try a fresh puzzle tomorrow.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -709,7 +709,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
             </DialogTitle>
             <DialogDescription className="text-body-lg text-center">
               {wasSkipped 
-                ? "Sometimes it's good to take a break. Come back tomorrow for a fresh puzzle!"
+                ? "Take your time. Every puzzle is a chance to learn and grow. Come back tomorrow for a new challenge!"
                 : "You gave it your best effort! Every puzzle helps keep your mind active and sharp."}
             </DialogDescription>
           </DialogHeader>
@@ -718,21 +718,23 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
             <p className="text-4xl font-bold text-foreground uppercase tracking-wider">{dailyWord}</p>
           </div>
           <div className="flex gap-4">
-            <Button
-              onClick={handleShare}
-              variant="outline"
-              className="flex-1 h-14 text-body-md"
-              data-testid="button-share-failure"
-            >
-              <Share2 className="w-5 h-5 mr-2" />
-              Share
-            </Button>
+            {!wasSkipped && (
+              <Button
+                onClick={handleShare}
+                variant="outline"
+                className="flex-1 h-14 text-body-md"
+                data-testid="button-share-failure"
+              >
+                <Share2 className="w-5 h-5 mr-2" />
+                Share
+              </Button>
+            )}
             <Button
               onClick={() => navigate("/")}
-              className="flex-1 h-14 text-body-md"
+              className={`${wasSkipped ? 'w-full' : 'flex-1'} h-14 text-body-md`}
               data-testid="button-done-failure"
             >
-              Done
+              {wasSkipped ? "Back to Dashboard" : "Done"}
             </Button>
           </div>
         </DialogContent>

@@ -130,11 +130,11 @@ export default function Crossword() {
     setGameOver(true);
     
     toast({
-      title: "Puzzle Skipped",
-      description: "Come back tomorrow for a new challenge!",
+      title: "That's Okay!",
+      description: "Take your time. Every puzzle helps keep your mind sharp. Come back tomorrow for a new challenge!",
     });
 
-    setTimeout(() => navigate("/"), 1000);
+    setTimeout(() => navigate("/"), 1500);
   };
 
   // Show locked state if workout not completed
@@ -311,7 +311,7 @@ export default function Crossword() {
           <AlertDialogHeader>
             <AlertDialogTitle className="text-h3">Skip This Puzzle?</AlertDialogTitle>
             <AlertDialogDescription className="text-body-md">
-              Skipping won't earn you any points, but you'll be able to move on to the next puzzle.
+              It's okay to take a break! Come back tomorrow for a fresh crossword challenge.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
