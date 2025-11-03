@@ -7,13 +7,32 @@ import { StreakDisplay } from "@/components/StreakDisplay";
 import { Button } from "@/components/ui/button";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
+import { useAuth } from "@/contexts/AuthContext";
 import { SAMPLE_WORKOUTS } from "@/data/workouts";
 import { getWorkoutCompletions } from "@/lib/localStorage";
 
 export default function Dashboard() {
   const { profile, loading: profileLoading } = useUserProfile();
   const { status, loading: statusLoading } = useDailyStatus();
+  const { user } = useAuth();
   const [, navigate] = useLocation();
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 18) return "Good afternoon";
+    return "Good evening";
+  };
+
+  const getUserFirstName = () => {
+    if (user?.displayName) {
+      return user.displayName.split(' ')[0];
+    }
+    if (profile?.name && profile.name !== "You") {
+      return profile.name.split(' ')[0];
+    }
+    return "";
+  };
 
   if (profileLoading || statusLoading) {
     return (
@@ -60,7 +79,7 @@ export default function Dashboard() {
       <main className="max-w-7xl mx-auto px-6 md:px-8 py-8">
         <div className="mb-8">
           <h2 className="text-h1 font-bold text-foreground mb-2">
-            Good morning{profile?.name && profile.name !== "You" ? `, ${profile.name}` : ""}!
+            {getGreeting()}{getUserFirstName() ? `, ${getUserFirstName()}` : ""}!
           </h2>
           <p className="text-body-lg text-muted-foreground">
             Your daily practice nourishes body and mind
