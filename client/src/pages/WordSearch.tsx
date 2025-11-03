@@ -276,14 +276,31 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
             <div className="mb-8 p-6 bg-success/10 border-2 border-success rounded-lg text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
               <CheckCircle2 className="w-16 h-16 mx-auto text-success mb-4" />
               <h3 className="text-h2 font-bold text-success mb-2">
-                Puzzle Complete!
+                {localStorage.getItem("justCompletedWorkout") === "true" 
+                  ? "Wonderful Work!" 
+                  : "Puzzle Complete!"}
               </h3>
               <p className="text-body-lg text-foreground mb-2">
-                You found all the words!
+                {localStorage.getItem("justCompletedWorkout") === "true" 
+                  ? "You completed your workout and found all the words! You're building strength and keeping your mind sharp."
+                  : "You found all the words!"}
               </p>
               <div className="flex items-center justify-center gap-2 text-warning font-semibold text-h3">
                 <Trophy className="w-6 h-6" />
-                +50 points
+                +{(() => {
+                  const workoutPoints = parseInt(localStorage.getItem("workoutPointsEarned") || "0");
+                  const justCompletedWorkout = localStorage.getItem("justCompletedWorkout") === "true";
+                  const puzzlePoints = 50;
+                  if (justCompletedWorkout) {
+                    // Clear the flag after showing
+                    setTimeout(() => {
+                      localStorage.removeItem("justCompletedWorkout");
+                      localStorage.removeItem("workoutPointsEarned");
+                    }, 100);
+                    return workoutPoints + puzzlePoints;
+                  }
+                  return puzzlePoints;
+                })()} points
               </div>
             </div>
           )}

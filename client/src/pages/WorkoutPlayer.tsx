@@ -72,7 +72,12 @@ export default function WorkoutPlayer() {
       await createWorkoutPost(user.uid, user.displayName || "Member", workout.title, workout.category);
     }
 
-    setCompleted(true);
+    // Store flag for combined celebration message
+    localStorage.setItem("justCompletedWorkout", "true");
+    localStorage.setItem("workoutPointsEarned", points.toString());
+    
+    // Navigate directly to puzzle
+    handleContinueToPuzzle();
   };
 
   const handleShareModalClose = () => {

@@ -536,22 +536,39 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
         </div>
       </main>
 
-      <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
+      <Dialog open={showSuccess} onOpenChange={(open) => {
+        setShowSuccess(open);
+        if (!open) {
+          // Clear the workout completion flag when dialog closes
+          localStorage.removeItem("justCompletedWorkout");
+          localStorage.removeItem("workoutPointsEarned");
+        }
+      }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <div className="flex justify-center mb-4">
               <CheckCircle className="w-32 h-32 text-secondary" />
             </div>
             <DialogTitle className="text-h2 text-center">
-              Excellent Focus!
+              {localStorage.getItem("justCompletedWorkout") === "true" 
+                ? "Wonderful Work!" 
+                : "Excellent Focus!"}
             </DialogTitle>
             <DialogDescription className="text-body-lg text-center">
-              You solved today's brain game in {guesses.length} {guesses.length === 1 ? "try" : "tries"}. You're keeping your mind sharp.
+              {localStorage.getItem("justCompletedWorkout") === "true" 
+                ? `You completed your workout and solved the puzzle in ${guesses.length} ${guesses.length === 1 ? "try" : "tries"}! You're building strength and keeping your mind sharp.`
+                : `You solved today's brain game in ${guesses.length} ${guesses.length === 1 ? "try" : "tries"}. You're keeping your mind sharp.`}
             </DialogDescription>
           </DialogHeader>
           <div className="bg-card rounded-lg p-6 text-center border-2 border-secondary">
             <p className="text-body-md text-muted-foreground mb-2">Points Earned</p>
-            <p className="text-stat font-bold text-secondary">+{pointsEarned}</p>
+            <p className="text-stat font-bold text-secondary">
+              +{(() => {
+                const workoutPoints = parseInt(localStorage.getItem("workoutPointsEarned") || "0");
+                const justCompletedWorkout = localStorage.getItem("justCompletedWorkout") === "true";
+                return justCompletedWorkout ? workoutPoints + pointsEarned : pointsEarned;
+              })()}
+            </p>
             {guesses.length <= 4 && (
               <p className="text-body-md text-secondary mt-2">Impressive! Bonus for 4 tries or fewer</p>
             )}
