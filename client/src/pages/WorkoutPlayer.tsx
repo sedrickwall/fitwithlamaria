@@ -95,6 +95,14 @@ export default function WorkoutPlayer() {
     navigate("/puzzle");
   };
 
+  const handleLoginModalClose = (open: boolean) => {
+    setShowLoginModal(open);
+    // If modal is closing (open = false), navigate to puzzle
+    if (!open) {
+      navigate("/puzzle");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <TopBar points={totalPoints} />
@@ -203,7 +211,7 @@ export default function WorkoutPlayer() {
       
       <LoginModal
         open={showLoginModal}
-        onOpenChange={setShowLoginModal}
+        onOpenChange={handleLoginModalClose}
         trigger="workout"
       />
       
