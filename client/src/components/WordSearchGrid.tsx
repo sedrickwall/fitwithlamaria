@@ -13,6 +13,7 @@ interface WordSearchGridProps {
 export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled }: WordSearchGridProps) {
   const [selectedCells, setSelectedCells] = useState<number[][]>([]);
   const [isDragging, setIsDragging] = useState(false);
+  const [dragStartCell, setDragStartCell] = useState<number[] | null>(null);
 
   const gridSize = grid.length;
 
@@ -22,12 +23,20 @@ export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled 
 
   const handleMouseDown = (row: number, col: number) => {
     if (disabled) return;
-    setIsDragging(true);
+    // Mark the start of a potential drag, but don't activate dragging yet
+    setDragStartCell([row, col]);
     setSelectedCells([[row, col]]);
   };
 
   const handleMouseEnter = (row: number, col: number) => {
-    if (!isDragging || disabled) return;
+    if (disabled) return;
+    
+    // If we have a drag start cell, activate dragging mode
+    if (dragStartCell && !isDragging) {
+      setIsDragging(true);
+    }
+    
+    if (!isDragging || selectedCells.length === 0) return;
     
     const lastCell = selectedCells[selectedCells.length - 1];
     if (!lastCell) return;
@@ -52,7 +61,12 @@ export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled 
   };
 
   const handleMouseUp = () => {
-    if (!isDragging || disabled) return;
+    if (disabled) return;
+    
+    setDragStartCell(null);
+    
+    if (!isDragging) return;
+    
     setIsDragging(false);
 
     // Auto-check if we have enough letters
@@ -62,7 +76,12 @@ export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled 
   };
 
   const handleCellClick = (row: number, col: number) => {
-    if (disabled || isDragging) return;
+    if (disabled) return;
+    
+    // If we were dragging, don't process the click - drag logic already handled it
+    if (isDragging) {
+      return;
+    }
 
     // If no cells selected, start a new selection
     if (selectedCells.length === 0) {
