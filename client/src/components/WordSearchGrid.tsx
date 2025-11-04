@@ -13,7 +13,7 @@ interface WordSearchGridProps {
 export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled }: WordSearchGridProps) {
   const [selectedCells, setSelectedCells] = useState<number[][]>([]);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStartCell, setDragStartCell] = useState<number[] | null>(null);
+  const [isMouseDown, setIsMouseDown] = useState(false);
 
   const gridSize = grid.length;
 
@@ -23,20 +23,19 @@ export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled 
 
   const handleMouseDown = (row: number, col: number) => {
     if (disabled) return;
-    // Mark the start of a potential drag, but don't activate dragging yet
-    setDragStartCell([row, col]);
+    setIsMouseDown(true);
     setSelectedCells([[row, col]]);
   };
 
   const handleMouseEnter = (row: number, col: number) => {
-    if (disabled) return;
+    if (disabled || !isMouseDown) return;
     
-    // If we have a drag start cell, activate dragging mode
-    if (dragStartCell && !isDragging) {
+    // Activate dragging mode when mouse moves while down
+    if (!isDragging) {
       setIsDragging(true);
     }
     
-    if (!isDragging || selectedCells.length === 0) return;
+    if (selectedCells.length === 0) return;
     
     const lastCell = selectedCells[selectedCells.length - 1];
     if (!lastCell) return;
@@ -63,22 +62,21 @@ export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled 
   const handleMouseUp = () => {
     if (disabled) return;
     
-    setDragStartCell(null);
+    setIsMouseDown(false);
     
-    if (!isDragging) return;
-    
-    setIsDragging(false);
-
-    // Auto-check if we have enough letters
-    if (selectedCells.length >= 3) {
-      checkSelectedWord();
+    // If we were dragging, auto-check the word
+    if (isDragging) {
+      setIsDragging(false);
+      if (selectedCells.length >= 3) {
+        checkSelectedWord();
+      }
     }
   };
 
   const handleCellClick = (row: number, col: number) => {
     if (disabled) return;
     
-    // If we were dragging, don't process the click - drag logic already handled it
+    // If we were dragging, the drag handlers already took care of it
     if (isDragging) {
       return;
     }
@@ -162,12 +160,15 @@ export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled 
     <div 
       className="inline-block select-none"
       onMouseLeave={() => {
-        if (isDragging) {
-          setIsDragging(false);
-          if (selectedCells.length >= 3) {
-            checkSelectedWord();
-          } else {
-            setSelectedCells([]);
+        if (isMouseDown) {
+          setIsMouseDown(false);
+          if (isDragging) {
+            setIsDragging(false);
+            if (selectedCells.length >= 3) {
+              checkSelectedWord();
+            } else {
+              setSelectedCells([]);
+            }
           }
         }
       }}
