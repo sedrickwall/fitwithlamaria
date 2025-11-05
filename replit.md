@@ -20,6 +20,18 @@ FitWord is a premium fitness and brain health application designed for active se
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+**Celebration & Positive Reinforcement (November 2025):**
+- Added subtle pastel confetti celebration effect using canvas-confetti library
+- Confetti triggers once per day (either after workout OR puzzle completion)
+- Gentle, calming animation (2 seconds) with brand-aligned pastel colors (#FAD7A0, #F9E79F, #D6EAF8, #E8DAEF, #D5F4E6)
+- Created centralized `client/src/lib/celebration.ts` utility for confetti management
+- Workout completion shows celebration modal: "🎉 Great Job! You just completed your first Fit with LaMaria workout!"
+- Modal offers two clear paths: "Play Puzzle 🧩" or "Maybe Later" (returns to dashboard)
+- Positive reinforcement loop designed for 65+ demographic without overwhelming visual effects
+- Confetti frequency tracked via localStorage (`lastConfettiDate`) to prevent over-stimulation
+
 ## System Architecture
 
 ### Frontend Architecture

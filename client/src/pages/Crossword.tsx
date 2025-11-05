@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Lock, CheckCircle2, Trophy, SkipForward, Dumbbell } from "lucide-react";
+import confetti from "canvas-confetti";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { CrosswordGrid } from "@/components/CrosswordGrid";
@@ -23,6 +24,7 @@ import { usePremiumStatus } from "@/hooks/usePremiumStatus";
 import { useFirstCompletionOffer } from "@/hooks/useFirstCompletionOffer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
+import { triggerCelebrationConfetti, shouldShowConfetti, markConfettiShown } from "@/lib/celebration";
 
 interface CrosswordClue {
   number: number;
@@ -112,6 +114,12 @@ export default function Crossword() {
           title: justCompletedWorkout ? "Wonderful Work!" : "Puzzle Complete!",
           description: `You earned ${pointsEarned} points!`,
         });
+        
+        // Trigger gentle confetti celebration (once per day only)
+        if (shouldShowConfetti()) {
+          triggerCelebrationConfetti();
+          markConfettiShown();
+        }
         
         // Check if this is first puzzle completion and user is not premium
         // Show offer modal INSTEAD of success modal, but completion is already saved above

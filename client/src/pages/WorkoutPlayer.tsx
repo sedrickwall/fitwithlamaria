@@ -23,6 +23,7 @@ import { saveWorkoutCompletion, getWorkoutCompletions } from "@/lib/localStorage
 import { calculateWorkoutPoints } from "@/lib/points";
 import { createWorkoutPost } from "@/lib/communityPosts";
 import { getWorkoutById } from "@/data/workouts";
+import { triggerCelebrationConfetti, shouldShowConfetti, markConfettiShown } from "@/lib/celebration";
 
 export default function WorkoutPlayer() {
   const [, params] = useRoute("/workout/:id");
@@ -88,9 +89,19 @@ export default function WorkoutPlayer() {
     localStorage.setItem("justCompletedWorkout", "true");
     localStorage.setItem("workoutPointsEarned", points.toString());
     
-    // Set completed state and show celebration modal
+    // Set completed state
     setCompleted(true);
-    setShowCelebrationModal(true);
+    
+    // Trigger gentle confetti celebration (once per day only)
+    if (shouldShowConfetti()) {
+      triggerCelebrationConfetti();
+      markConfettiShown();
+    }
+    
+    // Show celebration modal after confetti has started (smooth transition)
+    setTimeout(() => {
+      setShowCelebrationModal(true);
+    }, 500);
   };
 
   const handleShareModalClose = () => {

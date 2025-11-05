@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { CheckCircle2, Lock, Trophy, SkipForward, Dumbbell } from "lucide-react";
+import confetti from "canvas-confetti";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
@@ -26,6 +27,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { savePuzzleAttempt } from "@/lib/localStorage";
 import { createPuzzlePost } from "@/lib/communityPosts";
+import { triggerCelebrationConfetti, shouldShowConfetti, markConfettiShown } from "@/lib/celebration";
 
 interface WordSearchProps {
   puzzleIndex: number;
@@ -184,6 +186,12 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
     // Create community post for premium users
     if (isAuthenticated && user) {
       await createPuzzlePost(user.uid, user.displayName || "Member", "wordsearch", allFoundWords.length, true);
+    }
+
+    // Trigger gentle confetti celebration (once per day only)
+    if (shouldShowConfetti()) {
+      triggerCelebrationConfetti();
+      markConfettiShown();
     }
 
     // Check if this is first puzzle completion and user is not premium

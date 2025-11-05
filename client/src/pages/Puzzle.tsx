@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Lock, Share2, CheckCircle, SkipForward, AlertCircle, Crown, Dumbbell, Lightbulb } from "lucide-react";
+import confetti from "canvas-confetti";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { PuzzleGrid } from "@/components/PuzzleGrid";
@@ -38,6 +39,7 @@ import { puzzleOperations, userOperations } from "@/services/firestore";
 import { isFirebaseReady } from "@/services/firebase";
 import { PuzzleAttempt } from "@shared/schema";
 import { createPuzzlePost } from "@/lib/communityPosts";
+import { triggerCelebrationConfetti, shouldShowConfetti, markConfettiShown } from "@/lib/celebration";
 
 interface PuzzleProps {
   puzzleIndex: number;
@@ -291,6 +293,12 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
 
         setWon(true);
         setGameOver(true);
+        
+        // Trigger gentle confetti celebration (once per day only)
+        if (shouldShowConfetti()) {
+          triggerCelebrationConfetti();
+          markConfettiShown();
+        }
         
         // Check if this is first puzzle completion and user is not premium
         // Show offer modal INSTEAD of success modal, but completion is already saved above
