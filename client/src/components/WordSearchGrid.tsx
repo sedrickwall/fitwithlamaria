@@ -35,10 +35,35 @@ export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled 
     // Activate dragging mode when mouse moves while down
     if (!isDragging) {
       setIsDragging(true);
-      // Start selection from the cell where mouse was pressed
-      setSelectedCells([mouseDownCell]);
+      // Start selection from the cell where mouse was pressed, then add this cell
+      const firstCell = mouseDownCell;
+      
+      // Check if entering a different cell than where we pressed
+      if (row === firstCell[0] && col === firstCell[1]) {
+        setSelectedCells([firstCell]);
+        return;
+      }
+      
+      // Check if new cell is in line with the first cell
+      const isInLine = 
+        row === firstCell[0] || // same row
+        col === firstCell[1] || // same column
+        Math.abs(row - firstCell[0]) === Math.abs(col - firstCell[1]); // diagonal
+
+      // Check if the new cell is adjacent to the first cell
+      const isAdjacent = 
+        Math.abs(row - firstCell[0]) <= 1 && 
+        Math.abs(col - firstCell[1]) <= 1;
+
+      if (isInLine && isAdjacent) {
+        setSelectedCells([firstCell, [row, col]]);
+      } else {
+        setSelectedCells([firstCell]);
+      }
+      return;
     }
     
+    // Continue dragging - add to existing selection
     if (selectedCells.length === 0) return;
     
     const lastCell = selectedCells[selectedCells.length - 1];
