@@ -103,6 +103,15 @@ export default function Premium() {
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly">("monthly");
   const totalPoints = profile?.totalPoints || 0;
 
+  // Check for plan parameter in URL and pre-select
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const planParam = urlParams.get("plan");
+    if (planParam === "yearly" || planParam === "monthly") {
+      setSelectedPlan(planParam);
+    }
+  }, []);
+
   // Calculate trial end date (7 days from now)
   const trialEndDate = new Date();
   trialEndDate.setDate(trialEndDate.getDate() + 7);

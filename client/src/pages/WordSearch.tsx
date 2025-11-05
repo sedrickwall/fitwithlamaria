@@ -6,6 +6,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { Button } from "@/components/ui/button";
 import { WordSearchGrid } from "@/components/WordSearchGrid";
 import { LoginModal } from "@/components/LoginModal";
+import { LimitedTimeOfferModal } from "@/components/LimitedTimeOfferModal";
 import { PremiumBadge } from "@/components/PremiumBadge";
 import {
   AlertDialog,
@@ -20,6 +21,7 @@ import {
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
 import { usePremiumStatus } from "@/hooks/usePremiumStatus";
+import { useFirstCompletionOffer } from "@/hooks/useFirstCompletionOffer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { savePuzzleAttempt } from "@/lib/localStorage";
@@ -44,7 +46,9 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
   const [gameOver, setGameOver] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showOfferModal, setShowOfferModal] = useState(false);
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
+  const { shouldShowOffer, expiresAt, checkAndTriggerOffer, dismissOffer } = useFirstCompletionOffer();
   const [premiumPuzzleData, setPremiumPuzzleData] = useState<{grid: string[][], words: string[]} | null>(null);
 
   const totalPoints = profile?.totalPoints || 0;
@@ -159,8 +163,8 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
     }
 
     setGameOver(true);
-    setShowSuccess(true);
-
+    
+    // Always award points and save completion FIRST
     const pointsEarned = 50;
     addPoints(pointsEarned);
     await solveWordSearch(actualPuzzleIndex, pointsEarned);
@@ -181,6 +185,18 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
     if (isAuthenticated && user) {
       await createPuzzlePost(user.uid, user.displayName || "Member", "wordsearch", allFoundWords.length, true);
     }
+
+    // Check if this is first puzzle completion and user is not premium
+    // Show offer modal INSTEAD of success modal, but completion is already saved above
+    if (!isPremium) {
+      const shouldShowOfferNow = checkAndTriggerOffer("puzzle");
+      if (shouldShowOfferNow) {
+        setShowOfferModal(true);
+        return;
+      }
+    }
+    
+    setShowSuccess(true);
 
     setTimeout(() => {
       setShowSuccess(false);
@@ -418,6 +434,24 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
         open={showLoginModal}
         onOpenChange={setShowLoginModal}
         trigger="puzzle"
+      />
+
+      <LimitedTimeOfferModal
+        open={showOfferModal}
+        onOpenChange={(open) => {
+          setShowOfferModal(open);
+          // If closing the modal (open = false), trigger dismiss logic
+          if (!open) {
+            dismissOffer();
+            setShowSuccess(true);
+          }
+        }}
+        onDismiss={() => {
+          dismissOffer();
+          setShowOfferModal(false);
+          setShowSuccess(true);
+        }}
+        expiresAt={expiresAt}
       />
     </div>
   );

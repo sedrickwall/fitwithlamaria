@@ -5,10 +5,13 @@ import { TopBar } from "@/components/TopBar";
 import { Button } from "@/components/ui/button";
 import { LoginModal } from "@/components/LoginModal";
 import { SocialShareModal } from "@/components/SocialShareModal";
+import { LimitedTimeOfferModal } from "@/components/LimitedTimeOfferModal";
 import { WorkoutCompletion } from "@shared/schema";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
 import { useAuth } from "@/contexts/AuthContext";
+import { useFirstCompletionOffer } from "@/hooks/useFirstCompletionOffer";
+import { usePremiumStatus } from "@/hooks/usePremiumStatus";
 import { saveWorkoutCompletion, getWorkoutCompletions } from "@/lib/localStorage";
 import { calculateWorkoutPoints } from "@/lib/points";
 import { createWorkoutPost } from "@/lib/communityPosts";
@@ -21,9 +24,12 @@ export default function WorkoutPlayer() {
   const [isRepeatCompletion, setIsRepeatCompletion] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showOfferModal, setShowOfferModal] = useState(false);
   const { profile, addPoints } = useUserProfile();
   const { completeWorkout } = useDailyStatus();
   const { isAuthenticated, user } = useAuth();
+  const { isPremium } = usePremiumStatus();
+  const { shouldShowOffer, expiresAt, checkAndTriggerOffer, dismissOffer } = useFirstCompletionOffer();
 
   const workout = getWorkoutById(params?.id || "");
   const totalPoints = profile?.totalPoints || 0;
@@ -63,6 +69,7 @@ export default function WorkoutPlayer() {
       pointsEarned: points,
     };
 
+    // Always save completion, award points, and create community post FIRST
     saveWorkoutCompletion(completion);
     completeWorkout();
     addPoints(points);
@@ -75,6 +82,19 @@ export default function WorkoutPlayer() {
     // Store flag for combined celebration message
     localStorage.setItem("justCompletedWorkout", "true");
     localStorage.setItem("workoutPointsEarned", points.toString());
+    
+    // Set completed state so UI shows success
+    setCompleted(true);
+    
+    // Check if this is first workout completion and user is not premium
+    // Show offer modal INSTEAD of navigating to puzzle
+    if (!isPremium) {
+      const shouldShowOfferNow = checkAndTriggerOffer("workout");
+      if (shouldShowOfferNow) {
+        setShowOfferModal(true);
+        return;
+      }
+    }
     
     // Navigate directly to puzzle
     handleContinueToPuzzle();
@@ -213,6 +233,24 @@ export default function WorkoutPlayer() {
         open={showLoginModal}
         onOpenChange={handleLoginModalClose}
         trigger="workout"
+      />
+      
+      <LimitedTimeOfferModal
+        open={showOfferModal}
+        onOpenChange={(open) => {
+          setShowOfferModal(open);
+          // If closing the modal (open = false), trigger dismiss logic
+          if (!open) {
+            dismissOffer();
+            handleContinueToPuzzle();
+          }
+        }}
+        onDismiss={() => {
+          dismissOffer();
+          setShowOfferModal(false);
+          handleContinueToPuzzle();
+        }}
+        expiresAt={expiresAt}
       />
       
       <SocialShareModal

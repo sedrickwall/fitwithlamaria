@@ -4,6 +4,7 @@ import { Lock, CheckCircle2, Trophy, SkipForward, Dumbbell } from "lucide-react"
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
 import { CrosswordGrid } from "@/components/CrosswordGrid";
+import { LimitedTimeOfferModal } from "@/components/LimitedTimeOfferModal";
 import { PremiumBadge } from "@/components/PremiumBadge";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +20,7 @@ import {
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
 import { usePremiumStatus } from "@/hooks/usePremiumStatus";
+import { useFirstCompletionOffer } from "@/hooks/useFirstCompletionOffer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 
@@ -45,7 +47,9 @@ export default function Crossword() {
   const [puzzleSize, setPuzzleSize] = useState<number>(7);
   const [gameOver, setGameOver] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showOfferModal, setShowOfferModal] = useState(false);
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
+  const { shouldShowOffer, expiresAt, checkAndTriggerOffer, dismissOffer } = useFirstCompletionOffer();
   const [puzzleIndex, setPuzzleIndex] = useState(0);
 
   const totalPoints = profile?.totalPoints || 0;
@@ -95,8 +99,8 @@ export default function Crossword() {
       if (data.isComplete) {
         // Puzzle solved!
         setGameOver(true);
-        setShowSuccess(true);
-
+        
+        // Always award points and save completion FIRST
         const pointsEarned = 50;
         addPoints(pointsEarned);
         solvePuzzle(puzzleIndex, pointsEarned);
@@ -108,6 +112,18 @@ export default function Crossword() {
           title: justCompletedWorkout ? "Wonderful Work!" : "Puzzle Complete!",
           description: `You earned ${pointsEarned} points!`,
         });
+        
+        // Check if this is first puzzle completion and user is not premium
+        // Show offer modal INSTEAD of success modal, but completion is already saved above
+        if (!isPremium) {
+          const shouldShowOfferNow = checkAndTriggerOffer("puzzle");
+          if (shouldShowOfferNow) {
+            setShowOfferModal(true);
+            return;
+          }
+        }
+        
+        setShowSuccess(true);
       } else {
         toast({
           title: "Keep Going!",
@@ -328,6 +344,24 @@ export default function Crossword() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <LimitedTimeOfferModal
+        open={showOfferModal}
+        onOpenChange={(open) => {
+          setShowOfferModal(open);
+          // If closing the modal (open = false), trigger dismiss logic
+          if (!open) {
+            dismissOffer();
+            setShowSuccess(true);
+          }
+        }}
+        onDismiss={() => {
+          dismissOffer();
+          setShowOfferModal(false);
+          setShowSuccess(true);
+        }}
+        expiresAt={expiresAt}
+      />
     </div>
   );
 }

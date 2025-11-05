@@ -6,6 +6,7 @@ import { BottomNav } from "@/components/BottomNav";
 import { PuzzleGrid } from "@/components/PuzzleGrid";
 import { PuzzleKeyboard } from "@/components/PuzzleKeyboard";
 import { LoginModal } from "@/components/LoginModal";
+import { LimitedTimeOfferModal } from "@/components/LimitedTimeOfferModal";
 import { PremiumBadge } from "@/components/PremiumBadge";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
 import { usePremiumStatus } from "@/hooks/usePremiumStatus";
+import { useFirstCompletionOffer } from "@/hooks/useFirstCompletionOffer";
 import { useAuth } from "@/contexts/AuthContext";
 import { calculatePuzzlePoints } from "@/lib/points";
 import { savePuzzleAttempt, getPuzzleAttempts } from "@/lib/localStorage";
@@ -58,9 +60,11 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
   const [letterStatus, setLetterStatus] = useState<Record<string, "correct" | "present" | "absent" | "unused">>({});
   const [showSuccess, setShowSuccess] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [showOfferModal, setShowOfferModal] = useState(false);
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
   const [showFailureDialog, setShowFailureDialog] = useState(false);
   const [wasSkipped, setWasSkipped] = useState(false);
+  const { shouldShowOffer, expiresAt, checkAndTriggerOffer, dismissOffer } = useFirstCompletionOffer();
   const [puzzleNumber, setPuzzleNumber] = useState<number>(0);
   const [dailyWord, setDailyWord] = useState<string>("");
   const [wordLength, setWordLength] = useState<number>(5); // Dynamic word length based on difficulty
@@ -287,7 +291,21 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
 
         setWon(true);
         setGameOver(true);
-        setShowSuccess(true);
+        
+        // Check if this is first puzzle completion and user is not premium
+        // Show offer modal INSTEAD of success modal, but completion is already saved above
+        if (!isPremium) {
+          const shouldShowOfferNow = checkAndTriggerOffer("puzzle");
+          if (shouldShowOfferNow) {
+            setShowOfferModal(true);
+          } else {
+            setShowSuccess(true);
+          }
+        } else {
+          setShowSuccess(true);
+        }
+        
+        // Continue with login modal logic if needed
         
         if (!isAuthenticated) {
           const skipCount = parseInt(localStorage.getItem("fitword_login_skip_count") || "0");
@@ -778,6 +796,24 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
         open={showLoginModal}
         onOpenChange={setShowLoginModal}
         trigger="puzzle"
+      />
+
+      <LimitedTimeOfferModal
+        open={showOfferModal}
+        onOpenChange={(open) => {
+          setShowOfferModal(open);
+          // If closing the modal (open = false), trigger dismiss logic
+          if (!open) {
+            dismissOffer();
+            setShowSuccess(true);
+          }
+        }}
+        onDismiss={() => {
+          dismissOffer();
+          setShowOfferModal(false);
+          setShowSuccess(true);
+        }}
+        expiresAt={expiresAt}
       />
 
       <BottomNav />
