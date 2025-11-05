@@ -5,13 +5,20 @@ import { TopBar } from "@/components/TopBar";
 import { Button } from "@/components/ui/button";
 import { LoginModal } from "@/components/LoginModal";
 import { SocialShareModal } from "@/components/SocialShareModal";
-import { LimitedTimeOfferModal } from "@/components/LimitedTimeOfferModal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { WorkoutCompletion } from "@shared/schema";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useDailyStatus } from "@/hooks/useDailyStatus";
 import { useAuth } from "@/contexts/AuthContext";
-import { useFirstCompletionOffer } from "@/hooks/useFirstCompletionOffer";
-import { usePremiumStatus } from "@/hooks/usePremiumStatus";
 import { saveWorkoutCompletion, getWorkoutCompletions } from "@/lib/localStorage";
 import { calculateWorkoutPoints } from "@/lib/points";
 import { createWorkoutPost } from "@/lib/communityPosts";
@@ -24,12 +31,10 @@ export default function WorkoutPlayer() {
   const [isRepeatCompletion, setIsRepeatCompletion] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [showOfferModal, setShowOfferModal] = useState(false);
+  const [showCelebrationModal, setShowCelebrationModal] = useState(false);
   const { profile, addPoints } = useUserProfile();
   const { completeWorkout } = useDailyStatus();
   const { isAuthenticated, user } = useAuth();
-  const { isPremium } = usePremiumStatus();
-  const { shouldShowOffer, expiresAt, checkAndTriggerOffer, dismissOffer } = useFirstCompletionOffer();
 
   const workout = getWorkoutById(params?.id || "");
   const totalPoints = profile?.totalPoints || 0;
@@ -83,21 +88,9 @@ export default function WorkoutPlayer() {
     localStorage.setItem("justCompletedWorkout", "true");
     localStorage.setItem("workoutPointsEarned", points.toString());
     
-    // Set completed state so UI shows success
+    // Set completed state and show celebration modal
     setCompleted(true);
-    
-    // Check if this is first workout completion and user is not premium
-    // Show offer modal INSTEAD of navigating to puzzle
-    if (!isPremium) {
-      const shouldShowOfferNow = checkAndTriggerOffer("workout");
-      if (shouldShowOfferNow) {
-        setShowOfferModal(true);
-        return;
-      }
-    }
-    
-    // Navigate directly to puzzle
-    handleContinueToPuzzle();
+    setShowCelebrationModal(true);
   };
 
   const handleShareModalClose = () => {
@@ -235,23 +228,39 @@ export default function WorkoutPlayer() {
         trigger="workout"
       />
       
-      <LimitedTimeOfferModal
-        open={showOfferModal}
-        onOpenChange={(open) => {
-          setShowOfferModal(open);
-          // If closing the modal (open = false), trigger dismiss logic
-          if (!open) {
-            dismissOffer();
-            handleContinueToPuzzle();
-          }
-        }}
-        onDismiss={() => {
-          dismissOffer();
-          setShowOfferModal(false);
-          handleContinueToPuzzle();
-        }}
-        expiresAt={expiresAt}
-      />
+      <AlertDialog open={showCelebrationModal} onOpenChange={setShowCelebrationModal}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-center text-h2 mb-2">
+              🎉 Great Job!
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-center text-body-lg space-y-4">
+              <p className="text-foreground font-semibold">
+                You just completed your first Fit with LaMaria workout!
+              </p>
+              <p className="text-foreground">
+                You've unlocked today's Brain Game — ready to keep your mind sharp?
+              </p>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="flex-col sm:flex-col gap-3">
+            <AlertDialogAction
+              onClick={handleContinueToPuzzle}
+              className="w-full h-14 text-body-lg font-bold"
+              data-testid="button-play-puzzle"
+            >
+              Play Puzzle 🧩
+            </AlertDialogAction>
+            <AlertDialogCancel
+              onClick={() => navigate("/")}
+              className="w-full h-14 text-body-md"
+              data-testid="button-maybe-later"
+            >
+              Maybe Later
+            </AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       
       <SocialShareModal
         open={showShareModal}
