@@ -14,6 +14,7 @@ export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled 
   const [selectedCells, setSelectedCells] = useState<number[][]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [isMouseDown, setIsMouseDown] = useState(false);
+  const [mouseDownCell, setMouseDownCell] = useState<number[] | null>(null);
 
   const gridSize = grid.length;
 
@@ -24,15 +25,18 @@ export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled 
   const handleMouseDown = (row: number, col: number) => {
     if (disabled) return;
     setIsMouseDown(true);
-    setSelectedCells([[row, col]]);
+    setMouseDownCell([row, col]);
+    // Don't modify selectedCells here - let click or drag handlers do it
   };
 
   const handleMouseEnter = (row: number, col: number) => {
-    if (disabled || !isMouseDown) return;
+    if (disabled || !isMouseDown || !mouseDownCell) return;
     
     // Activate dragging mode when mouse moves while down
     if (!isDragging) {
       setIsDragging(true);
+      // Start selection from the cell where mouse was pressed
+      setSelectedCells([mouseDownCell]);
     }
     
     if (selectedCells.length === 0) return;
@@ -63,6 +67,7 @@ export function WordSearchGrid({ grid, words, foundWords, onWordFound, disabled 
     if (disabled) return;
     
     setIsMouseDown(false);
+    setMouseDownCell(null);
     
     // If we were dragging, auto-check the word
     if (isDragging) {
