@@ -1,4 +1,5 @@
 import { Workout } from "@shared/schema";
+import lowImpactCardioThumb from "@assets/Screenshot 2025-11-05 at 8.20.38 PM_1762395981557.png";
 
 const ALL_WORKOUTS: Workout[] = [
   {
@@ -43,7 +44,7 @@ const ALL_WORKOUTS: Workout[] = [
     duration: 10,
     difficulty: "medium",
     videoUrl: "https://www.youtube.com/embed/fywl19sc35Y?si=2Yl07mqNsCoGWqGY",
-    thumbnail: "/attached_assets/Screenshot 2025-11-05 at 8.20.38 PM_1762395981557.png",
+    thumbnail: lowImpactCardioThumb,
   },
   {
     id: "6",
