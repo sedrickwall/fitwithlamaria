@@ -25,19 +25,22 @@ export function WorkoutCard({ workout, onClick }: WorkoutCardProps) {
       className="w-full bg-card rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all focus:outline-none focus:ring-4 focus:ring-ring group flex flex-col"
       aria-label={`${workout.title} - ${workout.duration} minute ${workout.difficulty} workout`}
     >
-      <div className="relative w-full h-48 bg-gradient-to-br from-primary/20 to-accent overflow-hidden flex-shrink-0">
+      <div className="relative w-full h-48 overflow-hidden flex-shrink-0">
         {workout.thumbnail ? (
-          <img 
-            src={workout.thumbnail} 
-            alt="" 
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
+          <>
+            <img 
+              src={workout.thumbnail} 
+              alt="" 
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/40" />
+          </>
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-full bg-gradient-to-br from-primary/20 to-accent flex items-center justify-center">
             <TrendingUp className="w-16 h-16 text-primary/40" aria-hidden="true" />
           </div>
         )}
-        <div className="absolute top-3 right-3 flex gap-2">
+        <div className="absolute top-3 right-3 flex gap-2 z-10">
           <span className={`px-3 py-1 rounded-full text-body-sm font-medium ${difficultyColors[workout.difficulty]} backdrop-blur-sm`}>
             {workout.difficulty}
           </span>
