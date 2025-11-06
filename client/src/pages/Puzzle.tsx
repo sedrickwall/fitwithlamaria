@@ -322,7 +322,10 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
           }
         }
       } else if (newGuesses.length >= maxAttempts) {
+        // Set the word first, then show dialog after a brief delay to ensure state updates
         setDailyWord(word);
+        setGameOver(true);
+        setWasSkipped(false);
         
         if (profile) {
           const attempt: PuzzleAttempt = {
@@ -358,9 +361,10 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
           }
         }
 
-        setWasSkipped(false);
-        setGameOver(true);
-        setShowFailureDialog(true);
+        // Show failure dialog after a small delay to ensure dailyWord state is updated
+        setTimeout(() => {
+          setShowFailureDialog(true);
+        }, 100);
       }
     } catch (error) {
       console.error("Failed to submit guess:", error);
@@ -418,7 +422,11 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
 
       setWasSkipped(true);
       setGameOver(true);
-      setShowFailureDialog(true);
+      
+      // Show failure dialog after a small delay to ensure dailyWord state is updated
+      setTimeout(() => {
+        setShowFailureDialog(true);
+      }, 100);
     } catch (error) {
       console.error("Failed to skip puzzle:", error);
       toast({
