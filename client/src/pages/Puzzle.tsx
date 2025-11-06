@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
 import { Lock, Share2, CheckCircle, SkipForward, AlertCircle, Crown, Dumbbell, Lightbulb } from "lucide-react";
 import confetti from "canvas-confetti";
@@ -182,7 +182,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
     }
   }, [puzzleSolved]);
 
-  const updateLetterStatus = (guess: string, result: Array<"correct" | "present" | "absent">) => {
+  const updateLetterStatus = useCallback((guess: string, result: Array<"correct" | "present" | "absent">) => {
     const newStatus = { ...letterStatus };
     guess.split("").forEach((letter, i) => {
       const status = result[i];
@@ -191,18 +191,19 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
       }
     });
     setLetterStatus(newStatus);
-  };
+  }, [letterStatus]);
 
-  const handleKeyPress = (key: string) => {
+  const handleKeyPress = useCallback((key: string) => {
     if (gameOver || currentGuess.length >= wordLength) return;
-    setCurrentGuess(currentGuess + key);
-  };
+    // Auto-capitalize for better UX
+    setCurrentGuess(currentGuess + key.toUpperCase());
+  }, [gameOver, currentGuess, wordLength]);
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     setCurrentGuess(currentGuess.slice(0, -1));
-  };
+  }, [currentGuess]);
 
-  const handleEnter = async () => {
+  const handleEnter = useCallback(async () => {
     if (currentGuess.length !== wordLength) {
       toast({
         title: "Not enough letters",
@@ -374,7 +375,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
         variant: "destructive",
       });
     }
-  };
+  }, [currentGuess, wordLength, toast, actualPuzzleIndex, isPremium, premiumWord, guesses, evaluation, updateLetterStatus, profile, workoutCompleted, maxAttempts, puzzleNumber, user, isAuthenticated, addPoints, solveWordle, checkAndTriggerOffer, shouldShowConfetti, triggerCelebrationConfetti, markConfettiShown]);
 
   const handleSkip = async () => {
     setShowSkipConfirm(false);
@@ -460,6 +461,34 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
     }
   };
 
+  // Handle physical keyboard input
+  useEffect(() => {
+    const handlePhysicalKeyDown = (e: KeyboardEvent) => {
+      if (gameOver) return;
+
+      const key = e.key.toUpperCase();
+      
+      // Handle letter keys (A-Z)
+      if (/^[A-Z]$/.test(key)) {
+        e.preventDefault();
+        handleKeyPress(key);
+      }
+      // Handle backspace/delete
+      else if (key === 'BACKSPACE' || key === 'DELETE') {
+        e.preventDefault();
+        handleDelete();
+      }
+      // Handle enter
+      else if (key === 'ENTER') {
+        e.preventDefault();
+        handleEnter();
+      }
+    };
+
+    window.addEventListener('keydown', handlePhysicalKeyDown);
+    return () => window.removeEventListener('keydown', handlePhysicalKeyDown);
+  }, [gameOver, handleKeyPress, handleDelete, handleEnter]);
+
   let pointsEarned = won ? calculatePuzzlePoints(guesses.length, true) : 0;
   if (won && workoutCompleted) {
     pointsEarned += 10;
@@ -513,6 +542,24 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
             Guess any {wordLength}-letter word
           </p>
           
+          {/* Today's Hint - Always visible before first guess */}
+          {guesses.length === 0 && hintCategory && !gameOver && (
+            <div className="mt-3 sm:mt-4 max-w-md mx-auto bg-gradient-to-br from-warning/10 to-warning/5 border-2 border-warning/30 rounded-lg p-4">
+              <div className="flex items-center justify-center gap-2 mb-2">
+                <Lightbulb className="w-5 h-5 text-warning" />
+                <p className="text-sm sm:text-base font-semibold text-foreground">
+                  Today's Hint
+                </p>
+              </div>
+              <p className="text-lg sm:text-xl font-bold text-warning text-center">
+                {hintCategory}
+              </p>
+              <p className="text-xs sm:text-sm text-muted-foreground text-center mt-1">
+                The word is about {hintCategory.toLowerCase()}
+              </p>
+            </div>
+          )}
+          
           {/* Instructions */}
           <div className="mt-3 sm:mt-4 max-w-md mx-auto bg-secondary/5 border border-secondary/20 rounded-lg p-3 sm:p-4">
             <p className="text-xs sm:text-sm font-semibold text-foreground mb-2">
@@ -520,6 +567,7 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
             </p>
             <ul className="text-xs sm:text-sm text-muted-foreground space-y-1 text-left">
               <li>• <strong>Type:</strong> Use the keyboard to enter letters</li>
+              <li>• <strong>Press Enter:</strong> Submit your word guess</li>
               <li>• <strong>Green:</strong> Letter is correct and in the right spot</li>
               <li>• <strong>Yellow:</strong> Letter is in the word but wrong spot</li>
               <li>• <strong>Gray:</strong> Letter is not in the word</li>
@@ -531,17 +579,17 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
             Tries: {guesses.length}/{maxAttempts}
           </p>
           
-          {!gameOver && (
+          {!gameOver && guesses.length > 0 && (
             <div className="mt-3 sm:mt-4">
               <Button
                 onClick={() => setShowHintModal(true)}
                 variant="outline"
-                size="sm"
-                className="h-10 text-sm font-medium border-2"
+                size="lg"
+                className="h-12 sm:h-14 text-sm sm:text-base font-medium border-2 px-6"
                 data-testid="button-show-hint"
               >
-                <Lightbulb className="w-4 h-4 mr-2" />
-                Get a Hint
+                <Lightbulb className="w-5 h-5 mr-2" />
+                Need a Hint?
               </Button>
             </div>
           )}

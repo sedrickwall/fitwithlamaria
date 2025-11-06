@@ -194,11 +194,11 @@ router.post("/guess", (req, res) => {
 
   const isCorrect = normalizedGuess === puzzleWord;
 
-  // Only reveal the word if the guess is correct
+  // Always return the word so the failure dialog can show it
   res.json({
     result,
     isCorrect,
-    word: isCorrect ? puzzleWord : undefined
+    word: puzzleWord
   });
 });
 
