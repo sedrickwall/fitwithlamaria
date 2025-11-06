@@ -1,5 +1,6 @@
 import { Workout } from "@shared/schema";
 import lowImpactCardioThumb from "@assets/Screenshot 2025-11-05 at 8.20.38 PM_1762395981557.png";
+import balanceFlexibilityThumb from "@assets/Screenshot 2025-11-05 at 8.24.32 PM_1762396598501.png";
 
 const ALL_WORKOUTS: Workout[] = [
   {
@@ -71,6 +72,7 @@ const ALL_WORKOUTS: Workout[] = [
     duration: 5,
     difficulty: "low",
     videoUrl: "https://www.youtube.com/embed/8FvlCbqUOWE?si=iUof2MThK2EN2I2U",
+    thumbnail: balanceFlexibilityThumb,
   },
   {
     id: "9",
