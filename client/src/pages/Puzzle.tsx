@@ -538,20 +538,20 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
               <PremiumBadge />
             </div>
           )}
-          <p className="text-sm sm:text-body-lg text-muted-foreground">
-            Guess any {wordLength}-letter word
+          <p className="text-base sm:text-body-lg text-foreground font-medium">
+            Find the ONE hidden {wordLength}-letter word in {maxAttempts} tries
           </p>
           
           {/* Today's Hint - Always visible before first guess */}
           {guesses.length === 0 && hintCategory && !gameOver && (
-            <div className="mt-3 sm:mt-4 max-w-md mx-auto bg-gradient-to-br from-warning/10 to-warning/5 border-2 border-warning/30 rounded-lg p-4">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Lightbulb className="w-5 h-5 text-warning" />
-                <p className="text-sm sm:text-base font-semibold text-foreground">
+            <div className="mt-3 sm:mt-4 max-w-md mx-auto bg-gradient-to-br from-warning/10 to-warning/5 border-2 border-warning/30 rounded-lg p-3 sm:p-4">
+              <div className="flex items-center justify-center gap-2 mb-1.5">
+                <Lightbulb className="w-4 h-4 sm:w-5 sm:h-5 text-warning" />
+                <p className="text-xs sm:text-base font-semibold text-foreground">
                   Today's Hint
                 </p>
               </div>
-              <p className="text-lg sm:text-xl font-bold text-warning text-center">
+              <p className="text-base sm:text-xl font-bold text-warning text-center">
                 {hintCategory}
               </p>
               <p className="text-xs sm:text-sm text-muted-foreground text-center mt-1">
@@ -561,21 +561,20 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
           )}
           
           {/* Instructions */}
-          <div className="mt-3 sm:mt-4 max-w-md mx-auto bg-secondary/5 border border-secondary/20 rounded-lg p-3 sm:p-4">
-            <p className="text-xs sm:text-sm font-semibold text-foreground mb-2">
+          <div className="mt-2 sm:mt-4 max-w-md mx-auto bg-secondary/5 border border-secondary/20 rounded-lg p-2.5 sm:p-4">
+            <p className="text-xs sm:text-sm font-semibold text-foreground mb-1.5 sm:mb-2">
               How to Play:
             </p>
-            <ul className="text-xs sm:text-sm text-muted-foreground space-y-1 text-left">
+            <ul className="text-xs sm:text-sm text-muted-foreground space-y-0.5 sm:space-y-1 text-left">
               <li>• <strong>Type:</strong> Use the keyboard to enter letters</li>
               <li>• <strong>Press Enter:</strong> Submit your word guess</li>
               <li>• <strong>Green:</strong> Letter is correct and in the right spot</li>
               <li>• <strong>Yellow:</strong> Letter is in the word but wrong spot</li>
               <li>• <strong>Gray:</strong> Letter is not in the word</li>
-              <li>• You have {maxAttempts} tries to guess the word</li>
             </ul>
           </div>
           
-          <p className="text-xs sm:text-body-md text-muted-foreground mt-3 sm:mt-4">
+          <p className="text-sm sm:text-body-md text-muted-foreground mt-2 sm:mt-4">
             Tries: {guesses.length}/{maxAttempts}
           </p>
           
