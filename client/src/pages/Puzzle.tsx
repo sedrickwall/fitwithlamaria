@@ -295,6 +295,9 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
         setWon(true);
         setGameOver(true);
         
+        // Mark onboarding as seen since user is actively using the app
+        localStorage.setItem("hasSeenOnboarding", "true");
+        
         // Trigger gentle confetti celebration (once per day only)
         if (shouldShowConfetti()) {
           triggerCelebrationConfetti();
@@ -327,6 +330,9 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
         setDailyWord(word);
         setGameOver(true);
         setWasSkipped(false);
+        
+        // Mark onboarding as seen since user is actively using the app
+        localStorage.setItem("hasSeenOnboarding", "true");
         
         if (profile) {
           const attempt: PuzzleAttempt = {
@@ -423,6 +429,9 @@ export default function Puzzle({ puzzleIndex, difficultyLevel }: PuzzleProps) {
 
       setWasSkipped(true);
       setGameOver(true);
+      
+      // Mark onboarding as seen since user is actively using the app
+      localStorage.setItem("hasSeenOnboarding", "true");
       
       // Show failure dialog after a small delay to ensure dailyWord state is updated
       setTimeout(() => {
