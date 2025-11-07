@@ -2,6 +2,7 @@ import { Workout } from "@shared/schema";
 import lowImpactCardioThumb from "@assets/Screenshot 2025-11-05 at 8.20.38 PM_1762395981557.png";
 import balanceFlexibilityThumb from "@assets/Screenshot 2025-11-05 at 8.24.32 PM_1762396598501.png";
 import seatedCardioThumb from "@assets/Screenshot 2025-11-05 at 8.22.33 PM_1762396737911.png";
+import standingBalanceThumb from "@assets/Screenshot 2025-11-07 at 2.36.49 PM_1762548079929.png";
 
 const ALL_WORKOUTS: Workout[] = [
   {
@@ -38,7 +39,7 @@ const ALL_WORKOUTS: Workout[] = [
     duration: 4,
     difficulty: "low",
     videoUrl: "https://www.youtube.com/embed/e898TV_t77g?si=fYi5Y_yxT8ms8Ley",
-    //visible: false,  // ← Add this to hide it
+    thumbnail: standingBalanceThumb,
   },
   {
     id: "5",
