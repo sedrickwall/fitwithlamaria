@@ -33,12 +33,12 @@ const ALL_WORKOUTS: Workout[] = [
   },
   {
     id: "4",
-    title: "Standing Balance & Strength",
+    title: "Standing Balance & Mobility",
     category: "standing",
-    duration: 10,
+    duration: 4,
     difficulty: "low",
-    videoUrl: "https://www.youtube.com/embed/fywl19sc35Y?si=2Yl07mqNsCoGWqGY",
-    visible: false,  // ← Add this to hide it
+    videoUrl: "https://www.youtube.com/embed/e898TV_t77g?si=fYi5Y_yxT8ms8Ley",
+    //visible: false,  // ← Add this to hide it
   },
   {
     id: "5",
@@ -69,7 +69,7 @@ const ALL_WORKOUTS: Workout[] = [
   },
   {
     id: "8",
-    title: "Balance & Flexibility",
+    title: "Low Impact Squats",
     category: "balance",
     duration: 5,
     difficulty: "low",
