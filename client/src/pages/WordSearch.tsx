@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { CheckCircle2, Lock, Trophy, SkipForward, Dumbbell } from "lucide-react";
+import { CheckCircle2, Lock, Trophy, SkipForward, Dumbbell, AlertCircle, Check, X } from "lucide-react";
 import confetti from "canvas-confetti";
 import { TopBar } from "@/components/TopBar";
 import { BottomNav } from "@/components/BottomNav";
@@ -9,6 +9,13 @@ import { WordSearchGrid } from "@/components/WordSearchGrid";
 import { LoginModal } from "@/components/LoginModal";
 import { LimitedTimeOfferModal } from "@/components/LimitedTimeOfferModal";
 import { PremiumBadge } from "@/components/PremiumBadge";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -50,6 +57,7 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showOfferModal, setShowOfferModal] = useState(false);
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
+  const [showFailureDialog, setShowFailureDialog] = useState(false);
   const { shouldShowOffer, expiresAt, checkAndTriggerOffer, dismissOffer } = useFirstCompletionOffer();
   const [premiumPuzzleData, setPremiumPuzzleData] = useState<{grid: string[][], words: string[]} | null>(null);
 
@@ -166,6 +174,9 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
 
     setGameOver(true);
     
+    // Mark onboarding as seen since user is actively using the app
+    localStorage.setItem("hasSeenOnboarding", "true");
+    
     // Always award points and save completion FIRST
     const pointsEarned = 50;
     addPoints(pointsEarned);
@@ -232,14 +243,11 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
 
     await solveWordSearch(actualPuzzleIndex, 0);
 
-    toast({
-      title: "That's Okay!",
-      description: isPremium 
-        ? "Take a break and try another puzzle after your next workout." 
-        : "Come back tomorrow with a fresh mind for a new challenge!",
-    });
+    // Mark onboarding as seen since user is actively using the app
+    localStorage.setItem("hasSeenOnboarding", "true");
 
-    setTimeout(() => navigate("/"), 1500);
+    // Show failure dialog with word reveal
+    setShowFailureDialog(true);
   };
 
   const canPlay = canStartNewPuzzle(isPremium, 'wordsearch');
@@ -461,6 +469,58 @@ export default function WordSearch({ puzzleIndex, difficultyLevel }: WordSearchP
         }}
         expiresAt={expiresAt}
       />
+
+      <Dialog open={showFailureDialog} onOpenChange={setShowFailureDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <div className="flex justify-center mb-4">
+              <AlertCircle className="w-24 h-24 text-muted-foreground" />
+            </div>
+            <DialogTitle className="text-h2 text-center">
+              Nice Try!
+            </DialogTitle>
+            <DialogDescription className="text-body-lg text-center">
+              You found {foundWords.length} out of {words.length} words. Every puzzle helps keep your mind sharp!
+            </DialogDescription>
+          </DialogHeader>
+          <div className="bg-card rounded-lg p-4 border-2 border-muted">
+            <p className="text-sm font-semibold text-muted-foreground mb-3 text-center">Words in this puzzle:</p>
+            <div className="grid grid-cols-1 gap-2">
+              {words.map((word) => {
+                const wasFound = foundWords.includes(word);
+                return (
+                  <div 
+                    key={word}
+                    className={`flex items-center justify-between p-3 rounded-lg border-2 ${
+                      wasFound 
+                        ? 'bg-success/10 border-success/30' 
+                        : 'bg-muted/50 border-muted'
+                    }`}
+                  >
+                    <span className={`font-bold text-lg ${
+                      wasFound ? 'text-success' : 'text-foreground'
+                    }`}>
+                      {word}
+                    </span>
+                    {wasFound ? (
+                      <Check className="w-6 h-6 text-success" />
+                    ) : (
+                      <X className="w-6 h-6 text-muted-foreground" />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          <Button
+            onClick={() => navigate("/")}
+            className="w-full h-14 text-body-md"
+            data-testid="button-done-failure-wordsearch"
+          >
+            Back to Dashboard
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
