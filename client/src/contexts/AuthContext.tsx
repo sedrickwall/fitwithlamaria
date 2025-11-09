@@ -62,15 +62,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           
           if (!existingUser) {
             await userOperations.setUser(firebaseUser.uid, {
-              uid: firebaseUser.uid,
               email: firebaseUser.email || "",
               displayName: firebaseUser.displayName || undefined,
               totalPoints: 0,
               currentStreak: 0,
               longestStreak: 0,
-              emailNotifications: true,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
+              emailNotifications: true
             });
           }
         } catch (err) {
