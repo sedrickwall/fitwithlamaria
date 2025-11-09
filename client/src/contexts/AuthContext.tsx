@@ -61,14 +61,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const existingUser = await userOperations.getUser(firebaseUser.uid);
           
           if (!existingUser) {
-            await userOperations.setUser(firebaseUser.uid, {
+            const userData: any = {
               email: firebaseUser.email || "",
-              displayName: firebaseUser.displayName || undefined,
               totalPoints: 0,
               currentStreak: 0,
               longestStreak: 0,
               emailNotifications: true
-            });
+            };
+            
+            // Only add displayName if it exists (Firestore doesn't accept undefined)
+            if (firebaseUser.displayName) {
+              userData.displayName = firebaseUser.displayName;
+            }
+            
+            await userOperations.setUser(firebaseUser.uid, userData);
           }
         } catch (err) {
           console.error("Error syncing user to Firestore:", err);
