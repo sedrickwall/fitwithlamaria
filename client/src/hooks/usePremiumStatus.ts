@@ -16,6 +16,15 @@ export function usePremiumStatus() {
 
   useEffect(() => {
     const checkPremiumStatus = async () => {
+      // Check for testing override first
+      const testPremium = localStorage.getItem('testPremium');
+      if (testPremium === 'true') {
+        console.log('🧪 Testing override: Premium enabled');
+        setIsPremium(true);
+        setIsLoading(false);
+        return;
+      }
+
       if (!isFirebaseReady() || !user) {
         setIsPremium(false);
         setIsLoading(false);
@@ -24,6 +33,9 @@ export function usePremiumStatus() {
 
       try {
         const firestoreUser = await userOperations.getUser(user.uid);
+        console.log('👤 User UID:', user.uid);
+        console.log('📊 Firestore user data:', firestoreUser);
+        console.log('💎 Premium status:', firestoreUser?.premium);
         setIsPremium(firestoreUser?.premium === true);
       } catch (error) {
         console.error("Error checking premium status:", error);
