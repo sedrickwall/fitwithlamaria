@@ -14,7 +14,7 @@ export default function FAQ() {
     },
     {
       question: "What exercises are included?",
-      answer: "We offer gentle, effective workouts designed for active seniors 65+, including seated exercises, standing routines, and balance training. All led by certified instructors.",
+      answer: "We offer gentle, effective workouts designed for active 55+, including seated exercises, standing routines, and balance training. All led by certified instructors.",
     },
     {
       question: "Can I cancel my subscription anytime?",
