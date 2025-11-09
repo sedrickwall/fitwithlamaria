@@ -59,6 +59,35 @@ export function getWorkoutCompletions(): WorkoutCompletion[] {
   return getFromStorage<WorkoutCompletion[]>(STORAGE_KEYS.WORKOUT_COMPLETIONS, []);
 }
 
+export function hasCompletedWorkoutToday(): boolean {
+  const today = new Date().toISOString().split('T')[0];
+  const completions = getWorkoutCompletions();
+  return completions.some(c => c.date === today);
+}
+
+export function getLastWorkoutTimestamp(): number | null {
+  const completions = getWorkoutCompletions();
+  if (completions.length === 0) return null;
+  
+  // Get the most recent workout completion timestamp
+  const timestamps = completions
+    .map(c => new Date(c.completedAt).getTime())
+    .filter(t => !isNaN(t))
+    .sort((a, b) => b - a);
+  
+  return timestamps.length > 0 ? timestamps[0] : null;
+}
+
+export function canStartNewWorkout(): boolean {
+  const lastTimestamp = getLastWorkoutTimestamp();
+  if (!lastTimestamp) return true;
+  
+  const now = Date.now();
+  const hoursSinceLastWorkout = (now - lastTimestamp) / (1000 * 60 * 60);
+  
+  return hoursSinceLastWorkout >= 24;
+}
+
 export function saveWorkoutCompletion(completion: WorkoutCompletion): void {
   const completions = getWorkoutCompletions();
   

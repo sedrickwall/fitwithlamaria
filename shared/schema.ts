@@ -10,6 +10,7 @@ export const workoutSchema = z.object({
   videoUrl: z.string(),
   thumbnail: z.string().optional(),
   visible: z.boolean().optional(),
+  requiresPremium: z.boolean().optional(),
 });
 
 export type Workout = z.infer<typeof workoutSchema>;

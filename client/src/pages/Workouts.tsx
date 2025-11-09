@@ -5,17 +5,37 @@ import { WorkoutCard } from "@/components/WorkoutCard";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLocation } from "wouter";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { usePremiumStatus } from "@/hooks/usePremiumStatus";
+import { canStartNewWorkout } from "@/lib/localStorage";
 import { SAMPLE_WORKOUTS } from "@/data/workouts";
+import { Workout } from "@shared/schema";
 
 export default function Workouts() {
   const [, navigate] = useLocation();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const { profile } = useUserProfile();
+  const { isPremium } = usePremiumStatus();
   const totalPoints = profile?.totalPoints || 0;
 
   const filteredWorkouts = selectedCategory === "all"
     ? SAMPLE_WORKOUTS
     : SAMPLE_WORKOUTS.filter(w => w.category === selectedCategory);
+
+  const canStart = canStartNewWorkout();
+
+  const getWorkoutLockState = (workout: Workout): { isLocked: boolean; lockReason?: "premium" | "wait24hr" } => {
+    // Premium-only workouts
+    if (workout.requiresPremium && !isPremium) {
+      return { isLocked: true, lockReason: "premium" };
+    }
+    
+    // Free users can only do 1 workout per 24 hours
+    if (!isPremium && !canStart) {
+      return { isLocked: true, lockReason: "wait24hr" };
+    }
+    
+    return { isLocked: false };
+  };
 
   const handleWorkoutClick = (workoutId: string) => {
     navigate(`/workout/${workoutId}`);
@@ -71,13 +91,18 @@ export default function Workouts() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredWorkouts.map((workout) => (
-            <WorkoutCard 
-              key={workout.id} 
-              workout={workout} 
-              onClick={() => handleWorkoutClick(workout.id)}
-            />
-          ))}
+          {filteredWorkouts.map((workout) => {
+            const { isLocked, lockReason } = getWorkoutLockState(workout);
+            return (
+              <WorkoutCard 
+                key={workout.id} 
+                workout={workout} 
+                onClick={() => handleWorkoutClick(workout.id)}
+                isLocked={isLocked}
+                lockReason={lockReason}
+              />
+            );
+          })}
         </div>
 
         {filteredWorkouts.length === 0 && (
