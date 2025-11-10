@@ -20,7 +20,7 @@ export function WorkoutCard({ workout, onClick, isLocked = false, lockReason }: 
     medium: "bg-warning text-warning-foreground",
   };
 
-  const lockMessage = lockReason === "premium" ? "Premium Only" : "Wait 24hr";
+  const lockMessage = lockReason === "premium" ? "Premium Only" : "Wait 24hr or Subscribe to Premium";
 
   return (
     <button
