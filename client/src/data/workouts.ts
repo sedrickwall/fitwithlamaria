@@ -74,7 +74,7 @@ const ALL_WORKOUTS: Workout[] = [
     title: "Low Impact Squats",
     category: "balance",
     duration: 5,
-    difficulty: "low",
+    difficulty: "medium",
     videoUrl: "https://www.youtube.com/embed/8FvlCbqUOWE?si=iUof2MThK2EN2I2U",
     thumbnail: balanceFlexibilityThumb,
   },
