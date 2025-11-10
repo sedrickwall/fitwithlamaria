@@ -20,7 +20,7 @@ const ALL_WORKOUTS: Workout[] = [
     title: "Seated & Standing",
     category: "seated",
     duration: 15,
-    difficulty: "low",
+    difficulty: "medium",
     videoUrl: "https://www.youtube.com/embed/lILzVK_jiC8?si=_Oz_KidAa8bw0jDq",
     thumbnail: seatedStandingThumb,
   },
