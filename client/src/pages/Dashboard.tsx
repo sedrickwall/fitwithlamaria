@@ -25,13 +25,41 @@ export default function Dashboard() {
   };
 
   const getUserFirstName = () => {
-    if (user?.displayName) {
-      return user.displayName.split(' ')[0];
-    }
+    let name = "";
+    
+    // Prioritize profile name over user displayName
     if (profile?.name && profile.name !== "You") {
-      return profile.name.split(' ')[0];
+      name = profile.name;
+    } else if (user?.displayName) {
+      name = user.displayName;
     }
-    return "";
+    
+    if (!name) return "";
+    
+    // If it's an email, extract username before '@' and clean it up
+    if (name.includes('@')) {
+      const emailPrefix = name.split('@')[0];
+      // Remove dots, underscores, digits and capitalize
+      const cleaned = emailPrefix
+        .replace(/[._\d]/g, ' ')
+        .trim()
+        .split(' ')[0];
+      
+      // If cleaned result is too short or empty, skip the name
+      if (cleaned.length < 2) return "";
+      
+      name = cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase();
+    } else {
+      // For non-email names, just take first name
+      name = name.split(' ')[0];
+    }
+    
+    // Limit length to 14 characters for small screens
+    if (name.length > 14) {
+      name = name.substring(0, 14) + "...";
+    }
+    
+    return name;
   };
 
   if (profileLoading || statusLoading) {
