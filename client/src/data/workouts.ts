@@ -16,12 +16,12 @@ const ALL_WORKOUTS: Workout[] = [
   },
   {
     id: "2",
-    title: "Chair Yoga Flow",
+    title: "Seated & Standing",
     category: "seated",
     duration: 15,
     difficulty: "low",
-    videoUrl: "https://www.youtube.com/embed/KLGkCOMMbSs",
-    visible: false,  // ← Add this to hide it
+    videoUrl: "https://www.youtube.com/embed/lILzVK_jiC8?si=_Oz_KidAa8bw0jDq",
+    //visible: false,  // ← Add this to hide it
   },
   {
     id: "3",
