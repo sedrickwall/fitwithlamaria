@@ -44,15 +44,15 @@ export function BackHeader({ title, subtitle, backPath = "/more" }: BackHeaderPr
       onTouchEnd,
     },
     HeaderComponent: (
-      <div className="mb-8">
+      <div className="mb-6">
         <button
           onClick={handleBack}
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4"
+          className="flex items-center gap-2 min-h-[56px] px-4 py-3 -ml-4 rounded-xl text-primary hover:bg-primary/10 active:bg-primary/20 transition-colors mb-2"
           data-testid="button-back"
           aria-label="Go back"
         >
-          <ArrowLeft className="w-6 h-6" />
-          <span className="text-body-md">Back</span>
+          <ArrowLeft className="w-7 h-7" strokeWidth={2.5} />
+          <span className="text-lg font-semibold">Back</span>
         </button>
         <h1 className="text-h1 font-bold text-foreground mb-2" data-testid="text-page-title">
           {title}
