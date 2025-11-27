@@ -14,15 +14,19 @@
     }
   ],
   "rewrites": [
-    { "source": "/api/puzzle/(.*)", "destination": "/api/puzzle" },
-    { "source": "/api/wordsearch/(.*)", "destination": "/api/wordsearch" },
-    { "source": "/api/crossword/(.*)", "destination": "/api/crossword" },
-    { "source": "/api/puzzletype", "destination": "/api/puzzletype" },
-    { "source": "/api/stripe/(.*)", "destination": "/api/stripe" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "env": {
     "STRIPE_SECRET_KEY": "@stripe_secret_key",
-    "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret"
+    "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret",
+    "VITE_STRIPE_PUBLIC_KEY": "@vite_stripe_public_key",
+    "VITE_STRIPE_MONTHLY_PRICE_ID": "@vite_stripe_monthly_price_id",
+    "VITE_STRIPE_YEARLY_PRICE_ID": "@vite_stripe_yearly_price_id",
+    "VITE_FIREBASE_API_KEY": "@vite_firebase_api_key",
+    "VITE_FIREBASE_AUTH_DOMAIN": "@vite_firebase_auth_domain",
+    "VITE_FIREBASE_PROJECT_ID": "@vite_firebase_project_id",
+    "VITE_FIREBASE_STORAGE_BUCKET": "@vite_firebase_storage_bucket",
+    "VITE_FIREBASE_MESSAGING_SENDER_ID": "@vite_firebase_messaging_sender_id",
+    "VITE_FIREBASE_APP_ID": "@vite_firebase_app_id"
   }
 }

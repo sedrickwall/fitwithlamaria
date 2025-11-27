@@ -76,60 +76,44 @@ const CROSSWORD_PUZZLES: CrosswordPuzzle[] = [
 ];
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
-  const { method } = req;
-  const path = req.url?.split('?')[0] || '';
-  
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
-  if (method === 'OPTIONS') {
+  if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  if (method === 'GET' && (path === '/api/crossword' || path === '/api/crossword/')) {
-    const puzzleIndex = parseInt(req.query.index as string) || 0;
-    const puzzleNumber = puzzleIndex % CROSSWORD_PUZZLES.length;
-    const puzzle = CROSSWORD_PUZZLES[puzzleNumber];
-    
-    return res.json({
-      puzzleNumber,
-      puzzleIndex,
-      size: puzzle.size,
-      clues: puzzle.clues,
-    });
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  if (method === 'POST' && path === '/api/crossword/check') {
-    const { puzzleIndex = 0, answers } = req.body;
-    
-    if (!answers || typeof answers !== "object") {
-      return res.status(400).json({ error: "Answers required" });
-    }
-    
-    const puzzleNumber = puzzleIndex % CROSSWORD_PUZZLES.length;
-    const puzzle = CROSSWORD_PUZZLES[puzzleNumber];
-    
-    const results: Record<number, boolean> = {};
-    let correctCount = 0;
-    
-    puzzle.clues.forEach(clue => {
-      const userAnswer = answers[clue.number]?.toUpperCase() || "";
-      const isCorrect = userAnswer === clue.answer;
-      results[clue.number] = isCorrect;
-      if (isCorrect) correctCount++;
-    });
-    
-    const isComplete = correctCount === puzzle.clues.length;
-    
-    return res.json({
-      results,
-      correctCount,
-      totalClues: puzzle.clues.length,
-      isComplete,
-      grid: isComplete ? puzzle.grid : undefined,
-    });
+  const { puzzleIndex = 0, answers } = req.body;
+  
+  if (!answers || typeof answers !== "object") {
+    return res.status(400).json({ error: "Answers required" });
   }
-
-  return res.status(404).json({ error: 'Not found' });
+  
+  const puzzleNumber = puzzleIndex % CROSSWORD_PUZZLES.length;
+  const puzzle = CROSSWORD_PUZZLES[puzzleNumber];
+  
+  const results: Record<number, boolean> = {};
+  let correctCount = 0;
+  
+  puzzle.clues.forEach(clue => {
+    const userAnswer = answers[clue.number]?.toUpperCase() || "";
+    const isCorrect = userAnswer === clue.answer;
+    results[clue.number] = isCorrect;
+    if (isCorrect) correctCount++;
+  });
+  
+  const isComplete = correctCount === puzzle.clues.length;
+  
+  return res.json({
+    results,
+    correctCount,
+    totalClues: puzzle.clues.length,
+    isComplete,
+    grid: isComplete ? puzzle.grid : undefined,
+  });
 }

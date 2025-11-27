@@ -45,122 +45,26 @@ const WORD_HINTS: Record<number, WordHint[]> = {
   ],
 };
 
-const WORD_LISTS: Record<number, string[]> = {
-  5: WORD_HINTS[5].map(h => h.word),
-  6: WORD_HINTS[6].map(h => h.word),
-  7: WORD_HINTS[7].map(h => h.word),
-};
-
-function getPuzzleWord(puzzleIndex: number, difficultyLevel: number, isPremium: boolean = false): string {
-  const wordLength = Math.min(5 + difficultyLevel, 7);
-  const wordList = WORD_LISTS[wordLength] || WORD_LISTS[5];
-  
-  if (isPremium) {
-    const randomIndex = Math.floor(Math.random() * wordList.length);
-    return wordList[randomIndex];
-  } else {
-    const index = puzzleIndex % wordList.length;
-    return wordList[index];
-  }
-}
-
 export default function handler(req: VercelRequest, res: VercelResponse) {
-  const { method } = req;
-  const path = req.url?.split('?')[0] || '';
-  
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
-  if (method === 'OPTIONS') {
+  if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  if (method === 'GET' && (path === '/api/puzzle' || path === '/api/puzzle/')) {
-    const puzzleIndex = parseInt(req.query.index as string) || 0;
-    const isPremium = req.query.premium === 'true';
-    const difficultyLevel = Math.floor(puzzleIndex / 2);
-    const wordLength = Math.min(5 + difficultyLevel, 7);
-    const maxAttempts = 6 + Math.floor(difficultyLevel / 2);
-    
-    return res.json({
-      puzzleNumber: puzzleIndex,
-      puzzleIndex,
-      wordLength,
-      maxAttempts,
-      difficultyLevel,
-      isPremium,
-    });
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  if (method === 'GET' && path === '/api/puzzle/hint') {
-    const puzzleIndex = parseInt(req.query.index as string) || 0;
-    const difficultyLevel = Math.floor(puzzleIndex / 2);
-    const wordLength = Math.min(5 + difficultyLevel, 7);
-    
-    const hints = WORD_HINTS[wordLength] || WORD_HINTS[5];
-    const hintIndex = puzzleIndex % hints.length;
-    const { category, hint } = hints[hintIndex];
-    
-    return res.json({ category, hint });
-  }
-
-  if (method === 'GET' && path === '/api/puzzle/word') {
-    const puzzleIndex = parseInt(req.query.index as string) || 0;
-    const difficultyLevel = Math.floor(puzzleIndex / 2);
-    const word = getPuzzleWord(puzzleIndex, difficultyLevel, true);
-    
-    return res.json({ word });
-  }
-
-  if (method === 'POST' && path === '/api/puzzle/guess') {
-    const { guess, puzzleIndex = 0, isPremium = false, word } = req.body;
-    
-    if (!guess || typeof guess !== "string") {
-      return res.status(400).json({ error: "Guess is required" });
-    }
-
-    const normalizedGuess = guess.toUpperCase();
-    const difficultyLevel = Math.floor(puzzleIndex / 2);
-    const expectedLength = Math.min(5 + difficultyLevel, 7);
-    
-    if (normalizedGuess.length !== expectedLength) {
-      return res.status(400).json({ error: `Guess must be ${expectedLength} letters` });
-    }
-
-    let puzzleWord: string;
-    if (isPremium && word) {
-      const wordLength = Math.min(5 + difficultyLevel, 7);
-      const wordList = WORD_LISTS[wordLength] || WORD_LISTS[5];
-      if (wordList.includes(word.toUpperCase())) {
-        puzzleWord = word.toUpperCase();
-      } else {
-        return res.status(400).json({ error: "Invalid puzzle word" });
-      }
-    } else {
-      puzzleWord = getPuzzleWord(puzzleIndex, difficultyLevel, false);
-    }
-    
-    const result: Array<"correct" | "present" | "absent"> = Array(expectedLength).fill("absent");
-    const wordArray = puzzleWord.split("");
-    const guessArray = normalizedGuess.split("");
-
-    guessArray.forEach((letter, i) => {
-      if (letter === wordArray[i]) {
-        result[i] = "correct";
-      } else if (wordArray.includes(letter)) {
-        result[i] = "present";
-      }
-    });
-
-    const isCorrect = normalizedGuess === puzzleWord;
-
-    return res.json({
-      result,
-      isCorrect,
-      word: puzzleWord
-    });
-  }
-
-  return res.status(404).json({ error: 'Not found' });
+  const puzzleIndex = parseInt(req.query.index as string) || 0;
+  const difficultyLevel = Math.floor(puzzleIndex / 2);
+  const wordLength = Math.min(5 + difficultyLevel, 7);
+  
+  const hints = WORD_HINTS[wordLength] || WORD_HINTS[5];
+  const hintIndex = puzzleIndex % hints.length;
+  const { category, hint } = hints[hintIndex];
+  
+  return res.json({ category, hint });
 }

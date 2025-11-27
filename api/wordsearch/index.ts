@@ -32,10 +32,9 @@ function seededRandom(seed: number) {
   };
 }
 
-function generateWordSearchGrid(words: string[], size: number = 10, seed: number): { grid: string[][], placements: Record<string, number[][]> } {
+function generateWordSearchGrid(words: string[], size: number = 10, seed: number): { grid: string[][] } {
   const random = seededRandom(seed);
   const grid: string[][] = Array(size).fill(null).map(() => Array(size).fill(""));
-  const placements: Record<string, number[][]> = {};
 
   const directions = [
     [0, 1], [1, 0], [1, 1], [0, -1], [-1, 0], [-1, -1], [1, -1], [-1, 1],
@@ -61,18 +60,13 @@ function generateWordSearchGrid(words: string[], size: number = 10, seed: number
     return true;
   };
 
-  const placeWord = (word: string, row: number, col: number, dir: number[]): number[][] => {
+  const placeWord = (word: string, row: number, col: number, dir: number[]): void => {
     const [dRow, dCol] = dir;
-    const coords: number[][] = [];
-
     for (let i = 0; i < word.length; i++) {
       const r = row + dRow * i;
       const c = col + dCol * i;
       grid[r][c] = word[i];
-      coords.push([r, c]);
     }
-
-    return coords;
   };
 
   for (const word of words) {
@@ -86,8 +80,7 @@ function generateWordSearchGrid(words: string[], size: number = 10, seed: number
       const dir = directions[Math.floor(random() * directions.length)];
 
       if (canPlaceWord(word, row, col, dir)) {
-        const coords = placeWord(word, row, col, dir);
-        placements[word] = coords;
+        placeWord(word, row, col, dir);
         placed = true;
       }
 
@@ -104,73 +97,38 @@ function generateWordSearchGrid(words: string[], size: number = 10, seed: number
     }
   }
 
-  return { grid, placements };
+  return { grid };
 }
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
-  const { method } = req;
-  const path = req.url?.split('?')[0] || '';
-  
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   
-  if (method === 'OPTIONS') {
+  if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  if (method === 'GET' && (path === '/api/wordsearch' || path === '/api/wordsearch/')) {
-    const puzzleIndex = parseInt(req.query.index as string) || 0;
-    const isPremium = req.query.premium === 'true';
-    const difficultyLevel = Math.floor(puzzleIndex / 2);
-    const gridSize = getGridSize(difficultyLevel);
-    
-    const words = getPuzzleWords(puzzleIndex, isPremium);
-    const seed = isPremium ? Date.now() : puzzleIndex;
-    const { grid } = generateWordSearchGrid(words, gridSize, seed);
-
-    return res.json({
-      grid,
-      words,
-      size: grid.length,
-      puzzleIndex,
-      puzzleNumber: puzzleIndex,
-      difficultyLevel,
-      isPremium,
-    });
+  if (req.method !== 'GET') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  if (method === 'POST' && path === '/api/wordsearch/validate') {
-    const { word, coordinates, puzzleIndex = 0, isPremium = false, words: puzzleWords, grid } = req.body;
+  const puzzleIndex = parseInt(req.query.index as string) || 0;
+  const isPremium = req.query.premium === 'true';
+  const difficultyLevel = Math.floor(puzzleIndex / 2);
+  const gridSize = getGridSize(difficultyLevel);
+  
+  const words = getPuzzleWords(puzzleIndex, isPremium);
+  const seed = isPremium ? Date.now() : puzzleIndex;
+  const { grid } = generateWordSearchGrid(words, gridSize, seed);
 
-    if (!word || !coordinates) {
-      return res.status(400).json({ error: "Word and coordinates required" });
-    }
-
-    const wordUpper = word.toUpperCase();
-
-    if (isPremium && puzzleWords && grid) {
-      const isValid = puzzleWords.includes(wordUpper);
-      return res.json({ valid: isValid, word: wordUpper });
-    } else {
-      const difficultyLevel = Math.floor(puzzleIndex / 2);
-      const gridSize = getGridSize(difficultyLevel);
-      
-      const words = getPuzzleWords(puzzleIndex, false);
-      const { placements } = generateWordSearchGrid(words, gridSize, puzzleIndex);
-      
-      const isValid = words.includes(wordUpper);
-      
-      let coordinatesValid = false;
-      if (isValid && placements[wordUpper]) {
-        const expectedCoords = placements[wordUpper];
-        coordinatesValid = JSON.stringify(coordinates) === JSON.stringify(expectedCoords) ||
-                           JSON.stringify(coordinates) === JSON.stringify(expectedCoords.reverse());
-      }
-
-      return res.json({ valid: isValid && coordinatesValid, word: wordUpper });
-    }
-  }
-
-  return res.status(404).json({ error: 'Not found' });
+  return res.json({
+    grid,
+    words,
+    size: grid.length,
+    puzzleIndex,
+    puzzleNumber: puzzleIndex,
+    difficultyLevel,
+    isPremium,
+  });
 }
