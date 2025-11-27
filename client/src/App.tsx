@@ -5,6 +5,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { TestModeBanner } from "@/components/TestModeBanner";
+import { initTestMode } from "@/lib/testMode";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Workouts from "@/pages/Workouts";
@@ -67,10 +69,15 @@ function Router() {
 }
 
 function App() {
+  useEffect(() => {
+    initTestMode();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
+          <TestModeBanner />
           <Toaster />
           <Router />
         </TooltipProvider>
