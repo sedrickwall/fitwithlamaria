@@ -79,6 +79,12 @@ export function getLastWorkoutTimestamp(): number | null {
 }
 
 export function canStartNewWorkout(): boolean {
+  // Testing override - bypass 24hr lock
+  if (localStorage.getItem('bypassWorkoutLock') === 'true') {
+    console.log('🧪 Testing override: 24hr workout lock bypassed');
+    return true;
+  }
+  
   const lastTimestamp = getLastWorkoutTimestamp();
   if (!lastTimestamp) return true;
   
