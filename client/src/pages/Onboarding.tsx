@@ -25,6 +25,28 @@ const slides = onboardingConfig.slides.map((slide) => ({
 export default function Onboarding() {
   const [, navigate] = useLocation();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    if (isLeftSwipe) {
+      nextSlide();
+    }
+  };
 
   const handleGetStarted = () => {
     localStorage.setItem("hasSeenOnboarding", "true");
@@ -61,7 +83,12 @@ export default function Onboarding() {
         </button>
       </div>
 
-      <div className="flex flex-col items-center gap-4 px-4 pb-6 max-w-2xl mx-auto w-full">
+      <div 
+        className="flex flex-col items-center gap-4 px-4 pb-6 max-w-2xl mx-auto w-full"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+      >
         <div className="w-full flex flex-col items-center gap-4">
           <div className="relative w-full max-w-xs h-[220px] sm:h-auto sm:aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
             <img
