@@ -72,7 +72,12 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div 
+      className="min-h-screen bg-background flex flex-col"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       <div className="flex justify-end px-4 pt-4 pb-2 shrink-0">
         <button
           onClick={handleGetStarted}
@@ -83,12 +88,7 @@ export default function Onboarding() {
         </button>
       </div>
 
-      <div 
-        className="flex flex-col items-center gap-4 px-4 pb-6 max-w-2xl mx-auto w-full"
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-      >
+      <div className="flex flex-col items-center gap-4 px-4 pb-6 max-w-2xl mx-auto w-full">
         <div className="w-full flex flex-col items-center gap-4">
           <div className="relative w-full max-w-xs h-[220px] sm:h-auto sm:aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
             <img
