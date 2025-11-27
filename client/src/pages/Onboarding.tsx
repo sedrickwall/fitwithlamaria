@@ -121,7 +121,7 @@ export default function Onboarding() {
             <p className="text-center text-muted-foreground text-sm">
               {currentSlide === slides.length - 1 
                 ? "Ready to start your wellness journey?" 
-                : "Swipe to learn more"}
+                : "Swipe right to learn more"}
             </p>
 
             {currentSlide === slides.length - 1 && (
