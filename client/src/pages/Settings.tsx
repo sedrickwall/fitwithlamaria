@@ -1,19 +1,21 @@
 import { Bell, Moon, Globe, Shield } from "lucide-react";
 import { BottomNav } from "@/components/BottomNav";
+import { BackHeader } from "@/components/BackHeader";
 import { Card } from "@/components/ui/card";
 
 export default function Settings() {
+  const { swipeHandlers, HeaderComponent } = BackHeader({
+    title: "Settings",
+    subtitle: "Customize your Fit with LaMaria experience",
+  });
+
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div 
+      className="min-h-screen bg-background pb-24"
+      {...swipeHandlers}
+    >
       <div className="max-w-2xl mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-h1 font-bold text-foreground mb-2" data-testid="text-settings-title">
-            Settings
-          </h1>
-          <p className="text-body-lg text-muted-foreground">
-            Customize your Fit with LaMaria experience
-          </p>
-        </div>
+        {HeaderComponent}
 
         <div className="space-y-6">
           <Card className="p-6">

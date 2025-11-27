@@ -1,19 +1,21 @@
 import { Heart, Target, Users, Sparkles } from "lucide-react";
 import { BottomNav } from "@/components/BottomNav";
+import { BackHeader } from "@/components/BackHeader";
 import { Card } from "@/components/ui/card";
 
 export default function About() {
+  const { swipeHandlers, HeaderComponent } = BackHeader({
+    title: "About Fit with LaMaria",
+    subtitle: "Move your body, sharpen your mind",
+  });
+
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div 
+      className="min-h-screen bg-background pb-24"
+      {...swipeHandlers}
+    >
       <div className="max-w-3xl mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-h1 font-bold text-foreground mb-2" data-testid="text-about-title">
-            About Fit with LaMaria
-          </h1>
-          <p className="text-body-lg text-muted-foreground">
-            Move your body, sharpen your mind
-          </p>
-        </div>
+        {HeaderComponent}
 
         <div className="space-y-8">
           <Card className="p-8 bg-gradient-to-br from-primary/5 to-secondary/5">

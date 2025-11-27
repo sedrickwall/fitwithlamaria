@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { User, Mail, Crown, Calendar } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { BottomNav } from "@/components/BottomNav";
+import { BackHeader } from "@/components/BackHeader";
 import { Card } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { userOperations } from "@/services/firestore";
@@ -50,17 +51,18 @@ export default function Account() {
     return null;
   }
 
+  const { swipeHandlers, HeaderComponent } = BackHeader({
+    title: "My Account",
+    subtitle: "Manage your profile and subscription",
+  });
+
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div 
+      className="min-h-screen bg-background pb-24"
+      {...swipeHandlers}
+    >
       <div className="max-w-2xl mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-h1 font-bold text-foreground mb-2" data-testid="text-account-title">
-            My Account
-          </h1>
-          <p className="text-body-lg text-muted-foreground">
-            Manage your profile and subscription
-          </p>
-        </div>
+        {HeaderComponent}
 
         <div className="space-y-6">
           <Card className="p-6">

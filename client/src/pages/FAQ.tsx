@@ -1,5 +1,5 @@
-import { ChevronDown } from "lucide-react";
 import { BottomNav } from "@/components/BottomNav";
+import { BackHeader } from "@/components/BackHeader";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
 export default function FAQ() {
@@ -38,17 +38,18 @@ export default function FAQ() {
     },
   ];
 
+  const { swipeHandlers, HeaderComponent } = BackHeader({
+    title: "Frequently Asked Questions",
+    subtitle: "Get answers to common questions about Fit with LaMaria",
+  });
+
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div 
+      className="min-h-screen bg-background pb-24"
+      {...swipeHandlers}
+    >
       <div className="max-w-3xl mx-auto px-6 py-8">
-        <div className="mb-8">
-          <h1 className="text-h1 font-bold text-foreground mb-2" data-testid="text-faq-title">
-            Frequently Asked Questions
-          </h1>
-          <p className="text-body-lg text-muted-foreground">
-            Get answers to common questions about Fit with LaMaria
-          </p>
-        </div>
+        {HeaderComponent}
 
         <Accordion type="single" collapsible className="space-y-4">
           {faqs.map((faq, index) => (
