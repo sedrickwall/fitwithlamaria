@@ -27,5 +27,5 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  return res.status(404).json({ error: 'Not found' });
+  return res.status(405).json({ error: 'Method not allowed' });
 }
