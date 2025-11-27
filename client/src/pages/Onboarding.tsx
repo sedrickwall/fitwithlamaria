@@ -25,6 +25,28 @@ const slides = onboardingConfig.slides.map((slide) => ({
 export default function Onboarding() {
   const [, navigate] = useLocation();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    if (isLeftSwipe) {
+      nextSlide();
+    }
+  };
 
   const handleGetStarted = () => {
     localStorage.setItem("hasSeenOnboarding", "true");
@@ -50,7 +72,12 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div 
+      className="min-h-screen bg-background flex flex-col"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       <div className="flex justify-end px-4 pt-4 pb-2 shrink-0">
         <button
           onClick={handleGetStarted}
@@ -70,7 +97,7 @@ export default function Onboarding() {
               className="w-full h-full object-cover"
               data-testid={`image-onboarding-${currentSlide}`}
             />
-            
+
             {currentSlide > 0 && (
               <button
                 onClick={prevSlide}
@@ -81,7 +108,7 @@ export default function Onboarding() {
                 <ChevronLeft className="w-6 h-6 text-gray-800" />
               </button>
             )}
-            
+
             <button
               onClick={nextSlide}
               className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/90 shadow-lg flex items-center justify-center hover:bg-white transition-colors"
@@ -121,7 +148,7 @@ export default function Onboarding() {
             <p className="text-center text-muted-foreground text-sm">
               {currentSlide === slides.length - 1 
                 ? "Ready to start your wellness journey?" 
-                : "Swipe to learn more"}
+                : "Swipe right to learn more"}
             </p>
 
             {currentSlide === slides.length - 1 && (
