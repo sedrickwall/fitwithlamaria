@@ -24,16 +24,19 @@
     }
   ],
   "env": {
-    "stripe_secret_key": "@stripe_secret_key",
-    "stripe_webhook_secret": "@stripe_webhook_secret",
-    "vite_stripe_public_key": "@vite_stripe_public_key",
-    "vite_stripe_monthly_price_id": "@vite_stripe_monthly_price_id",
-    "vite_stripe_yearly_price_id": "@vite_stripe_yearly_price_id",
-    "vite_firebase_api_key": "@vite_firebase_api_key",
-    "vite_firebase_auth_domain": "@vite_firebase_auth_domain",
-    "vite_firebase_project_id": "@vite_firebase_project_id",
-    "vite_firebase_storage_bucket": "@vite_firebase_storage_bucket",
-    "vite_firebase_messaging_sender_id": "@vite_firebase_messaging_sender_id",
-    "vite_firebase_app_id": "@vite_firebase_app_id"
+    "STRIPE_SECRET_KEY": "@STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET": "@STRIPE_WEBHOOK_SECRET",
+    "STRIPE_PUBLISHABLE_KEY": "@STRIPE_PUBLISHABLE_KEY",
+    "STRIPE_PRICE_ID_MONTHLY": "@STRIPE_PRICE_ID_MONTHLY",
+    "STRIPE_PRICE_ID_YEARLY": "@STRIPE_PRICE_ID_YEARLY",
+
+    "VITE_FIREBASE_API_KEY": "@VITE_FIREBASE_API_KEY",
+    "VITE_FIREBASE_AUTH_DOMAIN": "@VITE_FIREBASE_AUTH_DOMAIN",
+    "VITE_FIREBASE_PROJECT_ID": "@VITE_FIREBASE_PROJECT_ID",
+    "VITE_FIREBASE_STORAGE_BUCKET": "@VITE_FIREBASE_STORAGE_BUCKET",
+    "VITE_FIREBASE_MESSAGING_SENDER_ID": "@VITE_FIREBASE_MESSAGING_SENDER_ID",
+    "VITE_FIREBASE_APP_ID": "@VITE_FIREBASE_APP_ID",
+
+    "VITE_STRIPE_PUBLIC_KEY": "@VITE_STRIPE_PUBLIC_KEY"
   }
 }
