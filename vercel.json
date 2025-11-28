@@ -1,16 +1,8 @@
 {
   "version": 2,
-  "functions": {
-    "api/**/*.ts": {
-      "runtime": "@vercel/node@3",
-      "memory": 1024,
-      "maxDuration": 10,
-      "excludeFiles": "client/**"
-    }
-  },
   "builds": [
     {
-      "src": "api/**/*.ts",
+      "src": "server/index.ts",
       "use": "@vercel/node"
     },
     {
@@ -22,21 +14,7 @@
     }
   ],
   "routes": [
-    {
-      "src": "/api/stripe/webhook",
-      "dest": "/api/stripe/webhook.ts",
-      "methods": [ "POST" ],
-      "headers": {
-        "Content-Type": "application/json"
-      }
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1.ts"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/client/dist/index.html"
-    }
+    { "src": "/api/(.*)", "dest": "/server/index.ts" },
+    { "src": "/(.*)", "dest": "/client/dist/index.html" }
   ]
 }
