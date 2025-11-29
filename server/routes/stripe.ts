@@ -3,13 +3,19 @@ import Stripe from "stripe";
 
 const router = express.Router();
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
-}
+let stripe: Stripe | null = null;
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2025-10-29.clover",
-});
+function getStripe(): Stripe {
+  if (!stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+    }
+    stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2025-10-29.clover",
+    });
+  }
+  return stripe;
+}
 
 // Webhook endpoint needs raw body for signature verification
 // This must be registered BEFORE the main Express JSON middleware
@@ -32,7 +38,7 @@ router.post(
     let event: Stripe.Event;
 
     try {
-      event = stripe.webhooks.constructEvent(
+      event = getStripe().webhooks.constructEvent(
         req.body,
         sig,
         process.env.STRIPE_WEBHOOK_SECRET
@@ -99,7 +105,7 @@ router.post("/create-payment-intent", async (req, res) => {
   try {
     const { amount } = req.body;
     
-    const paymentIntent = await stripe.paymentIntents.create({
+    const paymentIntent = await getStripe().paymentIntents.create({
       amount: Math.round(amount * 100),
       currency: "usd",
       automatic_payment_methods: {
@@ -148,7 +154,7 @@ router.post("/create-checkout-session", async (req, res) => {
       sessionConfig.customer_email = userEmail;
     }
     
-    const session = await stripe.checkout.sessions.create(sessionConfig);
+    const session = await getStripe().checkout.sessions.create(sessionConfig);
 
     res.json({ url: session.url, sessionId: session.id });
   } catch (error: any) {
@@ -164,7 +170,7 @@ router.get("/checkout-session/:sessionId", async (req, res) => {
   try {
     const { sessionId } = req.params;
     
-    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    const session = await getStripe().checkout.sessions.retrieve(sessionId);
     
     res.json({
       status: session.status,
