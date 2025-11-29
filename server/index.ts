@@ -1,6 +1,6 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
-import { setupVite, serveStatic, log } from "./vite";
+import { serveStatic, log } from "./vite"; // ONLY serveStatic allowed in prod
 
 const app = express();
 
@@ -11,21 +11,24 @@ declare module "http" {
   }
 }
 
-app.use(express.json({
-  verify: (req, _res, buf) => {
-    req.rawBody = buf;
-  }
-}));
+app.use(
+  express.json({
+    verify: (req, _res, buf) => {
+      req.rawBody = buf;
+    },
+  })
+);
+
 app.use(express.urlencoded({ extended: false }));
 
-// API log middleware
+// API logging middleware
 app.use((req, res, next) => {
   const start = Date.now();
-  let capturedJsonResponse: any;
+  let capturedJson: any;
 
   const originalJson = res.json;
   res.json = function (body, ...args) {
-    capturedJsonResponse = body;
+    capturedJson = body;
     return originalJson.apply(res, [body, ...args]);
   };
 
@@ -33,9 +36,7 @@ app.use((req, res, next) => {
     if (req.path.startsWith("/api")) {
       const duration = Date.now() - start;
       let logLine = `${req.method} ${req.path} ${res.statusCode} in ${duration}ms`;
-      if (capturedJsonResponse) {
-        logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
-      }
+      if (capturedJson) logLine += ` :: ${JSON.stringify(capturedJson)}`;
       log(logLine);
     }
   });
@@ -43,8 +44,8 @@ app.use((req, res, next) => {
   next();
 });
 
-// Register routes normally
-registerRoutes(app).catch(err => {
+// Register API routes
+registerRoutes(app).catch((err) => {
   console.error("Error registering routes:", err);
 });
 
@@ -53,9 +54,13 @@ app.use((err: any, _req: Request, res: Response) => {
   res.status(err.status || 500).json({ message: err.message || "Server error" });
 });
 
-// Production static files
+// Production static serving (this is OK with Vercel)
 if (process.env.NODE_ENV === "production") {
   serveStatic(app);
 }
+
+// ⛔ NO server.listen()
+// ⛔ NO async IIFE
+// ⛔ NO Vite dev server in production
 
 export default app;
