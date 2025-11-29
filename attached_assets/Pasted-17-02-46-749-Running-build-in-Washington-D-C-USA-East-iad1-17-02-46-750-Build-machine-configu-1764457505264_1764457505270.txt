@@ -1,0 +1,48 @@
+17:02:46.749 Running build in Washington, D.C., USA (East) – iad1
+17:02:46.750 Build machine configuration: 2 cores, 8 GB
+17:02:46.879 Cloning github.com/sedrickwall/fitwithlamaria (Branch: Sub_Main, Commit: 4edb20d)
+17:02:48.695 Cloning completed: 1.816s
+17:02:48.786 Restored build cache from previous deployment (EsxDNaKVDydhrN5MeecphrvvwFeU)
+17:02:49.420 Running "vercel build"
+17:02:49.816 Vercel CLI 48.12.0
+17:02:50.439 Running "install" command: `npm install`...
+17:02:52.558 
+17:02:52.559 up to date, audited 360 packages in 2s
+17:02:52.559 
+17:02:52.559 37 packages are looking for funding
+17:02:52.560   run `npm fund` for details
+17:02:52.566 
+17:02:52.566 2 moderate severity vulnerabilities
+17:02:52.566 
+17:02:52.567 To address all issues (including breaking changes), run:
+17:02:52.567   npm audit fix --force
+17:02:52.567 
+17:02:52.567 Run `npm audit` for details.
+17:02:53.718 
+17:02:53.718 > fitwithlamaria-client@1.0.0 build
+17:02:53.718 > vite build
+17:02:53.718 
+17:02:54.634 [36mvite v5.4.21 [32mbuilding for production...[36m[39m
+17:02:54.699 transforming...
+17:03:00.575 [32m✓[39m 2117 modules transformed.
+17:03:01.151 rendering chunks...
+17:03:01.194 computing gzip size...
+17:03:01.223 [2mdist/[22m[32mindex.html                                                             [39m[1m[2m    2.01 kB[22m[1m[22m[2m │ gzip:   0.80 kB[22m
+17:03:01.223 [2mdist/[22m[2massets/[22m[32mpixabay_elderly_woman_gym_illustration-9bo_bgqi.jpg             [39m[1m[2m  135.64 kB[22m[1m[22m
+17:03:01.223 [2mdist/[22m[2massets/[22m[32mpexels_elderly_couple_yoga_stretching-BsyIdvAg.jpg              [39m[1m[2m1,520.14 kB[22m[1m[22m
+17:03:01.224 [2mdist/[22m[2massets/[22m[32mpexels_elderly_woman_garden_meditation-DJk6yd39.jpg             [39m[1m[2m2,590.79 kB[22m[1m[22m
+17:03:01.224 [2mdist/[22m[2massets/[22m[32mScreenshot 2025-11-05 at 8.20.38 PM_1762395981557-1ArMkR9t.png  [39m[1m[2m3,589.14 kB[22m[1m[22m
+17:03:01.224 [2mdist/[22m[2massets/[22m[32mScreenshot 2025-11-05 at 8.24.32 PM_1762396598501-DYW_MeyY.png  [39m[1m[2m6,282.25 kB[22m[1m[22m
+17:03:01.224 [2mdist/[22m[2massets/[22m[32mScreenshot 2025-11-05 at 8.22.33 PM_1762396737911-DB6IVw29.png  [39m[1m[2m7,105.18 kB[22m[1m[22m
+17:03:01.225 [2mdist/[22m[2massets/[22m[32mScreenshot 2025-11-07 at 2.36.49 PM_1762548079929-CBArK9l1.png  [39m[1m[2m7,479.43 kB[22m[1m[22m
+17:03:01.225 [2mdist/[22m[2massets/[22m[32mScreenshot 2025-11-09 at 7.02.38 PM_1762736573565-C2u7B7Et.png  [39m[1m[2m8,183.26 kB[22m[1m[22m
+17:03:01.225 [2mdist/[22m[2massets/[22m[35mindex-QH_oxWLR.css                                              [39m[1m[2m   83.82 kB[22m[1m[22m[2m │ gzip:  14.03 kB[22m
+17:03:01.225 [2mdist/[22m[2massets/[22m[36mindex-DLy1lpZY.js                                               [39m[1m[33m1,005.43 kB[39m[22m[2m │ gzip: 271.63 kB[22m
+17:03:01.225 [33m
+17:03:01.225 (!) Some chunks are larger than 500 kB after minification. Consider:
+17:03:01.225 - Using dynamic import() to code-split the application
+17:03:01.226 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+17:03:01.226 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+17:03:01.226 [32m✓ built in 6.56s[39m
+17:03:01.285 Error: No Output Directory named "dist" found after the Build completed. Configure the Output Directory in your Project Settings. Alternatively, configure vercel.json#outputDirectory.
+17:03:01.286 Learn More: https://vercel.link/missing-public-directory
