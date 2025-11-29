@@ -44,10 +44,14 @@ app.use((req, res, next) => {
   next();
 });
 
-// Register API routes
-registerRoutes(app).catch((err) => {
-  console.error("Error registering routes:", err);
-});
+// Register API routes synchronously for Vercel compatibility
+(async () => {
+  try {
+    await registerRoutes(app);
+  } catch (err) {
+    console.error("Error registering routes:", err);
+  }
+})();
 
 // Error handler
 app.use((err: any, _req: Request, res: Response) => {
