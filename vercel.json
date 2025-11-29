@@ -1,20 +1,26 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/index.ts",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "client/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/public",
+  "framework": null,
+  "rewrites": [
+    { "source": "/api/puzzle/guess", "destination": "/api/puzzle/guess" },
+    { "source": "/api/puzzle/hint", "destination": "/api/puzzle/hint" },
+    { "source": "/api/puzzle/word", "destination": "/api/puzzle/word" },
+    { "source": "/api/puzzle", "destination": "/api/puzzle/index" },
+    { "source": "/api/wordsearch/validate", "destination": "/api/wordsearch/validate" },
+    { "source": "/api/wordsearch", "destination": "/api/wordsearch/index" },
+    { "source": "/api/crossword/check", "destination": "/api/crossword/check" },
+    { "source": "/api/crossword", "destination": "/api/crossword/index" },
+    { "source": "/api/puzzletype", "destination": "/api/puzzletype" },
+    { "source": "/api/stripe/webhook", "destination": "/api/stripe/webhook" },
+    { "source": "/api/stripe/create-payment-intent", "destination": "/api/stripe/create-payment-intent" },
+    { "source": "/api/stripe/create-checkout-session", "destination": "/api/stripe/create-checkout-session" },
+    { "source": "/api/stripe/checkout-session/:sessionId", "destination": "/api/stripe/checkout-session/[sessionId]" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/index.ts" },
-    { "src": "/(.*)", "dest": "/client/dist/index.html" }
-  ]
+  "env": {
+    "STRIPE_SECRET_KEY": "@stripe_secret_key",
+    "STRIPE_WEBHOOK_SECRET": "@stripe_webhook_secret"
+  }
 }

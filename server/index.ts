@@ -54,13 +54,20 @@ app.use((err: any, _req: Request, res: Response) => {
   res.status(err.status || 500).json({ message: err.message || "Server error" });
 });
 
-// Production static serving (this is OK with Vercel)
-if (process.env.NODE_ENV === "production") {
+// Start server for local development
+if (process.env.NODE_ENV !== "production") {
+  (async () => {
+    const { setupVite } = await import("./vite");
+    const { createServer } = await import("http");
+    const server = createServer(app);
+    await setupVite(app, server);
+    const port = 5000;
+    server.listen(port, "0.0.0.0", () => {
+      log(`serving on port ${port}`);
+    });
+  })();
+} else {
   serveStatic(app);
 }
-
-// ⛔ NO server.listen()
-// ⛔ NO async IIFE
-// ⛔ NO Vite dev server in production
 
 export default app;

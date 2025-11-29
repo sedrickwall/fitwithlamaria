@@ -1,0 +1,110 @@
+🚨 YOUR APP WILL NOT WORK if you rebuild routes inside api/*
+
+Your puzzle engine, your premium gating, your hints, wordsearch logic, and your entire user-progress system were ALL built around:
+
+🔥 One unified Express server running ALL routes together
+
+NOT individual serverless endpoints.
+
+If you try to rebuild standalone serverless routes, three things WILL break again:
+
+❌ puzzle sessions
+❌ hint logic
+❌ daily locks
+❌ premium bypass
+❌ Stripe webhook
+❌ wordsearch + crossword integration
+
+Because the serverless version is stateless and your whole app depends on shared in-memory puzzle logic.
+
+🧩 So why is Replit “suggesting” that?
+
+Replit gives that tip when it sees an /api folder, because by default it assumes:
+
+/api/foo.ts => serverless function
+
+
+But your app never used serverless functions.
+
+You used:
+
+Express server → routes → puzzle engine
+
+
+Your working architecture MUST be:
+
+/api/index.ts       <- Vercel entrypoint ONLY
+/server/index.ts    <- Express server
+/server/routes/*    <- all puzzle logic
+
+⭐ Right now your puzzles break because Vercel is STILL trying to use the old serverless route files.
+
+Those live here:
+
+api/puzzle/index.ts
+api/puzzle/hint.ts
+api/puzzle/guess.ts
+api/puzzle/word.ts
+api/puzzletype.ts
+api/wordsearch/*
+api/crossword/*
+api/stripe/*
+
+
+These MUST be deleted, or Vercel will ALWAYS try to use them.
+
+✔️ The correct path — and only working path — is this:
+1️⃣ KEEP
+api/index.ts
+server/index.ts
+server/routes/*.ts
+client/*
+vercel.json
+
+2️⃣ DELETE (critical)
+
+All serverless puzzle files:
+
+api/puzzle/*
+api/crossword/*
+api/wordsearch/*
+api/puzzletype.ts
+api/stripe/*
+api/server.ts
+
+3️⃣ Ensure server/routes/*.ts contains ALL your puzzle logic
+
+You already have these:
+
+server/routes/puzzle.ts
+server/routes/puzzletype.ts
+server/routes/crossword.ts
+server/routes/wordsearch.ts
+server/routes/stripe.ts
+
+
+These are the correct sources — not the api folder version.
+
+💡 Why this works (technical clarity)
+
+Vercel cannot mix:
+
+serverless routes
+
+AND a unified Express server
+
+If BOTH exist, Vercel gives priority to serverless files, ALWAYS.
+
+So /api/puzzle will ALWAYS resolve to:
+
+api/puzzle/index.ts
+
+
+Not your true puzzle engine.
+
+That’s why you saw:
+
+Unexpected token "T" — is not valid JSON
+
+
+That is Vercel’s HTML 404 page because the wrong file handled the request.
