@@ -1,7 +1,7 @@
 {
   "installCommand": "npm install",
   "buildCommand": "npm run build",
-  "outputDirectory": "client/dist",
+  "outputDirectory": "dist",
   "functions": {
     "api/index.ts": {
       "runtime": "nodejs20.x"
