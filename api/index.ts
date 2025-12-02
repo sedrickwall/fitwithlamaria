@@ -1,5 +1,8 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import express, { type Request, type Response } from "express";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
 
 let initError: Error | null = null;
 let puzzleRouter: any;
