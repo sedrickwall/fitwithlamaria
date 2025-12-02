@@ -7,7 +7,7 @@
     "api/**/*.ts": {
       "memory": 1024,
       "maxDuration": 10,
-      "includeFiles": "server/**"
+      "includeFiles": "server/**,shared/**"
     }
   },
   "rewrites": [

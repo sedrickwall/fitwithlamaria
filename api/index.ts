@@ -35,8 +35,8 @@ app.use("/api/puzzletype", puzzletypeRouter);
 // Payment
 app.use("/api/stripe", stripeRouter);
 
-// Error handler
-app.use((err: any, _req: Request, res: Response) => {
+// Error handler (must have 4 parameters for Express to recognize it)
+app.use((err: any, _req: Request, res: Response, _next: any) => {
   console.error("API Error:", err);
   res.status(err.status || 500).json({ message: err.message || "Server error" });
 });
