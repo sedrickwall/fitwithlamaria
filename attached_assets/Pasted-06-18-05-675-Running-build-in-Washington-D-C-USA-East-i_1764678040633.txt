@@ -1,0 +1,49 @@
+06:18:05.675 Running build in Washington, D.C., USA (East) – iad1
+06:18:05.676 Build machine configuration: 2 cores, 8 GB
+06:18:05.804 Cloning github.com/sedrickwall/fitwithlamaria (Branch: Sub_Main, Commit: e4c083f)
+06:18:07.601 Cloning completed: 1.797s
+06:18:07.695 Restored build cache from previous deployment (6JFVHBhewTbRAGvuyUc2FF3YNRp3)
+06:18:08.316 Running "vercel build"
+06:18:08.706 Vercel CLI 48.12.0
+06:18:09.588 Running "install" command: `npm install`...
+06:18:11.369 
+06:18:11.370 up to date, audited 360 packages in 2s
+06:18:11.371 
+06:18:11.371 37 packages are looking for funding
+06:18:11.371   run `npm fund` for details
+06:18:11.377 
+06:18:11.378 2 moderate severity vulnerabilities
+06:18:11.378 
+06:18:11.378 To address all issues (including breaking changes), run:
+06:18:11.379   npm audit fix --force
+06:18:11.379 
+06:18:11.379 Run `npm audit` for details.
+06:18:11.621 
+06:18:11.622 > fitwithlamaria-client@1.0.0 build
+06:18:11.622 > vite build
+06:18:11.623 
+06:18:11.928 [36mvite v5.4.21 [32mbuilding for production...[36m[39m
+06:18:11.990 transforming...
+06:18:12.024 node:internal/process/promises:394
+06:18:12.024     triggerUncaughtException(err, true /* fromPromise */);
+06:18:12.024     ^
+06:18:12.024 
+06:18:12.024 [Failed to load PostCSS config: Failed to load PostCSS config (searchPath: /vercel/path0/client): [Error] Loading PostCSS Plugin failed: Cannot find module 'tailwindcss'
+06:18:12.024 Require stack:
+06:18:12.025 - /vercel/path0/postcss.config.cjs
+06:18:12.025 
+06:18:12.025 (@/vercel/path0/postcss.config.cjs)
+06:18:12.025 Error: Loading PostCSS Plugin failed: Cannot find module 'tailwindcss'
+06:18:12.025 Require stack:
+06:18:12.025 - /vercel/path0/postcss.config.cjs
+06:18:12.025 
+06:18:12.025 (@/vercel/path0/postcss.config.cjs)
+06:18:12.025     at load (file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:33632:11)
+06:18:12.025     at file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:33657:16
+06:18:12.025     at Array.map (<anonymous>)
+06:18:12.025     at plugins (file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:33656:8)
+06:18:12.026     at processResult (file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:33726:14)
+06:18:12.026     at file:///vercel/path0/client/node_modules/vite/dist/node/chunks/dep-BK3b2jBa.js:33856:14]
+06:18:12.026 
+06:18:12.026 Node.js v24.11.1
+06:18:12.041 Error: Command "npm run build" exited with 1
