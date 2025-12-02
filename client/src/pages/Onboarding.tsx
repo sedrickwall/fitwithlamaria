@@ -94,7 +94,9 @@ export default function Onboarding() {
             <img
               src={slides[currentSlide].image}
               alt={slides[currentSlide].title}
-              className="w-full h-full object-cover"
+              className={`w-full h-full object-cover ${
+                currentSlide < 2 ? "object-center" : "object-top"
+              }`}
               data-testid={`image-onboarding-${currentSlide}`}
             />
 
