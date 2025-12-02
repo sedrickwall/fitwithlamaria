@@ -54,6 +54,7 @@ function apiServerPlugin(): Plugin {
 
 export default defineConfig({
   plugins: [react(), apiServerPlugin()],
+  root: __dirname,
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src"),
