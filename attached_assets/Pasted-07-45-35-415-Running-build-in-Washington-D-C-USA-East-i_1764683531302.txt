@@ -1,0 +1,76 @@
+07:45:35.415 Running build in Washington, D.C., USA (East) – iad1
+07:45:35.416 Build machine configuration: 2 cores, 8 GB
+07:45:35.543 Cloning github.com/sedrickwall/fitwithlamaria (Branch: Sub_Main, Commit: 08340db)
+07:45:37.374 Cloning completed: 1.830s
+07:45:37.467 Restored build cache from previous deployment (4muscccJmSJuWEX4RQwdqwPKEuDs)
+07:45:38.050 Running "vercel build"
+07:45:38.476 Vercel CLI 48.12.0
+07:45:39.590 Running "install" command: `npm install && npm --prefix client install`...
+07:45:42.205 
+07:45:42.206 added 2 packages, and audited 649 packages in 2s
+07:45:42.206 
+07:45:42.206 70 packages are looking for funding
+07:45:42.207   run `npm fund` for details
+07:45:42.231 
+07:45:42.232 13 vulnerabilities (4 low, 6 moderate, 3 high)
+07:45:42.232 
+07:45:42.232 To address issues that do not require attention, run:
+07:45:42.232   npm audit fix
+07:45:42.233 
+07:45:42.233 To address all issues (including breaking changes), run:
+07:45:42.233   npm audit fix --force
+07:45:42.234 
+07:45:42.234 Run `npm audit` for details.
+07:45:43.280 
+07:45:43.281 up to date, audited 360 packages in 956ms
+07:45:43.282 
+07:45:43.282 37 packages are looking for funding
+07:45:43.282   run `npm fund` for details
+07:45:43.289 
+07:45:43.290 2 moderate severity vulnerabilities
+07:45:43.290 
+07:45:43.291 To address all issues (including breaking changes), run:
+07:45:43.291   npm audit fix --force
+07:45:43.291 
+07:45:43.292 Run `npm audit` for details.
+07:45:43.745 
+07:45:43.745 > fitwithlamaria-client@1.0.0 build
+07:45:43.746 > vite build
+07:45:43.746 
+07:45:44.083 [36mvite v5.4.21 [32mbuilding for production...[36m[39m
+07:45:44.147 transforming...
+07:45:50.105 [32m✓[39m 2117 modules transformed.
+07:45:50.689 rendering chunks...
+07:45:50.732 computing gzip size...
+07:45:50.762 [2m../dist/[22m[32mindex.html                                                             [39m[1m[2m    2.01 kB[22m[1m[22m[2m │ gzip:   0.80 kB[22m
+07:45:50.762 [2m../dist/[22m[2massets/[22m[32mpixabay_elderly_woman_gym_illustration-9bo_bgqi.jpg             [39m[1m[2m  135.64 kB[22m[1m[22m
+07:45:50.763 [2m../dist/[22m[2massets/[22m[32mpexels_elderly_couple_yoga_stretching-BsyIdvAg.jpg              [39m[1m[2m1,520.14 kB[22m[1m[22m
+07:45:50.763 [2m../dist/[22m[2massets/[22m[32mpexels_elderly_woman_garden_meditation-DJk6yd39.jpg             [39m[1m[2m2,590.79 kB[22m[1m[22m
+07:45:50.763 [2m../dist/[22m[2massets/[22m[32mScreenshot 2025-11-05 at 8.20.38 PM_1762395981557-1ArMkR9t.png  [39m[1m[2m3,589.14 kB[22m[1m[22m
+07:45:50.763 [2m../dist/[22m[2massets/[22m[32mScreenshot 2025-11-05 at 8.24.32 PM_1762396598501-DYW_MeyY.png  [39m[1m[2m6,282.25 kB[22m[1m[22m
+07:45:50.764 [2m../dist/[22m[2massets/[22m[32mScreenshot 2025-11-05 at 8.22.33 PM_1762396737911-DB6IVw29.png  [39m[1m[2m7,105.18 kB[22m[1m[22m
+07:45:50.764 [2m../dist/[22m[2massets/[22m[32mScreenshot 2025-11-07 at 2.36.49 PM_1762548079929-CBArK9l1.png  [39m[1m[2m7,479.43 kB[22m[1m[22m
+07:45:50.764 [2m../dist/[22m[2massets/[22m[32mScreenshot 2025-11-09 at 7.02.38 PM_1762736573565-C2u7B7Et.png  [39m[1m[2m8,183.26 kB[22m[1m[22m
+07:45:50.764 [2m../dist/[22m[2massets/[22m[35mindex-QH_oxWLR.css                                              [39m[1m[2m   83.82 kB[22m[1m[22m[2m │ gzip:  14.03 kB[22m
+07:45:50.768 [2m../dist/[22m[2massets/[22m[36mindex-DLy1lpZY.js                                               [39m[1m[33m1,005.43 kB[39m[22m[2m │ gzip: 271.63 kB[22m
+07:45:50.768 [32m✓ built in 6.65s[39m
+07:45:50.768 [33m
+07:45:50.768 (!) Some chunks are larger than 500 kB after minification. Consider:
+07:45:50.768 - Using dynamic import() to code-split the application
+07:45:50.768 - Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+07:45:50.769 - Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.[39m
+07:45:50.885 Installing dependencies...
+07:45:51.988 
+07:45:51.989 removed 2 packages in 896ms
+07:45:51.989 
+07:45:51.990 70 packages are looking for funding
+07:45:51.990   run `npm fund` for details
+07:45:52.209 Using TypeScript 5.6.3 (local user-provided)
+07:45:58.364 Build Completed in /vercel/output [19s]
+07:45:58.563 Deploying outputs...
+07:46:00.948 Warning: Provided `memory` setting in `vercel.json` is ignored on Active CPU billing. You can safely remove this setting from your configuration. Learn more: https://vercel.com/docs/fluid-compute/pricing
+07:46:05.285 Deployment completed
+07:46:05.945 Creating build cache...
+07:47:01.731 Created build cache: 55.780s
+07:47:01.732 Uploading build cache [126.93 MB]
+07:47:03.428 Build cache uploaded: 1.701s
