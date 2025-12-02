@@ -1,0 +1,72 @@
+index-DLy1lpZY.js:3502 ✅ Firebase initialized successfully
+index-DLy1lpZY.js:3502 🧪 TEST MODE ENABLED - All restrictions bypassed
+index-DLy1lpZY.js:3599  GET https://fitwithlamaria.vercel.app/api/puzzletype?index=0 500 (Internal Server Error)
+(anonymous) @ index-DLy1lpZY.js:3599
+kf @ index-DLy1lpZY.js:40
+pa @ index-DLy1lpZY.js:40
+(anonymous) @ index-DLy1lpZY.js:40
+P @ index-DLy1lpZY.js:25
+M @ index-DLy1lpZY.js:25
+index-DLy1lpZY.js:3599 Puzzle 0 type: undefined, difficulty: undefined
+index-DLy1lpZY.js:3551 🧪 Testing override: Premium enabled
+index-DLy1lpZY.js:3574  GET https://fitwithlamaria.vercel.app/api/puzzle/hint?index=0 500 (Internal Server Error)
+(anonymous) @ index-DLy1lpZY.js:3574
+(anonymous) @ index-DLy1lpZY.js:3574
+kf @ index-DLy1lpZY.js:40
+pa @ index-DLy1lpZY.js:40
+b0 @ index-DLy1lpZY.js:40
+Mo @ index-DLy1lpZY.js:38
+eO @ index-DLy1lpZY.js:40
+Jo @ index-DLy1lpZY.js:40
+IT @ index-DLy1lpZY.js:40
+P @ index-DLy1lpZY.js:25
+M @ index-DLy1lpZY.js:25
+index-DLy1lpZY.js:3599  GET https://fitwithlamaria.vercel.app/api/puzzletype?index=0 500 (Internal Server Error)
+(anonymous) @ index-DLy1lpZY.js:3599
+kf @ index-DLy1lpZY.js:40
+pa @ index-DLy1lpZY.js:40
+b0 @ index-DLy1lpZY.js:40
+Mo @ index-DLy1lpZY.js:38
+eO @ index-DLy1lpZY.js:40
+Jo @ index-DLy1lpZY.js:40
+IT @ index-DLy1lpZY.js:40
+P @ index-DLy1lpZY.js:25
+M @ index-DLy1lpZY.js:25
+index-DLy1lpZY.js:3599 Puzzle 0 type: undefined, difficulty: undefined
+index-DLy1lpZY.js:3574  GET https://fitwithlamaria.vercel.app/api/puzzle?index=0 500 (Internal Server Error)
+(anonymous) @ index-DLy1lpZY.js:3574
+(anonymous) @ index-DLy1lpZY.js:3574
+kf @ index-DLy1lpZY.js:40
+pa @ index-DLy1lpZY.js:40
+b0 @ index-DLy1lpZY.js:40
+Mo @ index-DLy1lpZY.js:38
+eO @ index-DLy1lpZY.js:40
+Jo @ index-DLy1lpZY.js:40
+IT @ index-DLy1lpZY.js:40
+P @ index-DLy1lpZY.js:25
+M @ index-DLy1lpZY.js:25
+index-DLy1lpZY.js:3574  GET https://fitwithlamaria.vercel.app/api/puzzle?index=0 500 (Internal Server Error)
+(anonymous) @ index-DLy1lpZY.js:3574
+(anonymous) @ index-DLy1lpZY.js:3574
+kf @ index-DLy1lpZY.js:40
+pa @ index-DLy1lpZY.js:40
+b0 @ index-DLy1lpZY.js:40
+Mo @ index-DLy1lpZY.js:38
+eO @ index-DLy1lpZY.js:40
+Jo @ index-DLy1lpZY.js:40
+IT @ index-DLy1lpZY.js:40
+P @ index-DLy1lpZY.js:25
+M @ index-DLy1lpZY.js:25
+index-DLy1lpZY.js:3574  GET https://fitwithlamaria.vercel.app/api/puzzle/word?index=0 500 (Internal Server Error)
+(anonymous) @ index-DLy1lpZY.js:3574
+await in (anonymous)
+(anonymous) @ index-DLy1lpZY.js:3574
+kf @ index-DLy1lpZY.js:40
+pa @ index-DLy1lpZY.js:40
+b0 @ index-DLy1lpZY.js:40
+Mo @ index-DLy1lpZY.js:38
+eO @ index-DLy1lpZY.js:40
+Jo @ index-DLy1lpZY.js:40
+IT @ index-DLy1lpZY.js:40
+P @ index-DLy1lpZY.js:25
+M @ index-DLy1lpZY.js:25
