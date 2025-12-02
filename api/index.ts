@@ -1,26 +1,11 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import express, { type Request, type Response } from "express";
-import { createRequire } from "module";
 
-const require = createRequire(import.meta.url);
-
-let initError: Error | null = null;
-let puzzleRouter: any;
-let wordsearchRouter: any;
-let crosswordRouter: any;
-let puzzletypeRouter: any;
-let stripeRouter: any;
-
-try {
-  puzzleRouter = require("../server/routes/puzzle").default;
-  wordsearchRouter = require("../server/routes/wordsearch").default;
-  crosswordRouter = require("../server/routes/crossword").default;
-  puzzletypeRouter = require("../server/routes/puzzletype").default;
-  stripeRouter = require("../server/routes/stripe").default;
-} catch (err: any) {
-  initError = err;
-  console.error("Failed to load routes:", err);
-}
+import puzzleRouter from "../server/routes/puzzle.js";
+import wordsearchRouter from "../server/routes/wordsearch.js";
+import crosswordRouter from "../server/routes/crossword.js";
+import puzzletypeRouter from "../server/routes/puzzletype.js";
+import stripeRouter from "../server/routes/stripe.js";
 
 const app = express();
 
@@ -41,36 +26,19 @@ app.use(
 
 app.use(express.urlencoded({ extended: false }));
 
-// Health check endpoint to debug initialization
+// Health check endpoint
 app.get("/api/health", (_req, res) => {
-  if (initError) {
-    return res.status(500).json({ 
-      status: "error", 
-      error: initError.message,
-      stack: initError.stack 
-    });
-  }
   res.json({ status: "ok", routes: ["puzzle", "wordsearch", "crossword", "puzzletype", "stripe"] });
 });
 
-// Check if routes loaded successfully before registering
-if (initError) {
-  app.use("/api", (_req, res) => {
-    res.status(500).json({ 
-      error: "Server initialization failed", 
-      message: initError?.message 
-    });
-  });
-} else {
-  // Register all puzzle routes
-  app.use("/api/puzzle", puzzleRouter);
-  app.use("/api/wordsearch", wordsearchRouter);
-  app.use("/api/crossword", crosswordRouter);
-  app.use("/api/puzzletype", puzzletypeRouter);
+// Register all puzzle routes
+app.use("/api/puzzle", puzzleRouter);
+app.use("/api/wordsearch", wordsearchRouter);
+app.use("/api/crossword", crosswordRouter);
+app.use("/api/puzzletype", puzzletypeRouter);
 
-  // Payment
-  app.use("/api/stripe", stripeRouter);
-}
+// Payment
+app.use("/api/stripe", stripeRouter);
 
 // Error handler (must have 4 parameters for Express to recognize it)
 app.use((err: any, _req: Request, res: Response, _next: any) => {
